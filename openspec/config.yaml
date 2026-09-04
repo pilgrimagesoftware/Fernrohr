@@ -1,0 +1,76 @@
+schema: spec-driven
+
+context: |
+  Project: Fernrohr - a native Kubernetes cluster GUI in Rust. Broadly a
+  FreeLens/OpenLens equivalent with k9s-inspired keyboard-first workflows and
+  multi-window / multi-panel support.
+
+  Tech stack:
+    - Rust, GPUI (Zed's UI framework) + gpui-component (Longbridge component lib:
+      Dock, Table, Sidebar, TitleBar, Input, etc.)
+    - kube-rs (kube, kube-runtime, k8s-openapi) for the Kubernetes client;
+      watcher + reflector Store for live caches; discovery for CRDs
+    - tokio multi-thread runtime on background threads, bridged to GPUI's
+      foreground executor via bounded channels
+    - dirs crate for platform paths; per-concern TOML config files; keyring crate
+      for secrets
+  Targets: macOS and Linux (GPUI's Linux backend is less mature - a known risk).
+
+  Architecture decisions already made in exploration:
+    - The spine: tokio runtime owns kube-rs; watcher deltas are mirrored into
+      app-scoped GPUI Entities (Vec + HashMap<Uid> per cluster+kind); window-scoped
+      Views observe those Entities. Bounded channels with coalescing for backpressure
+      during relist bursts.
+    - Watcher lifecycle is reference-counted per (cluster, kind): last panel closed
+      across all windows stops the watcher.
+    - App-global state: ClusterRegistry, ClusterSession[ctx] (kube::Client, watchers,
+      Store cache). Windows own Dock layout; each Panel = (ClusterSession ref,
+      ResourceView: kind + namespace + filter + sort + selection).
+    - Multi-cluster side-by-side panels in one dock is an explicit differentiator vs Lens.
+    - Keyboard-first via GPUI's actions!/KeyBinding/KeyContext. Central command
+      registry: every action has an id, title, default keybind, context predicate.
+      Menus, palette, keymap all read from it. One global keymap.toml now;
+      per-workspace overrides later.
+    - Tunnels: SSH tunnels and k8s port-forwards share one ManagedForward abstraction
+      (state machine, refcount, local-bind allocation, health, UI row). A kube context
+      binds to 0 or 1 tunnel; many contexts may share one. Bound cluster connects only
+      when its tunnel is Up; tunnel flap pauses (not destroys) that cluster's watchers.
+      Same pause/resume path handles exec-auth (aws eks get-token / gcloud) 401 re-auth.
+      SSH impl: shell out to `ssh -L` for MVP, swap to russh later behind the trait.
+      URL rewrite to 127.0.0.1:PORT with kube::Config.tls_server_name set to the real
+      apiserver host so cert validation still passes.
+    - Prometheus: default path queries through the kube apiserver service proxy
+      (/api/v1/namespaces/{ns}/services/{svc}:{port}/proxy/api/v1/query_range), so it
+      piggybacks the existing (possibly tunneled) kube client with no extra config.
+      Provider abstraction (lens/helm/helm-14/operator/stacklight/openshift): each finds
+      its Prometheus Service by label selector and carries its own PromQL templates.
+      A directUrl mode (OpenShift / kube-rbac-proxy, optional bearer token) is opt-in
+      and needs its own ManagedForward.
+    - Persistence (pattern from pilgrimagesoftware/dtrpg-app.rs): dirs crate, one
+      central paths.rs. macOS dir name = reverse-domain bundle id, Linux = "fernrohr".
+      dirs::data_dir()/<id>/ holds state (window_state.toml, workspace.toml,
+      tunnels.toml non-secret fields). dirs::preference_dir()/<id>/ holds ui.toml and
+      keymap.toml. dirs::cache_dir()/<id>/ holds discovery cache and metric buffers.
+      Per-file typed serde struct + load()/save(); first run writes defaults; parse
+      failure keeps the file and falls back to defaults. Secrets (SSH passphrases,
+      passwords) go in the OS keychain via keyring (apple-native on macOS, Secret
+      Service on Linux; fallback to prompt when no daemon). kubeconfig is read-only,
+      never owned ($KUBECONFIG then ~/.kube/config).
+
+  Conventions:
+    - American English in code, comments, docs.
+    - Keep functions under ~50 lines, files under ~700 lines.
+    - Tests: cargo test, assertions that verify behavior, no live-cluster dependency
+      (mock the kube client / use recorded fixtures).
+    - i18n from the start for user-facing strings.
+
+# Per-artifact rules (optional)
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+
+# Per-operation guidance (optional)
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
