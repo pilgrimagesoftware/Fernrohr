@@ -11,22 +11,18 @@ OpenSpec change becomes one issue, fully tagged per `docs/openspec.md`'s "GitHub
 
 ### 1. Identify the change and its repo
 
-Ask which change, unless already clear from context. OpenSpec changes live in the umbrella
-`platform` repo, or in a service submodule once that submodule adopts OpenSpec (see
-`docs/openspec.md`). Search `openspec/changes/<name>` in `platform` first; if not found, check
-the target submodule.
+Ask which change, unless already clear from context. OpenSpec changes live in
+`openspec/changes/<name>` in the repo.
 
-The change's own repo is the target repo for the issue - an umbrella-repo change gets a
-`platform` issue, a submodule-scoped change gets an issue in that submodule's repo. Resolve
-`owner/repo` from that repo's `git remote -v` (or `gh repo view --json owner,name`); the org is
-`sweetrpg`.
+The change's own repo is the target repo for the issue. Resolve `owner/repo` from that repo's
+`git remote -v` (or `gh repo view --json owner,name`).
 
 ### 2. Check for an existing issue first
 
 Search before creating, so this skill never produces a duplicate:
 
 ```
-gh issue list --repo sweetrpg/<repo> --state all --search "<change-name> in:title,body" --json number,title,url,state
+gh issue list --repo pilgrimagesoftware/Fernrohr --state all --search "<change-name> in:title,body" --json number,title,url,state
 ```
 
 If a match already exists, stop and tell the user - point them at `project-start-change` instead
@@ -50,10 +46,10 @@ a larger size than a single-file, single-group change.
 Taxonomies differ per repo and may not exist yet. Pull the real options before mapping anything:
 
 ```
-gh label list --repo sweetrpg/<repo> --json name,description
-gh issue create --repo sweetrpg/<repo> --help | grep -A3 -- '--type'
-gh api repos/sweetrpg/<repo>/milestones --jq '.[] | {title, number, state}'
-gh project list --owner sweetrpg --format json
+gh label list --repo pilgrimagesoftware/Fernrohr --json name,description
+gh issue create --repo pilgrimagesoftware/Fernrohr --help | grep -A3 -- '--type'
+gh api repos/pilgrimagesoftware/Fernrohr/milestones --jq '.[] | {title, number, state}'
+gh project list --owner pilgrimagesoftware --format json
 ```
 
 Native GitHub Issue Types is an org-level feature and not every org has it enabled - if
@@ -87,7 +83,7 @@ rest of the OpenSpec workflow (`project-start-change`, `project-finish-change`) 
 find their way back to the spec. Use a heredoc so multi-line formatting survives:
 
 ```
-gh issue create --repo sweetrpg/<repo> --title "<title>" --body "$(cat <<'EOF'
+gh issue create --repo pilgrimagesoftware/Fernrohr --title "<title>" --body "$(cat <<'EOF'
 <condensed Why + What Changes summary>
 
 ---
@@ -99,8 +95,8 @@ EOF
 Then, if type or milestone weren't settable at creation time, apply them:
 
 ```
-gh issue edit <n> --repo sweetrpg/<repo> --milestone "<milestone>"
-gh issue edit <n> --repo sweetrpg/<repo> --type "<type>"   # only if native Issue Types is enabled
+gh issue edit <n> --repo pilgrimagesoftware/Fernrohr --milestone "<milestone>"
+gh issue edit <n> --repo pilgrimagesoftware/Fernrohr --type "<type>"   # only if native Issue Types is enabled
 ```
 
 ### 7. Add to the project and set custom fields

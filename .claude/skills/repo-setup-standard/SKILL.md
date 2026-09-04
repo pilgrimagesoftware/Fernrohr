@@ -1,21 +1,20 @@
 ---
 name: repo-setup-standard
-description: Scaffold a new or under-scaffolded sweetrpg service/library repo with CI, dependabot, branch protection, community docs, and AGENTS.md/CLAUDE.md robot setup. Use whenever the user asks to "set up the repo", "add repo scaffolding", "bootstrap CI", or start a brand-new sweetrpg service before implementation begins.
+description: Scaffold a new or under-scaffolded repo with CI, dependabot, branch protection, community docs, and AGENTS.md/CLAUDE.md robot setup. Use whenever the user asks to "set up the repo", "add repo scaffolding", "bootstrap CI", or start a brand-new repo before implementation begins. Note: this skill was designed for multi-repo org setups; adapt the org-specific parts to your project.
 metadata:
   type: engineering
 ---
 
 # Repo setup standard
 
-Bring a sweetrpg service repo up to a working baseline: CI, dependabot, branch protection,
+Bring a service repo up to a working baseline: CI, dependabot, branch protection,
 community docs, and robot guidance. This is infrastructure work, separate from implementing
 whatever the repo actually does - do this first, commit it on its own, then move to feature
 work.
 
-The sweetrpg org is polyglot (Python, TypeScript, and others across different services).
-`sweetrpg/github-actions` holds reusable workflows for the release family per language
-(`<lang>-prepare-release.yaml`/`<lang>-release.yaml`/`<lang>-tag-release.yaml` - see step 3.11)
-but there is no reusable CI/PR workflow repo yet - those stay inline per repo. **Don't assume a
+For polyglot orgs (Python, TypeScript, and others across different services), reusable
+workflows may exist in a shared `github-actions` repo for the release family per language
+(`<lang>-prepare-release.yaml`/`<lang>-release.yaml`/`<lang>-tag-release.yaml`). **Don't assume a
 fixed stack or copy another repo's CI file blind.** This skill is discovery-first: figure out
 what the target repo actually needs, then find a live sibling repo with a working example of
 that pattern.
@@ -34,12 +33,12 @@ Don't hardcode a "source of truth" repo - query the org for repos and check whic
 have populated `.github/workflows/`:
 
 ```bash
-gh repo list sweetrpg --limit 100 --json name,url
-gh api repos/sweetrpg/<candidate>/contents/.github/workflows --jq '.[].name'
+gh repo list <org> --limit 100 --json name,url
+gh api repos/<org>/<candidate>/contents/.github/workflows --jq '.[].name'
 ```
 
 Prefer a sibling with the same detected stack (step 1) and workflows that ran successfully
-recently (`gh run list --repo sweetrpg/<candidate> --limit 5`) over one that merely has files
+recently (`gh run list --repo <org>/<candidate> --limit 5`) over one that merely has files
 present but stale/broken. If more than one plausible sibling exists, ask the user which to model
 this repo on.
 
@@ -52,7 +51,7 @@ have moved on since this was written.
 1. **CI workflow(s)** (`.github/workflows/`) - matching the detected stack's build/lint/test
    steps from the chosen sibling. Adapt package/module names; don't copy them verbatim.
 
-   Before wiring any caller workflow (`uses: sweetrpg/github-actions/.github/workflows/<x>.yaml@master`),
+   Before wiring any caller workflow (`uses: <org>/github-actions/.github/workflows/<x>.yaml@master`),
    read that reusable workflow's own `permissions:` and `secrets:` blocks - don't assume the
    caller's `permissions:` can just be "whatever looks reasonable" or that `secrets: inherit`
    covers everything:
@@ -97,8 +96,8 @@ have moved on since this was written.
    a shape:
 
    ```bash
-   gh api repos/sweetrpg/<sibling>/rulesets
-   gh api repos/sweetrpg/<sibling>/branches/<default-branch>/protection
+   gh api repos/<org>/<sibling>/rulesets
+   gh api repos/<org>/<sibling>/branches/<default-branch>/protection
    ```
 
    Whichever mechanism the sibling uses (rulesets vs. classic protection), replicate that same
@@ -112,58 +111,55 @@ have moved on since this was written.
      org-wide (`docs/git-flow.md`) - a squash-merged multi-commit PR reliably strips the
      Conventional Commits prefix `git-cliff` needs, and can make a release PR silently reuse an
      already-tagged version. Use `["merge", "rebase"]` only.
-   - **Never add a `copilot_code_review` ruleset rule.** The org has 0 Copilot seats
-     (`gh api orgs/sweetrpg/copilot/billing --jq '.seat_breakdown.total'`) - a rule requiring
+   - **Never add a `copilot_code_review` ruleset rule.** A rule requiring
      that review never completes review, silently blocking every PR forever (needs `--admin` to
      merge anything, permanently). If a sibling's ruleset has this rule, strip it before copying
      the pattern, and strip it from the sibling too while you're there.
 6. **Repository setting: allow auto-merge** - enable it at the repo level:
 
    ```bash
-   gh repo edit sweetrpg/<repo> --enable-auto-merge
+   gh repo edit <org>/<repo> --enable-auto-merge
    ```
 
    This is a plain repository setting, not a ruleset rule, and is off by default on new repos.
    Without it, `gh pr merge --auto` fails with `GraphQL: Auto merge is not allowed for this
    repository` even when the PR is otherwise mergeable. Verify with
-   `gh api repos/sweetrpg/<repo> --jq '.allow_auto_merge'`.
+   `gh api repos/<org>/<repo> --jq '.allow_auto_merge'`.
 6b. **Repository setting: disable "Automatically delete head branches"** - explicitly, even
    though this skill never turns it on:
 
    ```bash
-   gh repo edit sweetrpg/<repo> --delete-branch-on-merge=false
+   gh repo edit <org>/<repo> --delete-branch-on-merge=false
    ```
 
-   Found live (`true`) on several repos never scaffolded through this exact sequence
-   (`initiative-web`, `shared-web`, `web-template`, `game-room-api`, `game-room-objects.go`,
-   `web-core`, `client.py` as of 2026-08-26) - GitHub defaults it to `true` for a repo created
-   through some paths, and this platform's `master`+`develop` git-flow makes that dangerous in a
-   way a typical single-default-branch repo isn't: any PR whose *head* ref is `master` or
-   `develop` itself (a manual merge-forward PR, a botched hotfix, anything that isn't the
-   release automation's own server-side API merge) gets that branch deleted the moment the PR
-   merges. Verify with `gh api repos/sweetrpg/<repo> --jq '.delete_branch_on_merge'` and disable
-   unconditionally - never assume it's already off because this skill doesn't set it.
+   Found live (`true`) on several repos never scaffolded through this exact sequence - GitHub
+   defaults it to `true` for a repo created through some paths, and a `master`+`develop` git-flow
+   makes that dangerous in a way a typical single-default-branch repo isn't: any PR whose *head*
+   ref is `master` or `develop` itself (a manual merge-forward PR, a botched hotfix, anything that
+   isn't the release automation's own server-side API merge) gets that branch deleted the moment
+   the PR merges. Verify with `gh api repos/<org>/<repo> --jq '.delete_branch_on_merge'` and
+   disable unconditionally - never assume it's already off because this skill doesn't set it.
 7. **ArgoCD webhook** - if this repo has (or will have) a `kubernetes/overlays/` ArgoCD deploys
    from, add a GitHub webhook so pushes sync instantly instead of waiting out ArgoCD's default
-   poll cycle (see `docs/git-repos.md`'s GitOps section):
+   poll cycle:
 
    ```bash
-   gh api repos/sweetrpg/<repo>/hooks -X POST \
+   gh api repos/<org>/<repo>/hooks -X POST \
      -f name=web \
-     -f "config[url]=https://argocd.dev.pilgrimagesoftware.com/api/webhook" \
+     -f "config[url]=https://argocd.example.com/api/webhook" \
      -f "config[content_type]=json" \
      -F active=true \
      -f "events[]=push"
    ```
 
-8. **Debug workflow** (`.github/workflows/debug.yml`) - every sweetrpg repo carries one of these;
+8. **Debug workflow** (`.github/workflows/debug.yml`) - every repo carries one of these;
    never delete it while scaffolding or rewriting CI, even if it looks stale or references
    something being retired (e.g. an old private registry). Fix the stale parts in place instead:
    find a sibling's current `debug.yml`, keep its context-dump steps (GitHub/job/steps/runner/
    strategy/matrix - these never go stale, they just echo whatever `toJson()` returns) verbatim,
    and only rewrite the parts that reference this repo specifically (the `docker/metadata-action`
-   step's `images:` value, e.g. `ghcr.io/sweetrpg/<repo>` instead of a stale
-   `registry.sweetrpg.com/sweetrpg-<repo>`).
+   step's `images:` value, e.g. `ghcr.io/<org>/<repo>` instead of a stale
+   `registry.example.com/<repo>`).
 9. **Code coverage** - every repo's CI (and PR) workflow gets a coverage step, a warn-only
    threshold check, and a GitHub Pages-hosted badge, using the language-appropriate tool. This
    was rolled out platform-wide via `openspec/changes/add-code-coverage`; treat that change's
@@ -187,7 +183,7 @@ have moved on since this was written.
      `{"schemaVersion":1,"label":"coverage","message":"<pct>%","color":"<color>"}`, color
      `brightgreen`/`>=80`, `yellow`/`>=50`, `red` otherwise) into the coverage output directory,
      then publish that directory to `gh-pages` via `peaceiris/actions-gh-pages@v4`. README badge
-     markdown: `[![Coverage](https://img.shields.io/endpoint?url=https://sweetrpg.github.io/<repo>/<path>/coverage-badge.json)](https://sweetrpg.github.io/<repo>/<path>/)`.
+      markdown: `[![Coverage](https://img.shields.io/endpoint?url=https://<org>.github.io/<repo>/<path>/coverage-badge.json)](https://<org>.github.io/<repo>/<path>/)`.
      Two badge-hosting designs were tried and abandoned before landing on GitHub Pages: a direct
      push to the source branch (rejected by PR-only branch-protection rulesets) and a bot-opened
      PR with auto-merge (GITHUB_TOKEN-authored pushes/PRs never trigger further Actions runs, so
@@ -196,8 +192,8 @@ have moved on since this was written.
    **Gotchas specific to this step** (all found the hard way during the platform rollout - verify
    each, don't assume they're already handled):
    - **GitHub Pages must be explicitly enabled**: a `gh-pages` branch with the right content
-     existing is *not* the same as Pages serving it. `gh api repos/sweetrpg/<repo>/pages --jq
-     '.status'` first; if 404, `gh api -X POST repos/sweetrpg/<repo>/pages -f
+     existing is *not* the same as Pages serving it. `gh api repos/<org>/<repo>/pages --jq
+     '.status'` first; if 404, `gh api -X POST repos/<org>/<repo>/pages -f
      "source[branch]=gh-pages" -f "source[path]=/"`.
    - **If another job already publishes to `gh-pages` root** (e.g. a `docs` job publishing
      rustdoc/sphinx), the coverage publish step needs `destination_dir: coverage` (or similar)
@@ -239,15 +235,15 @@ have moved on since this was written.
     `amd64`-only unless `platforms:` is explicitly passed; `main-web` and `assets-web` both
     shipped this way (QEMU/Buildx present, `platforms:` missing) until caught and fixed. Verify
     with a manual `workflow_dispatch` run and check the pushed manifest is multi-arch (`docker
-    buildx imagetools inspect ghcr.io/sweetrpg/<repo>:latest` lists both platforms), not just
+    buildx imagetools inspect ghcr.io/<org>/<repo>:latest` lists both platforms), not just
     that the workflow went green - a green run proves the build succeeded for whatever platforms
     were actually requested, not that both were.
 
 11. **Release workflow family** - every repo gets `prepare-release.yaml`/`release.yaml`/
-    `tag-release.yaml`, each a thin caller into `sweetrpg/github-actions`'s reusable
+    `tag-release.yaml`, each a thin caller into a shared `github-actions` repo's reusable
     `<lang>-prepare-release.yaml`/`<lang>-release.yaml`/`<lang>-tag-release.yaml` workflows
     (`go`/`rust`/`swift`/`python` families exist as of this writing - check
-    `gh api repos/sweetrpg/github-actions/contents/.github/workflows --jq '.[].name'` for the
+    `gh api repos/<org>/github-actions/contents/.github/workflows --jq '.[].name'` for the
     current set before assuming a language isn't covered). Don't hand-roll release automation
     per repo - `assets-web` is the reference consumer for the Python family; check its own
     `.github/workflows/{prepare-release,release,tag-release}.yaml` for the exact caller shape
@@ -262,7 +258,7 @@ have moved on since this was written.
       pull-requests: write
     jobs:
       prepare:
-        uses: sweetrpg/github-actions/.github/workflows/<lang>-prepare-release.yaml@master
+        uses: <org>/github-actions/.github/workflows/<lang>-prepare-release.yaml@master
         with:
           version-file: <path to the file holding the version string, e.g. src/<pkg>/__init__.py>
         secrets: inherit
@@ -288,7 +284,7 @@ have moved on since this was written.
 
 12. **Architecture Decision Records** - every repo carries a `docs/adr/` directory and the `/adr`
     command, so a service-local decision (`ADR-NNNN`) has somewhere to land and platform-wide
-    ones (`PADR-NNNN`) are discoverable. Source everything from `sweetrpg/platform`:
+    ones (`PADR-NNNN`) are discoverable. Source everything from the platform repo:
 
     - `docs/adr/0000-template.md` - copy verbatim from `platform/docs/adr/0000-template.md`.
     - `docs/adr/README.md` - a short index. Copy `platform/docs/adr/README.md` and trim it to
@@ -307,14 +303,14 @@ have moved on since this was written.
       ```markdown
       ## Platform Conventions and Decisions
 
-      This repo is a submodule of `sweetrpg/platform`. Platform-wide conventions and Architecture
+      This repo is a submodule of the platform repo. Platform-wide conventions and Architecture
       Decision Records live there:
 
       - checked out inside the platform tree: `../../docs/README.md` (convention index) and
         `../../docs/adr/README.md` (platform ADRs, `PADR-*`)
       - standalone or module-only checkout:
-        <https://github.com/sweetrpg/platform/tree/master/docs> and
-        <https://github.com/sweetrpg/platform/tree/master/docs/adr>
+        <https://github.com/<org>/platform/tree/master/docs> and
+        <https://github.com/<org>/platform/tree/master/docs/adr>
 
       Accepted `PADR-*` records are binding constraints. Read the ADR index before proposing a
       structural change; if a task needs to contradict an accepted record, stop and say so -
@@ -327,10 +323,10 @@ have moved on since this was written.
 
 ### 4. Create a `release` label
 
-Every sweetrpg repo should have a `release` label, colored green, for tagging release PRs/issues:
+Every repo should have a `release` label, colored green, for tagging release PRs/issues:
 
 ```bash
-gh label create release --repo sweetrpg/<repo> --color 00FF00 --description "Release" --force
+gh label create release --repo <org>/<repo> --color 00FF00 --description "Release" --force
 ```
 
 `--force` makes this idempotent if the label already exists under a different color/description.
@@ -338,7 +334,7 @@ gh label create release --repo sweetrpg/<repo> --color 00FF00 --description "Rel
 ### 5. Look up the repo's real GitHub Projects v2 board
 
 ```bash
-gh project list --owner sweetrpg --format json
+gh project list --owner <org> --format json
 ```
 
 Confirm which project the repo actually belongs to (ask the user if more than one is plausible)
@@ -362,7 +358,7 @@ before wiring any project-number references into CI or docs.
   fully correct rulesets and still reject `gh pr merge --auto` until `allow_auto_merge` is
   turned on (step 3.6). Don't assume "branch protection is set up" implies auto-merge works.
 - **Rulesets vs. classic branch protection - check a live example before guessing the shape.**
-  Don't assume either is "the sweetrpg standard" without querying an actual sibling repo first
+  Don't assume either is "the standard" without querying an actual sibling repo first
   (step 3.5) - a repo you check might have neither configured, which is not the same as the org
   having no standard elsewhere.
 - **If GitHub API calls fail with a TLS/certificate error**, that's a sandboxed-network

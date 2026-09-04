@@ -11,16 +11,14 @@ the PR, close the issue, and clean up the worktree.
 ### 1. Identify the change and its worktree
 
 Ask which change to finish, unless clear from context. Find its worktree: `git worktree
-list` in the owning repo, or the fixed path convention
-`/Users/paulyhedral/Projects/Code/SweetRPG/platform/worktrees/<repo-slug>-<branch-slug>`. All
-remaining work happens inside that worktree, not the main working tree.
+list` in the repo, or the fixed path convention
+`<project-root>/worktrees/<branch-slug>`. All remaining work happens inside that worktree,
+not the main working tree.
 
 ### 2. Verify the work before declaring anything done
 
 Run the repo's build, lint, and test commands inside the worktree. Do not proceed to
-committing/merging on the basis of untested claims - confirm by actually running these. This
-repo (`platform`) has no build/test of its own; if the change is scoped to a service submodule,
-run that submodule's own commands.
+committing/merging on the basis of untested claims - confirm by actually running these.
 
 ### 3. Mark tasks complete
 
@@ -46,7 +44,7 @@ Use the `openspec-archive-change` skill to archive the change.
 pointed at the right base and not marked draft. If no PR exists yet, create one now:
 
 ```
-gh pr create --repo sweetrpg/<repo> --base <base-branch> --title "<issue title, no Conventional Commits prefix>" --body "Closes #<issue-number>"
+gh pr create --repo pilgrimagesoftware/Fernrohr --base <base-branch> --title "<issue title, no Conventional Commits prefix>" --body "Closes #<issue-number>"
 ```
 
 The `Closes #<n>` (or `Fixes #<n>`) line is what links the PR to the issue and auto-closes it
@@ -76,11 +74,11 @@ If the merge's `Closes #<n>` didn't auto-close it (e.g. PR merged into a branch 
 the repo's GitHub default branch), close it explicitly:
 
 ```
-gh issue close <n> --repo sweetrpg/<repo>
+gh issue close <n> --repo pilgrimagesoftware/Fernrohr
 ```
 
-Then, per `docs/openspec.md` ("When completing a change"): set the end date if the project
-tracks one, and move the issue's project status to "Done" (`gh project item-edit`).
+Then, per the project's OpenSpec conventions ("When completing a change"): set the end date if
+the project tracks one, and move the issue's project status to "Done" (`gh project item-edit`).
 
 ### 10. Update the local main worktree
 
@@ -91,26 +89,20 @@ git checkout <base-branch>
 git pull
 ```
 
-If the change was in a service submodule (not the umbrella `platform` repo itself), also
-update the pointer one level up: in `platform`'s main working tree, `git add <category>/<name>`
-and commit the updated submodule reference, then push (see `docs/git-submodules.md`).
-`platform` is the only meta-repo - submodule paths are one level deep under a category folder,
-no further propagation needed.
-
 ### 11. Remove the feature worktree
 
 ```
-git worktree remove /Users/paulyhedral/Projects/Code/SweetRPG/platform/worktrees/<repo-slug>-<branch-slug>
+git worktree remove <project-root>/worktrees/<branch-slug>
 git branch -D <branch-name>
 ```
 
-If `git worktree remove` refuses because a submodule is checked out inside it, confirm
-`git status --short` and `git submodule status` are clean first, then use `--force`.
+If `git worktree remove` refuses because something is checked out inside it, confirm
+`git status --short` is clean first, then use `--force`.
 
 ### 12. Report back
 
 Summarize: change name, PR number/URL and merge method, issue number and closed state,
-submodule reference updated (if any), and confirmation the worktree was removed.
+and confirmation the worktree was removed.
 
 ## Gotchas
 

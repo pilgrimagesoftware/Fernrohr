@@ -15,10 +15,8 @@ If unsure, offer to run `openspec list --json` to show options.
 
 ### 2. Locate the change
 
-OpenSpec changes live in the umbrella `platform` repo, or in a service submodule once that
-submodule adopts OpenSpec (see `docs/openspec.md`). Search `openspec/changes/<name>` in
-`platform` first; if not found, check the target submodule directly. If it exists in more than
-one place, ask the user to disambiguate.
+OpenSpec changes live in `openspec/changes/<name>` in the repo. Search for the change
+by name. If it exists in more than one place, ask the user to disambiguate.
 
 Read that change's `proposal.md` (and `design.md` if present) for context on scope and
 affected files.
@@ -28,7 +26,7 @@ affected files.
 - Check `proposal.md`/`design.md`/`tasks.md` for an existing issue reference (`#123` or a
   full issue URL).
 - If none is found, search the change's repo for an issue whose title or body names the
-  change: `gh issue list --repo sweetrpg/<repo> --state all --search "<change-name> in:title,body" --json number,title,url,state`
+  change: `gh issue list --repo pilgrimagesoftware/Fernrohr --state all --search "<change-name> in:title,body" --json number,title,url,state`
 - If multiple candidates come back, show them to the user (AskUserQuestion) rather than
   guessing which one is the match.
 - If zero candidates come back, create the issue yourself by invoking the
@@ -37,9 +35,9 @@ affected files.
 
 ### 4. Prep the issue for active work
 
-Per `docs/openspec.md` ("When starting on a change"):
+Per the project's OpenSpec conventions ("When starting on a change"):
 
-- `gh issue edit <n> --repo sweetrpg/<repo> --add-assignee @me`
+- `gh issue edit <n> --repo pilgrimagesoftware/Fernrohr --add-assignee @me`
 - Record a start date on the issue if the project uses that convention (check existing
   issues for the field before assuming one exists).
 - Move the issue's project status to "In Progress" (`gh project item-edit`, or ask the user
@@ -51,17 +49,12 @@ Follow this project's fixed worktree convention (do not use `EnterWorktree` - it
 worktrees under `.claude/worktrees/`, which conflicts with the path used here):
 
 ```
-git worktree add /Users/paulyhedral/Projects/Code/SweetRPG/platform/worktrees/<repo-slug>-<branch-slug> -b <branch-name> origin/<base-branch>
+git worktree add <project-root>/worktrees/<branch-slug> -b <branch-name> origin/<base-branch>
 ```
 
-- `<repo-slug>`: the repo path with `/` replaced by `-` (e.g. `services-catalog-api`, or
-  `platform` for the umbrella repo itself).
 - `<branch-name>`: `<issue-number>-<change-name>`, matching GitHub's own suggested linked
   branch name so the branch auto-links to the issue.
-- Base ref is `origin/master` for the `platform` meta-repo; for service submodules, use
-  `origin/develop` per the platform's git-flow standard (see `docs/git-flow.md`). If a submodule
-  doesn't have a `develop` branch yet, that's a gap to fix via `repo-setup-standard`, not a
-  different convention to follow.
+- Base ref is `origin/main` (or `origin/master` depending on the repo's default branch).
 - If you use `gh issue develop <n> --name <branch-name> --base <base-branch>` instead (to get
   GitHub's native issue-branch link), it checks the branch out in the current working tree
   by default - immediately switch that working tree back to its original branch, then
@@ -73,10 +66,10 @@ session into it, since that form of the tool accepts any existing worktree of th
 
 ### 6. Push and open the PR
 
-Per `docs/openspec.md`:
+Per the project's OpenSpec conventions:
 
 - Push the new branch: `git push -u origin <branch-name>` (run inside the worktree).
-- `gh pr create --repo sweetrpg/<repo> --base <base-branch> --title "<issue title, no Conventional Commits prefix>" --body "..."`
+- `gh pr create --repo pilgrimagesoftware/Fernrohr --base <base-branch> --title "<issue title, no Conventional Commits prefix>" --body "..."`
   (never `--draft` - PRs are opened ready for review)
 - Set PR assignee, labels, project, and milestone to match the issue.
 - Link the PR to the issue (via a `Closes #<n>` line in the body, or `gh issue develop`'s
@@ -100,7 +93,6 @@ current working tree.
   created in step 5 is the only place code changes should happen.
 - `gh issue list --search` needs `in:title,body` (not the default, which is title-only) or
   it will miss issues that only mention the change name in the description.
-- Confirm which repo (umbrella `platform` vs. a service submodule) before creating the
-  worktree - a wrong-repo worktree is wasted setup.
+- Confirm the correct repo before creating the worktree - a wrong-repo worktree is wasted setup.
 - If GitHub API calls fail with a TLS/certificate error, that's a sandboxed-network
   restriction, not a real GitHub outage - retry the `gh`/`gh api` call outside the sandbox.
