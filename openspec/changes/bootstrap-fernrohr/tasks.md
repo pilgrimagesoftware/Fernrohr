@@ -1,9 +1,9 @@
 ## 1. Workspace and dependency setup
 
-- [ ] 1.1 Create the Cargo workspace and an app crate; `cargo build` succeeds with an empty GPUI window that opens on macOS
-- [ ] 1.2 Add and pin GPUI + gpui-component to specific git revisions; a gpui-component `Dock` renders in the window and `cargo build` is reproducible from a clean checkout
-- [ ] 1.3 Add `tokio` (multi-thread), `kube`, `kube-runtime`, `k8s-openapi`, `dirs`, `serde`, `toml`, and an i18n crate; `cargo build` succeeds and `cargo tree` shows no duplicate major versions of `tokio` or `hyper`
-- [ ] 1.4 Add a Linux CI job (build + `cargo test`) alongside macOS; both legs pass on the empty-window commit
+- [x] 1.1 Create the Cargo workspace and an app crate; `cargo build` succeeds with an empty GPUI window that opens on macOS
+- [x] 1.2 Add and pin GPUI + gpui-component to specific git revisions; a gpui-component `Dock` renders in the window and `cargo build` is reproducible from a clean checkout
+- [x] 1.3 Add `tokio` (multi-thread), `kube`, `kube-runtime`, `k8s-openapi`, `dirs`, `serde`, `toml`, and an i18n crate; `cargo build` succeeds and `cargo tree` shows no duplicate major versions of `tokio` or `hyper`
+- [x] 1.4 Add a Linux CI job (build + `cargo test`) alongside macOS; both legs pass on the empty-window commit
 
 ## 2. Platform paths and config loading
 
