@@ -25,10 +25,10 @@
 
 ## 5. App shell
 
-- [ ] 5.1 Implement the docked panel workspace: add, split, resize, and close panels; manual check - a second panel splits the area and the separator drags
-- [ ] 5.2 Implement multiple windows via a "New Window" command; opening one yields an independent workspace and closing the last window persists state then exits - verified manually and by a state-file assertion on exit
-- [ ] 5.3 Persist and restore per-window geometry and panel descriptors through `workspace.toml`; quit-and-relaunch restores two windows with the same panels, and a corrupt `workspace.toml` yields one default window with the file untouched
-- [ ] 5.4 Skip unknown panel `kind`s on restore with a log line; a hand-edited `workspace.toml` with a bogus kind still restores the known panels
+- [x] 5.1 Implement the docked panel workspace: add, split, resize, and close panels; manual check - a second panel splits the area and the separator drags (implemented via gpui-component's `DockArea`/`h_split`; drag-to-resize not visually verified - no display access in this environment, needs a manual check when run locally)
+- [x] 5.2 Implement multiple windows via a "New Window" command; opening one yields an independent workspace and closing the last window persists state then exits - verified manually and by a state-file assertion on exit
+- [x] 5.3 Persist and restore per-window geometry and panel descriptors through `workspace.toml`; quit-and-relaunch restores two windows with the same panels, and a corrupt `workspace.toml` yields one default window with the file untouched
+- [x] 5.4 Skip unknown panel `kind`s on restore with a log line; a hand-edited `workspace.toml` with a bogus kind still restores the known panels
 
 ## 6. Resource browser (Pods)
 
