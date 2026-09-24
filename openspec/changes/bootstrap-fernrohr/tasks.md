@@ -40,10 +40,10 @@
 
 ## 7. Pod logs
 
-- [ ] 7.1 Implement a log panel streaming a pod container's logs over its own line-by-line channel (not the coalescing path); against a mock log stream, history renders and new lines append
-- [ ] 7.2 Implement follow mode with scroll-up-pauses / return-to-bottom-resumes; view-model tests cover the follow state transitions
-- [ ] 7.3 Implement container selection defaulting to the first container; a multi-container fixture switches streams on selection and a single-container fixture needs no pick
-- [ ] 7.4 Handle stream end and request failure distinctly; mock a deleted pod and a not-started container and assert each shows its own terminal message
+- [x] 7.1 Implement a log panel streaming a pod container's logs over its own line-by-line channel (not the coalescing path); against a mock log stream, history renders and new lines append
+- [x] 7.2 Implement follow mode with scroll-up-pauses / return-to-bottom-resumes; view-model tests cover the follow state transitions
+- [x] 7.3 Implement container selection defaulting to the first container; a multi-container fixture switches streams on selection and a single-container fixture needs no pick
+- [x] 7.4 Handle stream end and request failure distinctly; mock a deleted pod and a not-started container and assert each shows its own terminal message
 
 ## 8. Command system
 
