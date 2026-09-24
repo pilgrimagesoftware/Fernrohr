@@ -19,9 +19,9 @@
 
 ## 4. Cluster connection
 
-- [ ] 4.1 Load kubeconfig contexts via `kube`'s loader honoring `$KUBECONFIG` then `~/.kube/config`; a test with a fixture kubeconfig lists all context names and asserts the file's bytes and mtime are unchanged after load
-- [ ] 4.2 Connect a selected context on the `tokio` runtime, building the client and running one probe request; connection state (connecting / connected / failed-with-reason) is observable in the UI, verified against a mock API server for success, unreachable, and exec-plugin-failure cases
-- [ ] 4.3 Run API discovery on connect and expose the discovered kinds; a test against recorded discovery fixtures asserts `Pod` is present and the call runs off the foreground executor
+- [x] 4.1 Load kubeconfig contexts via `kube`'s loader honoring `$KUBECONFIG` then `~/.kube/config`; a test with a fixture kubeconfig lists all context names and asserts the file's bytes and mtime are unchanged after load
+- [x] 4.2 Connect a selected context on the `tokio` runtime, building the client and running one probe request; connection state (connecting / connected / failed-with-reason) is observable in the UI, verified against a mock API server for success, unreachable, and exec-plugin-failure cases
+- [x] 4.3 Run API discovery on connect and expose the discovered kinds; a test against recorded discovery fixtures asserts `Pod` is present and the call runs off the foreground executor
 
 ## 5. App shell
 
