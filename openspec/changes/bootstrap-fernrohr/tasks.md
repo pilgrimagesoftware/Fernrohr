@@ -7,9 +7,9 @@
 
 ## 2. Platform paths and config loading
 
-- [ ] 2.1 Implement `paths.rs` resolving state, preferences, and cache roots via `dirs`, using a reverse-domain id on macOS and `fernrohr` elsewhere; unit tests assert each resolved path ends with the expected dir name and falls back to `.` when the platform dir is unavailable
-- [ ] 2.2 Implement a generic typed-TOML `load()`/`save()` helper: first call with no file writes defaults, a corrupt file is left untouched and defaults are returned; unit tests cover create-default, round-trip, and parse-failure-keeps-file
-- [ ] 2.3 Define `ui.toml`, `window_state.toml`, and `workspace.toml` structs on the helper; `cargo test` covers serde round-trips and unknown-field tolerance
+- [x] 2.1 Implement `paths.rs` resolving state, preferences, and cache roots via `dirs`, using a reverse-domain id on macOS and `fernrohr` elsewhere; unit tests assert each resolved path ends with the expected dir name and falls back to `.` when the platform dir is unavailable
+- [x] 2.2 Implement a generic typed-TOML `load()`/`save()` helper: first call with no file writes defaults, a corrupt file is left untouched and defaults are returned; unit tests cover create-default, round-trip, and parse-failure-keeps-file
+- [x] 2.3 Define `ui.toml`, `window_state.toml`, and `workspace.toml` structs on the helper; `cargo test` covers serde round-trips and unknown-field tolerance
 
 ## 3. The runtime spine
 
