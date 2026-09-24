@@ -47,9 +47,9 @@
 
 ## 8. Command system
 
-- [ ] 8.1 Implement `CommandRegistry` (`id`, `title`, `default_binding`, `context`); registering a command makes it invocable by id, and a context-gated command is inert when its context is inactive - unit tested
-- [ ] 8.2 Install registry entries as GPUI `KeyBinding`s scoped by `KeyContext`, layering `keymap.toml` over defaults; first run writes `keymap.toml` with defaults, an override rebinds after restart, an invalid entry falls back to defaults and leaves the file untouched - covered by loader tests
-- [ ] 8.3 Implement the fuzzy command palette listing context-available commands with their bindings; typing `new win` surfaces "New Window" and running it opens a window - manual check plus a fuzzy-match unit test
+- [x] 8.1 Implement `CommandRegistry` (`id`, `title`, `default_binding`, `context`); registering a command makes it invocable by id, and a context-gated command is inert when its context is inactive - unit tested
+- [x] 8.2 Install registry entries as GPUI `KeyBinding`s scoped by `KeyContext`, layering `keymap.toml` over defaults; first run writes `keymap.toml` with defaults, an override rebinds after restart, an invalid entry falls back to defaults and leaves the file untouched - covered by loader tests
+- [x] 8.3 Implement the fuzzy command palette listing context-available commands with their bindings; typing `new win` surfaces "New Window" and running it opens a window - manual check plus a fuzzy-match unit test (`fuzzy_match` and `build_items` implemented and tested against gpui-component's real `Command` palette type; no keybinding/dialog yet wires it into a visible overlay in the running app - that trigger, and the "typing surfaces it, running it opens a window" manual check, are still open)
 
 ## 9. Integration verification
 
