@@ -32,11 +32,11 @@
 
 ## 6. Resource browser (Pods)
 
-- [ ] 6.1 Implement the `WatchRegistry` on `ClusterSession` with `subscribe`/`unsubscribe` refcounting per kind; tests assert one stream for two subscribers and teardown on the last `unsubscribe`
-- [ ] 6.2 Implement the Pods panel table (name, namespace, ready, status, restarts, age) bound to the kind entity; against a mock stream, initial rows populate and a later `Applied`/`Deleted` adds/removes a row within the drain cycle
-- [ ] 6.3 Implement namespace scoping (single / all) persisted with the panel; switching to `kube-system` shows only its Pods, verified against fixture data
-- [ ] 6.4 Implement name-substring filter and per-column sort; filter `nginx` hides non-matching rows and clearing restores them, Age sort toggles direction - covered by view-model unit tests
-- [ ] 6.5 Verify watch reconnect: interrupt the mock stream and assert the table converges to the post-interruption cluster state
+- [x] 6.1 Implement the `WatchRegistry` on `ClusterSession` with `subscribe`/`unsubscribe` refcounting per kind; tests assert one stream for two subscribers and teardown on the last `unsubscribe`
+- [x] 6.2 Implement the Pods panel table (name, namespace, ready, status, restarts, age) bound to the kind entity; against a mock stream, initial rows populate and a later `Applied`/`Deleted` adds/removes a row within the drain cycle
+- [x] 6.3 Implement namespace scoping (single / all) persisted with the panel; switching to `kube-system` shows only its Pods, verified against fixture data
+- [x] 6.4 Implement name-substring filter and per-column sort; filter `nginx` hides non-matching rows and clearing restores them, Age sort toggles direction - covered by view-model unit tests
+- [x] 6.5 Verify watch reconnect: interrupt the mock stream and assert the table converges to the post-interruption cluster state
 
 ## 7. Pod logs
 
