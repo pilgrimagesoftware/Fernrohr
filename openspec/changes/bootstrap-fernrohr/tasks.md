@@ -13,9 +13,9 @@
 
 ## 3. The runtime spine
 
-- [ ] 3.1 Build the `tokio` runtime at startup, store its handle in a GPUI global, and expose a helper to spawn a `tokio` task that streams items back over a bounded channel; an integration test spawns a task that emits N items and asserts the foreground drain receives them in order
-- [ ] 3.2 Implement the coalescing drain: fold consecutive updates to the same key before applying; a test feeds an interleaved add/update/delete burst and asserts the resulting index matches the final state with bounded intermediate work
-- [ ] 3.3 Implement the per-`(cluster, kind)` entity index (`Vec` + `HashMap<Uid,usize>`) with apply-`Applied`/apply-`Deleted`; unit tests cover insert, in-place update, delete, and missing-on-delete
+- [x] 3.1 Build the `tokio` runtime at startup, store its handle in a GPUI global, and expose a helper to spawn a `tokio` task that streams items back over a bounded channel; an integration test spawns a task that emits N items and asserts the foreground drain receives them in order
+- [x] 3.2 Implement the coalescing drain: fold consecutive updates to the same key before applying; a test feeds an interleaved add/update/delete burst and asserts the resulting index matches the final state with bounded intermediate work
+- [x] 3.3 Implement the per-`(cluster, kind)` entity index (`Vec` + `HashMap<Uid,usize>`) with apply-`Applied`/apply-`Deleted`; unit tests cover insert, in-place update, delete, and missing-on-delete
 
 ## 4. Cluster connection
 
