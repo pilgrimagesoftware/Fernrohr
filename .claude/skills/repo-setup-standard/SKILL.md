@@ -92,29 +92,41 @@ have moved on since this was written.
    ADR index (step 12 has the exact block). Accepted `PADR-*` records are binding constraints -
    the block says so, and says a task that needs to contradict one stops and proposes a
    superseding ADR rather than working around it.
-5. **Branch protection** - check what the chosen sibling actually has configured before assuming
-   a shape:
+5. **Branch protection via rulesets** - create branch rulesets (not classic protection) for both
+   `master` and `develop`:
 
-   ```bash
-   gh api repos/<org>/<sibling>/rulesets
-   gh api repos/<org>/<sibling>/branches/<default-branch>/protection
+   Key rules to include:
+   - `creation`, `deletion`, `non_fast_forward` - prevent destructive operations
+   - `required_signatures` - enforce commit signing
+   - `pull_request` with `allowed_merge_methods: ["merge", "rebase"]` (never squash)
+   - `required_status_checks` on integration branches (`develop`) matching actual CI job names
+
+   **Critical schema requirement:** Conditions must include both `include` AND `exclude` arrays,
+   even if `exclude` is empty:
+
+   ```json
+   {
+     "conditions": {
+       "ref_name": {
+         "include": ["refs/heads/master"],
+         "exclude": []
+       }
+     }
+   }
    ```
 
-   Whichever mechanism the sibling uses (rulesets vs. classic protection), replicate that same
-   mechanism on the target repo rather than picking whichever this skill happens to default to.
-   Required status check names must match the target repo's own CI job names (from step 3.1),
-   not copied verbatim from the sibling if the job IDs differ.
+   **Merge methods:** `allowed_merge_methods` must never include `squash`. Squash merges strip
+   Conventional Commits prefixes that `git-cliff` needs for release notes, and can cause release
+   PRs to silently reuse already-tagged versions. Use `["merge", "rebase"]` only.
 
-   Two fixes to make regardless of what the sibling's ruleset literally contains - the sibling
-   itself may still carry these from before they were caught:
-   - **`allowed_merge_methods` must never include `squash`.** Squash merges are disabled
-     org-wide (`docs/git-flow.md`) - a squash-merged multi-commit PR reliably strips the
-     Conventional Commits prefix `git-cliff` needs, and can make a release PR silently reuse an
-     already-tagged version. Use `["merge", "rebase"]` only.
-   - **Never add a `copilot_code_review` ruleset rule.** A rule requiring
-     that review never completes review, silently blocking every PR forever (needs `--admin` to
-     merge anything, permanently). If a sibling's ruleset has this rule, strip it before copying
-     the pattern, and strip it from the sibling too while you're there.
+   **Never add `copilot_code_review` rule:** A rule requiring Copilot review never completes
+   review, silently blocking every PR forever (requires `--admin` override). Strip this rule
+   from any sibling rulesets before copying the pattern.
+
+   **Ruleset validation:** The GitHub API has strict schema validation. If creation fails,
+   verify the `ref_name` conditions include both keys and the rules are valid types
+   (`creation`, `deletion`, `update`, `non_fast_forward`, `required_signatures`, `pull_request`,
+   `required_status_checks`, etc.) matching the API documentation.
 6. **Repository setting: allow auto-merge** - enable it at the repo level:
 
    ```bash
