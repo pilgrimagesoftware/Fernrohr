@@ -1,6 +1,6 @@
 ## 1. Prerequisites and spike
 
-- [ ] 1.1 Add the `keyring` dependency; a smoke test writes and reads back a secret on macOS Keychain and, where available, Linux Secret Service, and reports a catchable error when no daemon is present
+- [x] 1.1 Add the `keyring` dependency; a smoke test writes and reads back a secret on macOS Keychain and, where available, Linux Secret Service, and reports a catchable error when no daemon is present - `keyring = "4.2.0"` added (default `v1` features: Apple Keychain + zbus Secret Service); `app/src/keychain.rs` smoke test round-trips a secret and returns `Ok(false)` instead of erroring when `Entry::new`/`set_password` report no backend (`NoDefaultStore`/`NoStorageAccess`/`PlatformFailure`); verified passing against the real macOS Keychain (App commit pending)
 - [ ] 1.2 Confirm the TLS rewrite: build a `kube` client with `cluster_url` set to a local port and `tls_server_name` set to a different host, and verify against a bastioned test cluster (or a local stand-in with a SAN mismatch) that the certificate validates against the pinned name - this gates section 5
 - [ ] 1.3 Document `ssh` on `PATH` as a runtime requirement in the README and fail fast with a clear message if it is missing
 
