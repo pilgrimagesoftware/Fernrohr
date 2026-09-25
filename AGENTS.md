@@ -1,19 +1,22 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Architecture
 
-## Status
+Fernrohr is a meta-repository: `App` is the `pilgrimagesoftware/Fernrohr-App` git submodule holding
+the actual Rust/GPUI application code. This repo itself holds only the OpenSpec change proposals
+and specs that drive that code's implementation.
 
-Empty repository. Only `README.md` exists (single initial commit). No source, build system, or tests yet.
+See `docs/architecture.md` for the app's tech stack, architecture decisions (the tokio/GPUI bridge,
+watch lifecycle, tunnels, Prometheus, persistence), and conventions. It mirrors
+`openspec/config.yaml`'s `context:` block, which OpenSpec feeds into every proposal/apply
+operation - keep both in sync when either changes.
 
-Per `README.md`: **Fernrohr** is a meta-repository for a Kubernetes cluster monitoring application.
-"Meta-repository" implies it will aggregate other repos/components (submodules or a manifest) rather
-than hold application code directly.
+## Workflow
 
-## When code lands here
+Each OpenSpec change is implemented across two repos at once, on a matching branch name:
+- This repo (`openspec/changes/<name>/tasks.md` only, tracking progress).
+- The `App` submodule's own repo (the real code).
 
-Update this file with:
-
-- Build / lint / test commands, including how to run a single test.
-- The submodule or component layout and what each component does.
-- How the monitoring pieces fit together (data collection, storage, UI, deployment manifests).
+Work happens in matching worktrees under `worktrees/<branch-name>/` in each repo, not in the main
+checkout - see `openspec/changes/bootstrap-fernrohr/` for the in-progress slice (app shell, cluster
+connection, resource browser, pod logs, command system) as the reference example.
