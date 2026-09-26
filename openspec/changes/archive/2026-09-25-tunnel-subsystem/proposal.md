@@ -35,6 +35,10 @@ one subsystem. This change depends on `bootstrap-fernrohr`.
 Non-goals: the native `russh` implementation, `K8sPortForward` UI as a full "port-forward manager"
 view (the implementation lands here; the dedicated management view is a later change), Prometheus
 `directUrl` wiring (a later metrics change consumes `ManagedForward`), and SOCKS/dynamic forwarding.
+Also non-goal here: end-to-end verification against a real bastion host, a second OS, or a
+credential-plugin-backed cluster - this change is implemented and unit-tested against fakes and local
+stand-ins only; that verification pass is `tunnel-bastion-verification`, deferred until the
+infrastructure to test against exists.
 
 ## Capabilities
 
