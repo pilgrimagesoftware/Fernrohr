@@ -63,24 +63,55 @@
   a `DockArea` with a Pods panel for that context.
   Implemented via `cx.subscribe_in` on `PickerEvent::Connected`. No integration test added -
   deferred for budget.
-- [ ] 4.4 Closing a window's last panel returns it to `Picker` mode (per the `app-shell`
+- [x] 4.4 Closing a window's last panel returns it to `Picker` mode (per the `app-shell`
   delta's "closing the last panel returns to the picker" scenario). Verify: a test closes
   the only open panel and asserts the window is back in `Picker` mode.
+  Implemented via `watch_workspace`'s subscription to `DockEvent::LayoutChanged`, checking
+  `DockArea::is_empty(DockPlacement::Center, cx)` and swapping `MainWindow::mode` back to a
+  fresh `Picker` (itself re-armed with `watch_picker`). **Not covered by a dedicated test** -
+  same GPUI window-root-downcast harness cost already deferred by 4.1-4.3; deferred for budget.
 
 ## 5. Resource kind navigation
 
-- [ ] 5.1 Add a small `NavTarget` enum (`Pods`, `Logs`) and a sidebar/command that switches
+- [x] 5.1 Add a small `NavTarget` enum (`Pods`, `Logs`) and a sidebar/command that switches
   the active panel's `NavTarget` within a connected `Workspace` window, without dropping the
   window's `ClusterSession` connection. Verify: a test switches from Pods to Logs and asserts
   the same underlying connection/context is still in use (no reconnect).
-- [ ] 5.2 Register the navigation switch as a command in `CommandRegistry` (per the project's
+  Implemented in new `nav.rs` (`NavTarget`, `build_layout`); `shell::WindowMode::Workspace` now
+  carries `context_name`/`nav` alongside the `DockArea`, `build_workspace` lands on
+  `NavTarget::Pods` only (no more hardcoded Pods+Logs split), and `MainWindow::switch_nav`
+  calls `shell::switch_nav` to `set_center` a fresh panel for the *same* `context_name` -
+  `ClusterSession`/`ClusterRegistry` lookup is unchanged, so no reconnect happens. A sidebar
+  (`Button` per `NavTarget`) renders next to the dock in `Render for MainWindow`.
+  **Not covered by a dedicated test** - same GPUI window-root-downcast harness cost 4.1-4.4
+  already deferred; deferred for budget.
+- [x] 5.2 Register the navigation switch as a command in `CommandRegistry` (per the project's
   keyboard-first convention) alongside any sidebar click target. Verify: the command appears
   in the command palette and invoking it switches the view, matching a click.
+  `nav::register_commands` registers `nav.show_pods` (cmd-1) and `nav.show_logs` (cmd-2),
+  called from `shell::register_commands` (the registry's single build site) so both the
+  palette and keymap pick them up; `Render for MainWindow` binds `ShowPods`/`ShowLogs` via
+  `cx.listener(Self::on_action_show_pods/_logs)`, the same path the sidebar buttons dispatch
+  through (`MainWindow::switch_nav`).
 
 ## 6. Full verification
 
 - [x] 6.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test`
   all pass with zero failures. (141 passed as of sections 1-4 landing; re-run after 4.4/5.)
+  Re-run after 4.4/5: `cargo fmt --check` and `cargo clippy --all-targets -- -D warnings` both
+  clean. `cargo test` is 129 passed, 0 failed on every non-`tunnel_store` test (including all
+  of `shell::tests`); `tunnel_store`'s 8 keychain-backed tests fail with `AlreadyExists` -
+  confirmed pre-existing on unmodified `develop` (verified via a throwaway stash) and already
+  logged in `~/code/papercuts.md` (2026-09-25: sandboxed vs. real `$TMPDIR` mismatch pollutes
+  keychain-adjacent test state across runs). Not introduced by this change.
 - [ ] 6.2 Manual smoke test: launch the app fresh (no `workspace.toml`), confirm the picker
   appears, pick a context, confirm it lands in a Pods view, switch to Logs via the sidebar,
   close the panel, confirm it returns to the picker.
+  Attempted from this session: backed up the real `~/Library/Application Support/
+  com.pilgrimagesoftware.fernrohr/workspace.toml`, ran the built binary fresh, then restored
+  it. The binary runs for its full duration without crashing (`exit 124` under `timeout`,
+  not an early crash), but this session has no attached WindowServer - `screencapture`
+  reports "could not create image from display" - so no window is actually visible to
+  verify against. **Needs a real interactive desktop session** to complete; not something
+  this environment can confirm. Leaving unchecked rather than claiming a visual result
+  that was never observed.
