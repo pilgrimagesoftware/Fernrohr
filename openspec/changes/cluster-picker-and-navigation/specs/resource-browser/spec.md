@@ -42,6 +42,18 @@ kind, cluster, and namespace scope.
 - **THEN** a dockable panel for that kind opens in the workspace, equivalently to
   double-click
 
+#### Scenario: Re-selecting an open kind focuses it instead of duplicating
+
+- **WHEN** the user selects a kind that already has a panel open for the same cluster
+  and namespace scope
+- **THEN** the existing panel is focused and no second panel is opened
+
+#### Scenario: A kind with no implemented panel opens a placeholder
+
+- **WHEN** the user selects a discovered kind that has no concrete panel implementation
+- **THEN** a placeholder panel opens for it, rather than nothing happening and rather
+  than the kind being absent from the Resource panel
+
 ### Requirement: Panel title bar identifies kind, cluster, and namespace
 
 A resource panel's title bar SHALL show the resource kind, the cluster name when the
@@ -68,11 +80,19 @@ namespaced, a controls menu, and a close button.
 - **WHEN** a resource panel shows a cluster-scoped kind
 - **THEN** its title bar shows no namespace picker
 
+#### Scenario: Every resource panel has a controls menu and a close button
+
+- **WHEN** any resource panel is open
+- **THEN** its title bar shows both a controls menu and a close button
+
 ### Requirement: Resource kind navigation
 
 A connected window SHALL provide a way to switch which resource kind its active panel
-displays, choosing from the kinds the application currently supports, without closing
-and reopening the window's connection.
+displays, without closing and reopening the window's connection. Which kinds are
+offered is governed by the Resource panel above, not by this requirement: the
+Resource panel's discovery-driven list is the single place that decides what the
+window can show, so this requirement only covers switching without dropping the
+connection.
 
 #### Scenario: Switch from Pods to Logs
 
@@ -80,9 +100,3 @@ and reopening the window's connection.
 - **AND** the user navigates to Logs
 - **THEN** the panel is replaced by a Logs view for the same connection, without
   reconnecting or losing the cluster session
-
-#### Scenario: Navigation reflects the connected cluster's discovery
-
-- **WHEN** a window is connected to a cluster
-- **THEN** the navigation only offers resource kinds the application supports and that
-  cluster's API discovery confirms are available
