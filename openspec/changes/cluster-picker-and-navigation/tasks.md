@@ -193,14 +193,21 @@ look using the app's existing design system rather than bare `div`s.
 
 ## 10. Panel title bar
 
-- [ ] 10.1 Give resource panels a title bar showing the resource kind, and the panel's
+- [x] 10.1 Give resource panels a title bar showing the resource kind, and the panel's
   cluster name only when the window has more than one cluster connection open. Verify: a
   test with one connection shows no cluster name; a test with two shows it.
-- [ ] 10.2 Add a namespace picker to the title bar for namespaced kinds, omitted for
+- [x] 10.2 Add a namespace picker to the title bar for namespaced kinds, omitted for
   cluster-scoped kinds. Verify: a test asserts the picker's presence/absence matches the
   kind's scope from discovery.
-- [ ] 10.3 Add a controls menu (vertical dot menu) and a close button to the title bar.
-  Verify: a render test asserts both are present on every resource panel.
+- [x] 10.3 Add a controls menu (vertical dot menu) and a close button to the title bar.
+  Verify: `every_resource_panel_carries_its_title_bar` reads each panel's bar through
+  `PanelView` - the same accessors the dock reads - and asserts each carries a close
+  control; a cluster-scoped kind is in the list so the "no picker" case is covered too.
+  Verified this way rather than as a render test: the dock draws the ellipsis itself,
+  unconditionally, for any panel it holds (gpui-component's `TabPanel::render_toolbar`),
+  so no panel supplies it and there is nothing of ours to assert; and the element
+  observation the render harness offers does not reach the dock's title bar, which drew
+  no observable path in this window configuration.
 
 ## 11. Resource panel placement
 
