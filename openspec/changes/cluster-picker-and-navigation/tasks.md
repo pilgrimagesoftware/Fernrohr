@@ -8,13 +8,18 @@
   (named context resolves that context's cluster URL; `None` keeps existing behavior).
   Done via a `resolve_named_context` seam (`connection.rs`) with two new tests; `None`'s
   path is unchanged from before and covered transitively by existing `connect_and_probe` tests.
-- [ ] 1.2 Thread `context_name` through to `connect_and_probe`'s tunnel-binding lookup
+- [x] 1.2 Thread `context_name` through to `connect_and_probe`'s tunnel-binding lookup
   (currently reads `current_context_name(None)` internally) so a picker-selected context,
   not the kubeconfig's `current-context`, decides the tunnel binding. Verify: a test binds
   a tunnel to a non-current context and confirms `connect(cx, Some(that_context))` acquires it.
-  Implemented (`connect`'s `bound_context` now prefers the passed `context_name`) but
-  **not yet covered by a dedicated test** - would need a GPUI `TestAppContext` +
-  fixture `tunnels.toml` + fixture kubeconfig wired together; deferred for budget.
+  Implemented (`connect`'s `bound_context` now prefers the passed `context_name`), and now
+  extracted into a pure `resolve_bound_context` with a dedicated unit test proving `Some(name)`
+  short-circuits before `current_context_name` is ever consulted. Added
+  `tunnel::bound_context_acquires_its_tunnel_by_name`, a `TestAppContext` test with a fixture
+  `tunnels.toml` that binds a real (non-current) context name and confirms
+  `acquire_for_context` returns `Ok(Some(_))` for it and `Ok(None)` for an unbound name -
+  covers acquisition; the forward reaching `Up` against a real bastion stays
+  `tunnel-bastion-verification`'s job (deferred, no bastion to test against).
 
 ## 2. Rekey cluster state by context
 
@@ -38,12 +43,15 @@
   kubeconfig shows the "no contexts available" message.
   Data-level logic tested (`list_context_names` fixture tests); the `Render` impl branches
   on the same `Ok`/`Err`/empty cases but has **no dedicated render-level test** yet.
-- [ ] 3.2 Wire selecting a context to `ClusterConnection::connect(cx, Some(name))` (via the
+- [x] 3.2 Wire selecting a context to `ClusterConnection::connect(cx, Some(name))` (via the
   rekeyed registry from Section 2), showing `Connecting`/`WaitingForTunnel`/`Failed` states
   from `ConnectionState` inline on the picker. Verify: a test drives a fake `Failed` state and
   asserts the picker shows the failure message and remains interactive (can retry or pick again).
-  Implemented (`ClusterPicker::select` + its `Render` match on `ConnectionState`) but
-  **not covered by a test**; deferred for budget.
+  Implemented (`ClusterPicker::select` + its `Render` match on `ConnectionState`). Added
+  `picker::failed_attempt_shows_the_reason_and_stays_interactive`: drives a fake `Failed`
+  attempt via `ClusterConnection::test_with_state` (a new `#[cfg(test)]` constructor, avoiding
+  a real connect), asserts the failure reason is visible on `self.attempt`, then confirms a
+  subsequent `select` call starts a fresh attempt rather than getting stuck.
 
 ## 4. Wire the picker into the window
 
@@ -68,8 +76,12 @@
   the only open panel and asserts the window is back in `Picker` mode.
   Implemented via `watch_workspace`'s subscription to `DockEvent::LayoutChanged`, checking
   `DockArea::is_empty(DockPlacement::Center, cx)` and swapping `MainWindow::mode` back to a
-  fresh `Picker` (itself re-armed with `watch_picker`). **Not covered by a dedicated test** -
-  same GPUI window-root-downcast harness cost already deferred by 4.1-4.3; deferred for budget.
+  fresh `Picker` (itself re-armed with `watch_picker`). Added
+  `shell::closing_the_last_panel_returns_to_the_picker`: builds a `MainWindow` directly in
+  `Workspace` mode via `cx.add_window` (sidestepping the `Root`-wrapped window this file's
+  other tests deferred on), empties the center dock with `DockArea::set_center(DockLayout::tabs(), ..)`
+  - the same `LayoutChanged` emission a real panel close produces - and asserts the window
+  is back in `Picker` mode.
 
 ## 5. Resource kind navigation
 
