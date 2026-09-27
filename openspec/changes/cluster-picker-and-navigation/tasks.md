@@ -115,3 +115,40 @@
   verify against. **Needs a real interactive desktop session** to complete; not something
   this environment can confirm. Leaving unchecked rather than claiming a visual result
   that was never observed.
+
+## 7. Theme and picker/main-window design polish
+
+Follow-up requested mid-change: pull theme/appearance handling into this slice instead of
+bolting it on after the picker and main window already exist, and give both a more finished
+look using the app's existing design system rather than bare `div`s.
+
+- [x] 7.1 Wire the already-defined but `UNWIRED` `config::ui::UiConfig`/`Theme` into app
+  startup: new `theme.rs` module (`theme::init` applies the preference once before any
+  window exists; `theme::watch_window` re-applies per-window and, for `Theme::System`,
+  registers a live `Window::observe_window_appearance` subscription so a mid-session OS
+  appearance flip is picked up without a restart). `main.rs` loads `ui.toml` via
+  `config::load` and calls `theme::init` right after `gpui_kit::init`/`runtime::init`, before
+  `shell::init`. `shell::open_window` calls `theme::watch_window` first thing in its
+  window-creation closure. Removed the `#[allow(dead_code)]`/`UNWIRED` markers on
+  `UiConfig`/`Theme` now that they have a real caller.
+- [x] 7.2 Redesign `ClusterPicker` around the app's existing `Command` widget (the same
+  searchable-list component the command palette already uses) instead of a plain button
+  list: a centered card styled from `cx.theme()` tokens (`popover`/`border`/`shadow_lg`), a
+  header with a `Server` icon and subtitle, contexts as `CommandItem`s with per-item icons,
+  fuzzy search built in for free, and `on_confirm`'s `IndexPath.row` mapped back to the
+  matching context name to drive `ClusterPicker::select` (no per-context `Action` type
+  needed). Status/error/empty states keep their own theme-colored text.
+- [x] 7.3 Redesign `MainWindow`'s workspace sidebar around gpui-component's `Sidebar`/
+  `SidebarGroup`/`SidebarMenu`/`SidebarMenuItem` (replacing the ad hoc `div`+`Button` row),
+  with a `Boxes`/`ScrollText` icon per `NavTarget` and `.active(target == current)` marking
+  the current view - same click/command dispatch as before, just the app's own sidebar
+  chrome instead of a bespoke one.
+- [x] 7.4 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test`
+  (129/129 non-`tunnel_store`) all clean after 7.1-7.3.
+  A dedicated unit test for `theme::apply`'s three-way dispatch was attempted
+  (`#[gpui_kit::test]` on a `TestAppContext`) but hit a pre-existing crate-wide macro-expansion
+  ceiling: adding *any* new `#[gpui_kit::test]` anywhere right now fails with "recursion limit
+  reached" (confirmed with a fully empty test body - not content-dependent), and raising
+  `#![recursion_limit]` upgrades that to a compiler SIGBUS instead of fixing it. Logged in
+  `~/code/papercuts.md`; `apply()` is thin dispatch over an already-tested upstream `Theme`
+  API, so this is covered by the full suite passing rather than a dedicated unit test.
