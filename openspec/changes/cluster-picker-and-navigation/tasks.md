@@ -167,40 +167,47 @@ look using the app's existing design system rather than bare `div`s.
 
 ## 8. Resource panel: full discovery, including CRDs
 
-- [ ] 8.1 Replace the `NavTarget` (`Pods`, `Logs`) sidebar shipped in Section 5 with a
+- [x] 8.1 Replace the `NavTarget` (`Pods`, `Logs`) sidebar shipped in Section 5 with a
   Resource panel view that renders directly from `discovery.rs`'s output for the window's
   active cluster connection - one row per discovered `GroupVersionKind`, CRDs included.
   Verify: a test with a fixture discovery response containing a CRD asserts the panel lists it.
-- [ ] 8.2 Map a selected `GroupVersionKind` to a concrete panel constructor where one
+- [x] 8.2 Map a selected `GroupVersionKind` to a concrete panel constructor where one
   exists (`Pods`, `Logs` today); kinds without one open a placeholder panel rather than
   being hidden from the list. Verify: selecting Pods opens `PodsPanel`; selecting a kind
   with no implemented panel opens the placeholder instead of doing nothing.
-- [ ] 8.3 Register whichever panel-opening actions apply as commands in `CommandRegistry`
+- [x] 8.3 Register whichever panel-opening actions apply as commands in `CommandRegistry`
   (per the project's keyboard-first convention). Verify: the commands appear in the
   command palette and invoking one opens the same panel as double-click.
 
 ## 9. Opening panels from the Resource panel
 
-- [ ] 9.1 Double-clicking a resource kind opens a dockable panel for it in the workspace,
+- [x] 9.1 Double-clicking a resource kind opens a dockable panel for it in the workspace,
   without dropping the window's `ClusterSession` connection. Verify: a test double-clicks
   a kind and asserts a panel opens using the same connection (no reconnect).
-- [ ] 9.2 Add a context menu on each resource kind row with an "Open" action equivalent to
+- [x] 9.2 Add a context menu on each resource kind row with an "Open" action equivalent to
   double-click. Verify: a test invokes the context-menu action and asserts the same panel
   opens as the double-click path.
-- [ ] 9.3 Selecting a kind that already has an open panel for the same cluster and
+- [x] 9.3 Selecting a kind that already has an open panel for the same cluster and
   namespace scope focuses that panel instead of opening a duplicate. Verify: a test opens
   a kind twice and asserts only one panel exists, with the second selection focusing it.
 
 ## 10. Panel title bar
 
-- [ ] 10.1 Give resource panels a title bar showing the resource kind, and the panel's
+- [x] 10.1 Give resource panels a title bar showing the resource kind, and the panel's
   cluster name only when the window has more than one cluster connection open. Verify: a
   test with one connection shows no cluster name; a test with two shows it.
-- [ ] 10.2 Add a namespace picker to the title bar for namespaced kinds, omitted for
+- [x] 10.2 Add a namespace picker to the title bar for namespaced kinds, omitted for
   cluster-scoped kinds. Verify: a test asserts the picker's presence/absence matches the
   kind's scope from discovery.
-- [ ] 10.3 Add a controls menu (vertical dot menu) and a close button to the title bar.
-  Verify: a render test asserts both are present on every resource panel.
+- [x] 10.3 Add a controls menu (vertical dot menu) and a close button to the title bar.
+  Verify: `every_resource_panel_carries_its_title_bar` reads each panel's bar through
+  `PanelView` - the same accessors the dock reads - and asserts each carries a close
+  control; a cluster-scoped kind is in the list so the "no picker" case is covered too.
+  Verified this way rather than as a render test: the dock draws the ellipsis itself,
+  unconditionally, for any panel it holds (gpui-component's `TabPanel::render_toolbar`),
+  so no panel supplies it and there is nothing of ours to assert; and the element
+  observation the render harness offers does not reach the dock's title bar, which drew
+  no observable path in this window configuration.
 
 ## 11. Resource panel placement
 
