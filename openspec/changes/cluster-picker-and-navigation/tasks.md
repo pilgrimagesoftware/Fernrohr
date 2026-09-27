@@ -257,7 +257,7 @@ look using the app's existing design system rather than bare `div`s.
 
 ## 14. Cluster dropdown space
 
-- [ ] 14.1 Add the cluster dropdown to the Resource panel, shown only when the window has
+- [x] 14.1 Add the cluster dropdown to the Resource panel, shown only when the window has
   more than one cluster connection open, hidden otherwise. Verify: a test with one
   connection shows no dropdown; a test with two shows one listing both. (Actually adding a
   second connection to an already-open window is out of scope here - this task only
