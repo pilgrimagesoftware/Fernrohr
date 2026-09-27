@@ -167,27 +167,27 @@ look using the app's existing design system rather than bare `div`s.
 
 ## 8. Resource panel: full discovery, including CRDs
 
-- [ ] 8.1 Replace the `NavTarget` (`Pods`, `Logs`) sidebar shipped in Section 5 with a
+- [x] 8.1 Replace the `NavTarget` (`Pods`, `Logs`) sidebar shipped in Section 5 with a
   Resource panel view that renders directly from `discovery.rs`'s output for the window's
   active cluster connection - one row per discovered `GroupVersionKind`, CRDs included.
   Verify: a test with a fixture discovery response containing a CRD asserts the panel lists it.
-- [ ] 8.2 Map a selected `GroupVersionKind` to a concrete panel constructor where one
+- [x] 8.2 Map a selected `GroupVersionKind` to a concrete panel constructor where one
   exists (`Pods`, `Logs` today); kinds without one open a placeholder panel rather than
   being hidden from the list. Verify: selecting Pods opens `PodsPanel`; selecting a kind
   with no implemented panel opens the placeholder instead of doing nothing.
-- [ ] 8.3 Register whichever panel-opening actions apply as commands in `CommandRegistry`
+- [x] 8.3 Register whichever panel-opening actions apply as commands in `CommandRegistry`
   (per the project's keyboard-first convention). Verify: the commands appear in the
   command palette and invoking one opens the same panel as double-click.
 
 ## 9. Opening panels from the Resource panel
 
-- [ ] 9.1 Double-clicking a resource kind opens a dockable panel for it in the workspace,
+- [x] 9.1 Double-clicking a resource kind opens a dockable panel for it in the workspace,
   without dropping the window's `ClusterSession` connection. Verify: a test double-clicks
   a kind and asserts a panel opens using the same connection (no reconnect).
-- [ ] 9.2 Add a context menu on each resource kind row with an "Open" action equivalent to
+- [x] 9.2 Add a context menu on each resource kind row with an "Open" action equivalent to
   double-click. Verify: a test invokes the context-menu action and asserts the same panel
   opens as the double-click path.
-- [ ] 9.3 Selecting a kind that already has an open panel for the same cluster and
+- [x] 9.3 Selecting a kind that already has an open panel for the same cluster and
   namespace scope focuses that panel instead of opening a duplicate. Verify: a test opens
   a kind twice and asserts only one panel exists, with the second selection focusing it.
 
