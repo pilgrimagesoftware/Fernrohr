@@ -14,6 +14,9 @@ panel from a descriptor, so persisted panels are inert data today.
 
 So "pick a cluster" cannot be added as pure UI: `ClusterConnection::connect` and
 `ClusterSession` need to accept which context to use instead of assuming there is exactly one.
+`config::ui::UiConfig`/`Theme` is already defined but marked `UNWIRED` — nothing loads
+`ui.toml` or applies a theme — so the picker and workspace chrome this change adds would
+otherwise have no design system to draw on.
 
 ## Goals / Non-Goals
 
@@ -112,6 +115,18 @@ title-bar treatment keyed off focus state), not new state to track by hand.
 "fill the workspace" means (it lives outside the zoomable center dock, in an edge
 placement). No new maximize state machine is needed beyond wiring the existing zoom
 action and confirming Resource-panel space is excluded.
+
+**Theme is applied once at startup and re-applied per window, and the chrome is built from the
+app's existing design system.**
+`theme::init` applies the `ui.toml` preference once, before any window exists; `theme::watch_window`
+re-applies it per window and, for `Theme::System`, subscribes to `Window::observe_window_appearance`
+so a mid-session OS appearance change is picked up without a restart. Building the picker around
+the `Command` widget the command palette already uses, and the workspace sidebar around
+gpui-component's `Sidebar`/`SidebarGroup`/`SidebarMenu`/`SidebarMenuItem`, means both inherit
+theme tokens (`cx.theme()`) instead of hardcoding colors — and the picker gets the palette's
+fuzzy search for free. Alternative considered: theme each window independently at render time —
+rejected, since the preference has to be applied before the first window exists to avoid a flash of
+the wrong theme, and per-window re-application alone can't fix that.
 
 ## Risks / Trade-offs
 
