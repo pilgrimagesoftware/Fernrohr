@@ -23,6 +23,26 @@ Pods. A user cannot actually launch the app, pick a cluster, and look around
   time.
 - Surface a connection failure (bad context, unreachable cluster) on the
   picker itself rather than failing silently into a blank window.
+- Replace the fixed Pods/Logs sidebar with a Resource panel that lists every
+  kind a cluster's API discovery reports, including CRDs, and opens a
+  dockable panel for a selected kind (double-click or context menu).
+- Give resource panels a title bar showing kind, cluster name (when more
+  than one connection is open in the window), a namespace picker for
+  namespaced kinds, a controls menu, and a close button.
+- Anchor the Resource panel to either edge of the window (user preference,
+  movable at runtime, collapsible), and make dockable panels focus-aware
+  (one focused panel at a time, visually distinguished, receives panel
+  keyboard shortcuts) and individually maximizable (at most one at a time,
+  excluding the Resource panel's space). Panel move/tile/split/persist ride
+  on `gpui-kit`'s existing `DockArea` (drag-to-dock, splits, zoom, layout
+  dump/load) rather than new layout-engine work.
+- Restore a cluster's last saved layout on connect when one exists, falling
+  back to the full Resource panel (not a hardcoded split) when it doesn't.
+- Make visual space in the Resource panel for a cluster dropdown, shown once
+  a window has more than one cluster connection open. Actually opening a
+  *second* connection within an already-connected window is out of scope
+  for this change (see Non-Goals in `design.md`) - the dropdown and its
+  single-connection empty state are what land now.
 - **BREAKING**: `shell::open_window`'s hardcoded panel construction is
   removed; a window with no saved layout now opens the picker, not
   Pods+Logs.
@@ -34,17 +54,25 @@ Pods. A user cannot actually launch the app, pick a cluster, and look around
 
 ### Modified Capabilities
 - `app-shell`: what a window shows before any panel is open or restored
-  (the picker) instead of nothing being specified.
-- `resource-browser`: panels can switch resource kind via navigation instead
-  of being fixed to Pods at construction.
+  (the picker, or a per-cluster saved layout), Resource panel placement,
+  panel focus, and panel maximize.
+- `resource-browser`: the Resource panel lists full cluster discovery
+  (including CRDs) and opens dockable panels with a full title bar, instead
+  of a fixed Pods/Logs sidebar.
 
 ## Impact
 
 - `app/src/shell.rs`: `open_window` no longer hardcodes panel construction;
-  branches on whether the restored layout has panels.
+  branches on whether the restored layout has panels, and on which cluster
+  it's restoring a layout for.
 - `app/src/cluster/`: `kubeconfig.rs` (list contexts) and `connection.rs`
-  (connect) get a UI-facing entry point; `discovery.rs` output needs to reach
-  the new sidebar.
-- New UI module for the picker view and the resource-kind sidebar.
+  (connect) get a UI-facing entry point; `discovery.rs` output feeds the
+  Resource panel's full kind list instead of a fixed sidebar.
+- New UI module for the picker view and the Resource panel (kind list,
+  cluster dropdown, anchor/collapse).
 - `resource_index.rs` / `pods.rs`: panel construction decouples from "always
-  Pods" to "whatever kind is selected."
+  Pods" to "whatever kind is selected"; panel title bars gain cluster name,
+  namespace picker, controls menu.
+- `app/src/dock` (or wherever `DockArea` is wired today): panel focus
+  tracking and maximize/zoom wiring on top of `gpui-kit`'s existing dock
+  primitives.

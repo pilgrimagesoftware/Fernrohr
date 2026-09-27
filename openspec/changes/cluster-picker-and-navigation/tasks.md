@@ -164,3 +164,100 @@ look using the app's existing design system rather than bare `div`s.
   `#![recursion_limit]` upgrades that to a compiler SIGBUS instead of fixing it. Logged in
   `~/code/papercuts.md`; `apply()` is thin dispatch over an already-tested upstream `Theme`
   API, so this is covered by the full suite passing rather than a dedicated unit test.
+
+## 8. Resource panel: full discovery, including CRDs
+
+- [ ] 8.1 Replace the `NavTarget` (`Pods`, `Logs`) sidebar shipped in Section 5 with a
+  Resource panel view that renders directly from `discovery.rs`'s output for the window's
+  active cluster connection - one row per discovered `GroupVersionKind`, CRDs included.
+  Verify: a test with a fixture discovery response containing a CRD asserts the panel lists it.
+- [ ] 8.2 Map a selected `GroupVersionKind` to a concrete panel constructor where one
+  exists (`Pods`, `Logs` today); kinds without one open a placeholder panel rather than
+  being hidden from the list. Verify: selecting Pods opens `PodsPanel`; selecting a kind
+  with no implemented panel opens the placeholder instead of doing nothing.
+- [ ] 8.3 Register whichever panel-opening actions apply as commands in `CommandRegistry`
+  (per the project's keyboard-first convention). Verify: the commands appear in the
+  command palette and invoking one opens the same panel as double-click.
+
+## 9. Opening panels from the Resource panel
+
+- [ ] 9.1 Double-clicking a resource kind opens a dockable panel for it in the workspace,
+  without dropping the window's `ClusterSession` connection. Verify: a test double-clicks
+  a kind and asserts a panel opens using the same connection (no reconnect).
+- [ ] 9.2 Add a context menu on each resource kind row with an "Open" action equivalent to
+  double-click. Verify: a test invokes the context-menu action and asserts the same panel
+  opens as the double-click path.
+- [ ] 9.3 Selecting a kind that already has an open panel for the same cluster and
+  namespace scope focuses that panel instead of opening a duplicate. Verify: a test opens
+  a kind twice and asserts only one panel exists, with the second selection focusing it.
+
+## 10. Panel title bar
+
+- [ ] 10.1 Give resource panels a title bar showing the resource kind, and the panel's
+  cluster name only when the window has more than one cluster connection open. Verify: a
+  test with one connection shows no cluster name; a test with two shows it.
+- [ ] 10.2 Add a namespace picker to the title bar for namespaced kinds, omitted for
+  cluster-scoped kinds. Verify: a test asserts the picker's presence/absence matches the
+  kind's scope from discovery.
+- [ ] 10.3 Add a controls menu (vertical dot menu) and a close button to the title bar.
+  Verify: a render test asserts both are present on every resource panel.
+
+## 11. Resource panel placement
+
+- [ ] 11.1 Anchor the Resource panel to a window edge (left/right) read from a user
+  preference on window open, using `DockArea`'s existing edge-dock placement. Verify: a
+  test sets the preference to each side and asserts the panel opens there.
+- [ ] 11.2 Let the user move the Resource panel to the other edge at runtime without
+  changing the stored preference. Verify: a test moves the panel, then asserts a new
+  window still opens on the original preferred edge.
+- [ ] 11.3 Let the user collapse the Resource panel to reclaim workspace space, per-window
+  and not persisted across restarts. Verify: a test collapses the panel and asserts the
+  workspace area grows; a fresh window is not collapsed by default.
+
+## 12. Panel focus and maximize
+
+- [ ] 12.1 Style the focused dockable panel distinctly from unfocused ones via
+  `DockSkin`/`PanelStyle`, keyed off GPUI's existing `FocusHandle` state (no new focus
+  tracking). Verify: a test focuses a panel and asserts its style differs from an
+  unfocused sibling.
+- [ ] 12.2 Confirm panel-scoped keyboard shortcuts dispatch to the focused panel only.
+  Verify: a test focuses one of two open panels, invokes a panel-scoped shortcut, and
+  asserts only the focused panel received it.
+- [ ] 12.3 Wire `DockArea`'s zoom to a "maximize" action on non-Resource-panel panels,
+  confirming the Resource panel's edge-docked space stays excluded from what "fill the
+  workspace" zooms into. Verify: a test maximizes a panel and asserts the Resource
+  panel's region is unaffected; maximizing a second panel restores the first.
+
+## 13. Per-cluster layout restore
+
+- [ ] 13.1 Key saved `DockAreaState` layouts by cluster context name instead of one layout
+  per window. Verify: a test saves layouts for two contexts and asserts each restores
+  independently.
+- [ ] 13.2 On connect, restore the connected context's saved layout if one exists;
+  otherwise show the Resource panel (Section 8) instead of an unrelated or empty layout.
+  Verify: a test connects to a context with a saved layout and asserts it restores; a test
+  connects to one without and asserts the Resource panel shows instead.
+
+## 14. Cluster dropdown space
+
+- [ ] 14.1 Add the cluster dropdown to the Resource panel, shown only when the window has
+  more than one cluster connection open, hidden otherwise. Verify: a test with one
+  connection shows no dropdown; a test with two shows one listing both. (Actually adding a
+  second connection to an already-open window is out of scope here - this task only
+  covers the dropdown rendering once more than one connection exists, e.g. via test
+  fixtures constructing that state directly.)
+
+## 15. Full verification of the Resource panel and docking work
+
+Re-verification gate for Sections 8-14; the current verified baseline for Sections 1-7 is
+recorded in Section 6.
+
+- [ ] 15.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test`
+  all pass. Re-run the full gate after every section from 8 onward lands, and record the
+  result here (Section 6.1's run predates 1.2/3.2/4.4's dedicated tests, so its counts are
+  not a valid baseline for this gate).
+- [ ] 15.2 Manual smoke test: launch the app fresh (no `workspace.toml`), confirm the
+  picker appears, pick a context, confirm the Resource panel shows full discovery
+  including any CRDs, open a Pods panel via double-click, confirm its title bar, move and
+  collapse the Resource panel, maximize the Pods panel and restore it, close the panel,
+  confirm it returns to the picker.

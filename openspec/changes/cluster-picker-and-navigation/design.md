@@ -22,8 +22,11 @@ So "pick a cluster" cannot be added as pure UI: `ClusterConnection::connect` and
   that specific context, not whatever `current-context` happens to be.
 - `ClusterSession` becomes keyed by context name (a small registry), so a second window
   can pick a different cluster later without redesigning this change's plumbing again.
-- Existing `Pods`/`Logs` panels become reachable via navigation instead of being hardcoded
-  into every window.
+- The Resource panel lists a connected cluster's full API discovery (including CRDs),
+  not a fixed `Pods`/`Logs` pair, and opens a dockable panel for whichever kind is
+  selected instead of kinds being hardcoded into every window.
+- A cluster's last saved layout restores on connect when one exists; otherwise the
+  Resource panel (full discovery) is shown instead of a hardcoded split.
 - Each window is independent: opening a new window (the existing `NewWindow`
   action) shows that window's own picker, and it can connect to a different
   cluster than any other open window, fully side-by-side. Two windows
@@ -31,15 +34,20 @@ So "pick a cluster" cannot be added as pure UI: `ClusterConnection::connect` and
   connected to different contexts get independent ones.
 
 **Non-Goals:**
-- Two clusters shown side-by-side *inside one window's dock* (e.g. a
-  split with a Pods panel from cluster A next to a Pods panel from cluster B
-  in the same window) — that's a dock/panel-construction feature, not a
-  connection-model one, and isn't needed to satisfy this change's specs.
-  Multiple *windows* each connected to their own cluster (this change's
+- Opening a *second cluster connection within an already-connected window* — the
+  Resource panel makes visual room for it (the cluster dropdown, shown once more than
+  one connection exists), but the flow to actually add that second connection is
+  follow-up work. Multiple *windows* each connected to their own cluster (this change's
   actual goal, above) already falls out of the per-window picker plus the
   context-keyed `ClusterRegistry`.
-- Generic per-kind resource tables for arbitrary discovered kinds — navigation this change
-  adds only switches among kinds the app already implements (Pods, Logs).
+- Free-floating, arbitrarily-positioned panels with edge-to-edge snapping between them
+  and a modifier-key snap override — dropped from this change's scope. `gpui-kit`'s
+  `DockArea` panels live in a split/tab tree, not at arbitrary positions; "snap" is
+  satisfied by its existing drag-to-dock-into-a-split behavior, not a new floating
+  layout engine.
+- Panel minimize (collapse to a title-bar strip or similar) — dropped from this change's
+  scope. `DockArea` has zoom (this change's "maximize"), not minimize; revisit only if a
+  concrete need for it shows up later.
 - Full panel-layout restoration from `PanelDescriptor` (split arrangement etc.) — this change
   only needs enough restoration to know a window has panels and should skip the picker;
   reconstructing the exact prior split is separate work `restorable_panels`'s doc comment
@@ -74,13 +82,36 @@ picker's whole point is that there is no session (and so nothing to dock into) y
 `MainWindow` gains a simple enum (`Picker` vs `Workspace(Entity<DockArea>)`) and swaps on
 successful connect.
 
-**Navigation is a fixed sidebar of the app's implemented views, not a discovery-driven menu.**
-`resource-browser`'s "reflects that cluster's discovery" scenario is satisfied by filtering
-this fixed list against discovery output (e.g. hiding Logs if Pods aren't reachable is out of
-scope; the realistic filter today is close to a no-op since discovery isn't yet used to gate
-anything). Building a fully discovery-driven, arbitrary-kind navigation menu is deferred per
-Non-Goals; the sidebar is a small, explicit `NavTarget` enum today (`Pods`, `Logs`), not a
-generic list keyed by API resource.
+**The Resource panel is a discovery-driven list, not a fixed sidebar.**
+Superseding the original "fixed `NavTarget` enum" plan: the Resource panel renders
+directly from `discovery.rs`'s output for the panel's active cluster connection, so CRDs
+show up without any per-kind registration. Opening a kind still goes through a small
+`NavTarget`-shaped construction step internally (something has to map a discovered
+`GroupVersionKind` to a concrete panel type, and only `Pods`/`Logs` have one today) but
+the list the user picks from is the cluster's real discovery, not that internal enum.
+Kinds without an implemented panel type show in the list but open a placeholder rather
+than being hidden, so the list stays an honest reflection of discovery.
+
+**Resource panel anchor and collapse state live per-window, per-preference.**
+The edge (left/right) is a user preference with a sensible default, read on window open;
+moving it at runtime changes that window's placement only, not the stored preference,
+matching the notes' "moved... as the user chooses during runtime" without silently
+overwriting the user's stated default. Collapse state is per-window, ephemeral (not
+persisted across restarts) — there's no scenario calling for a remembered collapse state,
+and persisting one more piece of window chrome isn't needed to satisfy the spec above.
+
+**Panel focus is tracked via GPUI's existing focus system, not a custom notion.**
+`DockArea`/`Panel` already participate in GPUI's `FocusHandle` model; "focused panel" in
+the spec above means whichever panel's `FocusHandle` currently has window focus. The
+"visually distinguished" requirement is a `DockSkin`/`PanelStyle` concern (a border or
+title-bar treatment keyed off focus state), not new state to track by hand.
+
+**Panel maximize reuses `DockArea`'s zoom, scoped to exclude the Resource panel.**
+`gpui-kit`'s `DockArea` already supports zooming a panel to fill the dock; this change's
+"maximize" is that same mechanism, with the Resource panel's region carved out of what
+"fill the workspace" means (it lives outside the zoomable center dock, in an edge
+placement). No new maximize state machine is needed beyond wiring the existing zoom
+action and confirming Resource-panel space is excluded.
 
 ## Risks / Trade-offs
 
