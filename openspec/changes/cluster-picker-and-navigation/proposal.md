@@ -38,6 +38,12 @@ Pods. A user cannot actually launch the app, pick a cluster, and look around
   dump/load) rather than new layout-engine work.
 - Restore a cluster's last saved layout on connect when one exists, falling
   back to the full Resource panel (not a hardcoded split) when it doesn't.
+- Wire the app's existing but unwired `UiConfig`/`Theme` into startup (applied
+  once before any window exists, re-applied per window, and following a
+  mid-session OS appearance change when set to `System`), and build the picker
+  and workspace sidebar from the app's own design system — the `Command` widget
+  the command palette already uses, gpui-component's `Sidebar` — rather than
+  bespoke `div`s.
 - Make visual space in the Resource panel for a cluster dropdown, shown once
   a window has more than one cluster connection open. Actually opening a
   *second* connection within an already-connected window is out of scope
@@ -70,6 +76,9 @@ Pods. A user cannot actually launch the app, pick a cluster, and look around
   Resource panel's full kind list instead of a fixed sidebar.
 - New UI module for the picker view and the Resource panel (kind list,
   cluster dropdown, anchor/collapse).
+- New `app/src/theme.rs` plus startup wiring in `main.rs`: `ui.toml` is loaded
+  and the theme applied once before the first window opens, then re-applied
+  per window.
 - `resource_index.rs` / `pods.rs`: panel construction decouples from "always
   Pods" to "whatever kind is selected"; panel title bars gain cluster name,
   namespace picker, controls menu.
