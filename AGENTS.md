@@ -28,6 +28,6 @@ its slice of the change; the branch still needs one commit per coherent step, no
 section that cannot be split from its neighbour by file may share the branch, so the name tracks
 where the branch *starts*, not an exclusive range.
 
-Work one section at a time. Sections 1-10 of `cluster-picker-and-navigation` are done (8 and 9
+Work one section at a time. Sections 1-11 of `cluster-picker-and-navigation` are done (8 and 9
 share `8-resource-panel`, since every file section 9 touched was also touched by section 8); the
-next branch continues from section 11.
+next branch continues from section 12.
