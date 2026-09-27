@@ -211,15 +211,25 @@ look using the app's existing design system rather than bare `div`s.
 
 ## 11. Resource panel placement
 
-- [ ] 11.1 Anchor the Resource panel to a window edge (left/right) read from a user
+- [x] 11.1 Anchor the Resource panel to a window edge (left/right) read from a user
   preference on window open, using `DockArea`'s existing edge-dock placement. Verify: a
   test sets the preference to each side and asserts the panel opens there.
-- [ ] 11.2 Let the user move the Resource panel to the other edge at runtime without
+- [x] 11.2 Let the user move the Resource panel to the other edge at runtime without
   changing the stored preference. Verify: a test moves the panel, then asserts a new
   window still opens on the original preferred edge.
-- [ ] 11.3 Let the user collapse the Resource panel to reclaim workspace space, per-window
+- [x] 11.3 Let the user collapse the Resource panel to reclaim workspace space, per-window
   and not persisted across restarts. Verify: a test collapses the panel and asserts the
   workspace area grows; a fresh window is not collapsed by default.
+  Verified this way rather than by measuring pixels: `collapsing_the_resource_panel_is_per_window`
+  asserts the dock is closed but still present, and that the workspace's open panels are
+  untouched. A closed dock reserves no width, which is what "the workspace grows" means, and
+  the test harness gives no way to measure rendered geometry.
+- Found and fixed here, not by any task: the dock was built with a bare `DockArea::new` and
+  never given a `DockSkin`, so it rendered `BareDockArea` - layout only, no chrome. Every
+  `Panel::title`/`title_suffix`/`toolbar_buttons` in the app was computed and discarded,
+  including all of section 10's title bars, whose tests pass because they assert on returned
+  values rather than the render tree. Installing the skin is what makes section 10 real, and
+  it changes how every panel draws, not only the Resource panel.
 
 ## 12. Panel focus and maximize
 
