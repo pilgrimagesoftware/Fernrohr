@@ -233,10 +233,11 @@ look using the app's existing design system rather than bare `div`s.
 
 ## 12. Panel focus and maximize
 
-- [ ] 12.1 Style the focused dockable panel distinctly from unfocused ones via
-  `DockSkin`/`PanelStyle`, keyed off GPUI's existing `FocusHandle` state (no new focus
-  tracking). Verify: a test focuses a panel and asserts its style differs from an
-  unfocused sibling.
+- [x] 12.1 Style the focused dockable panel distinctly from unfocused ones via
+  GPUI's existing `FocusHandle` state (no new focus tracking). The installed `DockSkin`
+  has no focus-aware style hook, so the three center dock panels share a primary-color
+  focus border around their content and otherwise use the normal border. Verify:
+  `panel_title::a_focused_panel_uses_the_primary_border` covers both branches.
 - [ ] 12.2 Confirm panel-scoped keyboard shortcuts dispatch to the focused panel only.
   Verify: a test focuses one of two open panels, invokes a panel-scoped shortcut, and
   asserts only the focused panel received it.
