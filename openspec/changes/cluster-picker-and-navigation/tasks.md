@@ -238,7 +238,7 @@ look using the app's existing design system rather than bare `div`s.
   has no focus-aware style hook, so the three center dock panels share a primary-color
   focus border around their content and otherwise use the normal border. Verify:
   `panel_title::a_focused_panel_uses_the_primary_border` covers both branches.
-- [ ] 12.2 Confirm panel-scoped keyboard shortcuts dispatch to the focused panel only.
+- [x] 12.2 Confirm panel-scoped keyboard shortcuts dispatch to the focused panel only.
   Verify: a test focuses one of two open panels, invokes a panel-scoped shortcut, and
   asserts only the focused panel received it.
 - [x] 12.3 Wire `DockArea`'s zoom to a "maximize" action on non-Resource-panel panels.
@@ -247,10 +247,10 @@ look using the app's existing design system rather than bare `div`s.
 
 ## 13. Per-cluster layout restore
 
-- [ ] 13.1 Key saved `DockAreaState` layouts by cluster context name instead of one layout
+- [x] 13.1 Key saved `DockAreaState` layouts by cluster context name instead of one layout
   per window. Verify: a test saves layouts for two contexts and asserts each restores
   independently.
-- [ ] 13.2 On connect, restore the connected context's saved layout if one exists;
+- [x] 13.2 On connect, restore the connected context's saved layout if one exists;
   otherwise show the Resource panel (Section 8) instead of an unrelated or empty layout.
   Verify: a test connects to a context with a saved layout and asserts it restores; a test
   connects to one without and asserts the Resource panel shows instead.
@@ -269,7 +269,7 @@ look using the app's existing design system rather than bare `div`s.
 Re-verification gate for Sections 8-14; the current verified baseline for Sections 1-7 is
 recorded in Section 6.
 
-- [ ] 15.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test`
+- [x] 15.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test`
   all pass. Re-run the full gate after every section from 8 onward lands, and record the
   result here (Section 6.1's run predates 1.2/3.2/4.4's dedicated tests, so its counts are
   not a valid baseline for this gate).
