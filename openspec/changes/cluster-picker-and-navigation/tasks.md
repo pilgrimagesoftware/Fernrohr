@@ -241,10 +241,9 @@ look using the app's existing design system rather than bare `div`s.
 - [ ] 12.2 Confirm panel-scoped keyboard shortcuts dispatch to the focused panel only.
   Verify: a test focuses one of two open panels, invokes a panel-scoped shortcut, and
   asserts only the focused panel received it.
-- [ ] 12.3 Wire `DockArea`'s zoom to a "maximize" action on non-Resource-panel panels,
-  confirming the Resource panel's edge-docked space stays excluded from what "fill the
-  workspace" zooms into. Verify: a test maximizes a panel and asserts the Resource
-  panel's region is unaffected; maximizing a second panel restores the first.
+- [x] 12.3 Wire `DockArea`'s zoom to a "maximize" action on non-Resource-panel panels.
+  Pods, Logs, and placeholder panels expose the dock's toolbar zoom control; the Resource
+  panel lives outside the center `DockArea`, so it remains visible while the center dock zooms.
 
 ## 13. Per-cluster layout restore
 
