@@ -46,8 +46,14 @@
 
 ## 4. Full verification
 
-- [ ] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
-  pass.
+- [x] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
+  pass - 224/224 on five consecutive full runs. Getting there fixed two things outside this change's
+  original tasks: the selection highlight stayed on a row index after a sort or row update (Paul saw
+  it jump), so each table now remembers its own selected pod and re-points the highlight;
+  and `util::shell::tests` failed a random subset every run because `enter_workspace` starts a real
+  connect that wakes GPUI from a tokio thread, now covered with the `allow_parking` seam the session
+  and connection tests already use. Follow-up: those shell tests still read the real kubeconfig
+  (fixture context names just fail to resolve), so they are not fully hermetic.
 - [x] 4.2 Manual smoke test: open a Pods table, confirm UI-font cells, resize a column, reorder
   two columns and confirm data follows the column not the position, click a header to sort
   ascending then descending and confirm the indicator updates - Paul confirmed resize, reorder,
