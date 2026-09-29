@@ -48,12 +48,11 @@ with the 30-second escalation as a named constant in `consts.rs`. `ui/status_bar
 `Severity` to theme colors and `ContextHealth` to icon and text. That keeps the spec's color table
 testable without rendering.
 
-### 3. Contexts come from the window's own panel list
+### 3. Contexts come from the window's own context list
 
-The bar lists the distinct `context_name`s among the window's open panels. That is today's single
-workspace context, and it extends to multi-cluster docks without change. The existing closed-panel
-detection already maintains this list, so "last panel closed removes the item" needs no new
-bookkeeping.
+The bar lists the contexts the window uses. Today that is the workspace's single `context_name`.
+`window-context-bar` replaces it with an explicit list, which the bar reads unchanged. Closing
+panels never removes an item; only removing the context from the window does.
 
 ### 4. Refresh: observe the registry, tick only while unhealthy
 

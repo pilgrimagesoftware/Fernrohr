@@ -15,10 +15,10 @@
 
 ## 2. Status bar view
 
-- [ ] 2.1 Add `ui/status_bar.rs`: one item per distinct `context_name` among the window's open
-  panels, non-connected first, with state icon, context name, text, elapsed time, and the color
-  from `severity`. Verify: GPUI tests for two contexts (problem item first), for a closed last
-  panel removing its item, and for icon and text differing per state.
+- [ ] 2.1 Add `ui/status_bar.rs`: one item per context the window uses, non-connected first, with
+  state icon, context name, text, elapsed time, and the color from `severity`. Verify: GPUI tests
+  for two contexts (problem item first), for a closed last panel keeping its item, and for icon and
+  text differing per state.
 - [ ] 2.2 Refresh on `ClusterRegistry` changes, and run a one-second tick only while an item is not
   connected. Verify: a GPUI test with a fake clock showing elapsed time advancing while paused and
   escalating past 30 s, and no timer once all items are connected.
