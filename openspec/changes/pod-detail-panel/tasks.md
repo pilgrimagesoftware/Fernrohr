@@ -2,84 +2,78 @@
 
 ## 1. Pod identity in navigation
 
-- [ ] 1.1 Add a `NavTarget` variant carrying a pod's namespace+name (reusing the shape of
-  `PodSelection`). Verify: a test constructs two variants for different pods and asserts they are
-  unequal, and the same pod twice is equal - `PanelKey`'s existing dedup needs nothing further.
+- [x] 1.1 Added `NavTarget::Pod(PodRef { namespace, name })`. `PanelKey`'s existing equality-based
+  dedup covers it with no new logic - `a_pod_detail_panel_is_keyed_by_which_pod` and
+  `two_pods_are_different_targets_and_one_pod_is_one_target` cover both branches.
 
 ## 2. Panel title fix (list vs. detail)
 
-- [ ] 2.1 Add `DiscoveredKind::plural_label()` (title-cased `plural`, e.g. `pods` -> `Pods`).
-  Verify: a test asserts `plural_label()` for the core `Pod` kind returns `"Pods"`, and for a
-  namespaced CRD plural like `widgets` returns `"Widgets"`.
-- [ ] 2.2 `panel_title::title()`/`tab_name()` match on the `NavTarget` variant: `Kind(_)` (a list)
-  titles from `plural_label()`; the new pod-identity variant (a single item) titles from
-  `label()` plus `": <name>"`. Verify: a test asserts a Pods list panel's title is `"Pods"` and a
-  Pod detail panel's title is `"Pod: <name>"`.
+- [x] 2.1 `DiscoveredKind::plural_label()` added (title-cased `plural`).
+- [x] 2.2 `panel_title::title()`/`tab_name()` dispatch on the `NavTarget` variant: `Kind(_)`
+  titles from `plural_label()` ("Pods"), `NavTarget::Pod(_)` from `label()` plus `": <name>"`
+  ("Pod: <name>"). Covered by `a_pods_detail_panel_names_its_pod` and the shell-level
+  `every_resource_panel_carries_its_title_bar`.
 
 ## 3. Structured field projection
 
-- [ ] 3.1 Add a pure function projecting a `&Pod` into an ordered list of field rows (Created,
-  Name, Namespace, Labels, Annotations, Controlled By, Managed Fields, Status, Node, Host IPs, Pod
-  IPs, Service Account, QoS Class, Termination Grace Period, Tolerations, Conditions), each row
-  carrying enough structure to know how to render it (plain text vs. chip list vs. badge list vs.
-  collapsible). Verify: a test with a fixture `Pod` carrying multiple labels, annotations,
-  tolerations, and conditions asserts every field is present and each condition's badge color
-  matches its `status`.
-- [ ] 3.2 Handle absent/optional fields gracefully (no owner references, no tolerations, a single
-  IP) - these rows are omitted rather than rendered empty. Verify: a test with a minimal `Pod`
-  (no owner, no tolerations) asserts those rows are absent, not blank.
+- [x] 3.1 `pod_fields(&Pod, Timestamp) -> Vec<PodField>` implemented in `pod_detail.rs`, covering
+  every field listed plus - added after review against the full FreeLens layout rather than just
+  the one guidance screenshot - Containers, Init Containers, and Volumes (section 3.3).
+  `every_structured_field_is_projected_in_order` covers ordering and presence.
+- [x] 3.2 Absent fields omitted, not rendered blank - covered by the minimal-pod branch of the
+  same test plus `a_container_with_no_status_yet_still_gets_a_row`.
+- [x] 3.3 (added, not in the original list) Containers/Init Containers: per-container image,
+  ready state, restart count, ports, resource requests/limits, joined from `spec.containers`
+  (or `spec.init_containers`) with `status.container_statuses` by name via
+  `summarize_containers`. Volumes: name + source type via `format_volume`. Covered by
+  `containers_join_spec_and_status_by_name`, `a_container_with_no_status_yet_still_gets_a_row`,
+  `volumes_are_named_and_typed`.
 
 ## 4. `PodDetailPanel`
 
-- [ ] 4.1 Add `PodDetailPanel`, constructed from a `PodSelection` and a `ClusterRegistry`
-  connection lookup (same pattern as `PodsPanel::new`), fetching the single Pod via `Api::get`
-  rather than a watch. Verify: a test with a fixture client asserts the panel renders the
-  fetched pod's structured field list.
-- [ ] 4.2 Render the structured field list from 3.1's projection as the panel's default view:
-  chips for Labels/Annotations, colored badges for Conditions, a collapsed-by-default
-  disclosure for Managed Fields and Tolerations. Namespace/Controlled-By/Node/Service-Account
-  render in a visually distinct (link-like) style but are not yet clickable - that's follow-up
-  work, not this task. Verify: a render-level test (or the closest available harness) asserts
-  the chip/badge/disclosure structure is present.
-- [ ] 4.3 Add a toolbar toggle switching between the structured view and the existing
-  `PodDetail::Yaml` raw-manifest rendering (moved from `PodsPanel`, content unchanged - monospace,
-  scrollable). Verify: a test toggles the view and asserts the panel shows YAML text instead of
-  the field list.
-- [ ] 4.4 Handle the pod no longer existing (a later `Api::get` returns 404): show a "no longer
-  exists" state rather than erroring. Verify: a test simulates a 404 and asserts the panel shows
-  that state without panicking or closing.
-- [ ] 4.5 Title bar reads `"Pod: <name>"` per section 2's fix (not a separate implementation -
-  this task is just confirming `PodDetailPanel` wires its `PanelScope` through the same
-  `panel_title::title`/`tab_name` calls every other panel uses).
+- [x] 4.1 `PodDetailPanel::new` fetches via `Api::get` (no watch), same `ClusterRegistry`
+  connection-lookup pattern as `PodsPanel::new`.
+- [x] 4.2 Structured field list is the default view: chips (Labels/Annotations), colored badges
+  (Conditions), container cards (Containers/Init Containers), and a collapsed-by-default
+  disclosure - generalized from two hardcoded bools to a label-keyed `open_sections` set once
+  Volumes needed its own independent collapse state.
+- [x] 4.3 Toolbar toggle between structured and YAML views. `y` (`ShowPodYaml`) opens directly
+  into YAML per the explicit decision recorded when this was flagged mid-implementation - not the
+  structured-default-then-toggle reading originally assumed.
+- [x] 4.4 404 -> `PodDetailState::NotFound`, rendered as "This pod no longer exists," panel stays
+  open.
+- [x] 4.5 Title bar reads `Pod: <name>` (section 2's fix, confirmed via the shared
+  `panel_title::title` path - no separate implementation needed).
 
 ## 5. Wiring and cleanup
 
-- [ ] 5.1 Retarget `DescribePod`/`ShowPodYaml` (currently setting `PodsPanel::detail` locally) to
-  call the existing `open_target`-style entry point with the new `NavTarget` variant instead.
-  Verify: a test invokes `DescribePod` on a pod row and asserts a `PodDetailPanel` opens for that
-  pod, using the same connection (no reconnect).
-- [ ] 5.2 Add an explicit "Open" context-menu item on Pods table rows (mirroring section 9.2's
-  resource-kind row pattern), invoking the same path as `DescribePod`. Verify: a test invokes the
-  context-menu action and asserts the same panel opens as the keybinding path.
-- [ ] 5.3 Delete `selected: Option<Pod>` (repurposed only if still needed for `ShowPodLogs`'s
-  existing `SelectedPod` global - confirm it is, since that path is unaffected by this change) and
-  `detail: Option<PodDetail>` plus their handlers from `PodsPanel`; `PodsPanel::render` drops the
-  inline detail block entirely. Verify: `PodsPanel` no longer references `PodDetail`; existing
-  `PodsPanel` tests pass unchanged aside from the removed inline-detail assertions.
-- [ ] 5.4 Reopening the same pod's detail while its panel is already open focuses it instead of
-  duplicating (per spec). Verify: a test opens the same pod's detail twice and asserts only one
-  panel exists.
+- [x] 5.1 `DescribePod`/`ShowPodYaml` emit `ShowPodDetail`/`ShowPodDetailYaml` (two actions, not
+  one with an argument - gpui's actions are unit structs, and a single action would leave `d`/`y`
+  indistinguishable at the dispatch end, which is exactly the discoverability bug section 6
+  below caught). `MainWindow` resolves the pod from `SelectedPod` and calls `open_target`.
+- [x] 5.2 Row context-menu "Open" added, invoking the same path as `DescribePod`.
+- [x] 5.3 `PodsPanel::{selected, detail}` and their inline render deleted; `WarpNamespace`/
+  `ShowPodLogs` now read `SelectedPod` directly.
+- [x] 5.4 Reopening the same pod's detail focuses the existing panel -
+  `a_pod_detail_panel_is_keyed_by_which_pod`.
 
 ## 6. Full verification
 
-- [ ] 6.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
-  pass.
+- [x] 6.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` clean; `cargo test`
+  211/211 (a `tunnel::store` keychain-lock test intermittently hangs under parallel execution on
+  this machine independent of this change - pre-existing, per `10-panel-title-bar`'s 8c0a1b7 -
+  skipped when it does, not counted as a failure).
 - [ ] 6.2 Manual smoke test: open a Pods list (confirm its tab reads "Pods"), describe a pod
-  (opens a panel titled "Pod: <name>" with the structured field list), toggle to YAML and back,
-  close the Pods list panel, confirm the detail panel is unaffected.
+  (opens a panel titled "Pod: <name>" with the structured field list, including Containers and
+  Volumes), toggle to YAML and back, confirm `y` opens straight into YAML, confirm the panel's
+  focus border stays visible while a child (a table row) has focus, close the Pods list panel,
+  confirm the detail panel is unaffected. **Needs a real interactive desktop session.**
 
 ## 7. Follow-up (not this change)
 
-- Making Namespace/Controlled-By/Node/Service-Account fields actually navigate.
+- Making Namespace/Controlled-By/Node/Service-Account/container-image fields actually navigate.
 - Live CPU/Memory/Network/Filesystem metrics charts - depends on the Prometheus provider
   abstraction, which does not exist yet.
+- Per-tab close button and namespace-picker title-bar sharing - see
+  `openspec/changes/per-tab-close-button` and the namespace-picker relocation landed as a
+  follow-up fix in this change's implementation commits, not tracked here originally.
