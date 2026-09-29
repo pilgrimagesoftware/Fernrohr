@@ -40,13 +40,15 @@
 
 ## 3. Resize and reorder
 
-- [ ] 3.1 Enable `.col_resizable(true)` and `.col_movable(true)`. Verify: a manual/visual check
-  drags a column boundary and a column header and confirms both behaviors work.
+- [x] 3.1 Enable `.col_resizable(true)` and `.col_movable(true)`. Verify: a manual/visual check
+  drags a column boundary and a column header and confirms both behaviors work - enabled in
+  `sync_table`; Paul confirmed resize and reorder work in the running app (2026-09-29).
 
 ## 4. Full verification
 
 - [ ] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
   pass.
-- [ ] 4.2 Manual smoke test: open a Pods table, confirm UI-font cells, resize a column, reorder
+- [x] 4.2 Manual smoke test: open a Pods table, confirm UI-font cells, resize a column, reorder
   two columns and confirm data follows the column not the position, click a header to sort
-  ascending then descending and confirm the indicator updates.
+  ascending then descending and confirm the indicator updates - Paul confirmed resize, reorder,
+  and sort in the running app (2026-09-29).
