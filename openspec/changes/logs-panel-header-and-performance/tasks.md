@@ -33,3 +33,14 @@
   flake's fix landed elsewhere).
 - [ ] 3.2 Manual smoke test: open a Pod's logs, confirm the title shows pod and container, confirm
   scrolling a long log stream feels smooth. **Needs a real interactive desktop session.**
+
+## 4. Corrections found during manual review (not in the original scope, landed alongside it)
+
+- [x] 4.1 The Logs panel had a namespace picker in its title bar, wrong for a panel scoped to one
+  already-chosen pod's logs. Replaced with a container picker, using `LogsView`'s existing
+  `containers()`/`select_container` infrastructure (previously built and tested but never given a
+  caller).
+- [x] 4.2 `FollowState`/`scroll_up`/`scroll_to_bottom` were implemented and tested but had no UI
+  caller (`LogsPanel::render` just dumped every line unconditionally). Wired to real Jump to Top,
+  Jump to Bottom, and Follow controls, using `UniformListScrollHandle` for the actual scroll.
+  Substring search/filter is out of scope here - see `openspec/changes/logs-search-filter`.

@@ -77,3 +77,19 @@
 - Per-tab close button and namespace-picker title-bar sharing - see
   `openspec/changes/per-tab-close-button` and the namespace-picker relocation landed as a
   follow-up fix in this change's implementation commits, not tracked here originally.
+- Tabbed structured view - `openspec/changes/pod-detail-tabs`.
+- Per-container expansion beyond the summary card - `openspec/changes/container-detail-expansion`.
+
+## 8. Second round of fixes (from manual review before 6.2 could run)
+
+- [x] 8.1 Pods table row double-click (`TableEvent::DoubleClickedRow`) now opens the pod's detail
+  panel - previously unhandled, so nothing opened detail except the row's context menu (and `d`,
+  itself unbound until the keybinding fix below).
+- [x] 8.2 `d`/`w`/`l`/`y` were printed in the Pods panel's hint bar but never bound to a real
+  keystroke (`shell::init` only bound NewWindow/Palette/Pods/Logs) - fixed via
+  `pods::panel_bindings()`, registered in `PANEL_KEY_CONTEXT`.
+- [x] 8.3 `focus_frame` asked whether the panel's own focus handle was the focused element, which
+  stops being true the moment a child (a table row) takes focus - the border went dark exactly
+  when the panel was in use. Now checks `contains_focused`.
+- [x] 8.4 YAML/structured toggle relocated into the panel body with its own keybind, per section 2
+  of the namespace-picker relocation pattern (`PodDetailPanel`'s own key context, `y`).
