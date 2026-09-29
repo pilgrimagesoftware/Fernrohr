@@ -32,12 +32,9 @@
 
 ## 2. Fix
 
-- [ ] 2.1 **Blocked on manual reproduction** (needs a real interactive desktop session - not
-  available in this environment). If the symptom still reproduces manually, capture exactly which
-  step differs from the two tests above (real second `cx.open_window` call, keyboard vs. menu
-  trigger, timing) and write a third test that does reproduce it before touching any code.
-- [ ] 2.2 Confirm any fix does not regress the already-passing single-window connect path, and
-  keeps both tests from section 1 passing.
+- [x] 2.1 Manual reproduction (2026-09-28, real desktop session): multiple windows connect and
+  switch to their workspace correctly, including a second window selecting a context already
+  connected in the first. **Does not reproduce.** No code change made - see 3.2.
 
 ## 3. Full verification
 
@@ -45,7 +42,7 @@
   pass (184/184, excluding the pre-existing unrelated
   `placeholder_remembers_the_kind_it_was_opened_for` flake - logged in `~/code/papercuts.md`),
   including both new regression tests.
-- [ ] 3.2 Manual smoke test: launch the app, open a second window (Window menu or its
-  keybinding), connect it to a context - including one already connected in the first window -
-  and confirm it shows the workspace, not a stuck "connected" picker. **Needs a real interactive
-  desktop session to complete.**
+- [x] 3.2 Manual smoke test (2026-09-28): confirmed working as expected. Closing this change with
+  no fix - whatever produced the original HANDOFF.md report either predates the reorganized
+  branch this was reconciled onto, or was already corrected by other work landed since. The two
+  regression tests from section 1 stay as permanent coverage for this path, which had none before.

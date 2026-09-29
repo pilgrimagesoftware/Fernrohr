@@ -41,3 +41,29 @@ that the pod no longer exists rather than erroring or closing unexpectedly.
 - **WHEN** a pod is deleted from the cluster while its detail panel is open
 - **THEN** the panel shows that the pod no longer exists, and remains open until the user closes
   it
+
+### Requirement: Structured field view by default
+The detail panel SHALL render a structured, labeled list of the pod's fields by default,
+including at minimum: creation time, name, namespace, labels, annotations, controlling owner,
+status, node, host and pod IPs, service account, QoS class, termination grace period,
+tolerations, and conditions.
+
+#### Scenario: Structured fields shown by default
+- **WHEN** a pod's detail panel opens
+- **THEN** it shows the structured field list, not raw YAML
+
+#### Scenario: Labels and annotations render as discrete chips
+- **WHEN** a pod's detail panel shows a pod with more than one label
+- **THEN** each label renders as its own visually distinct chip, not a single run-on line of text
+
+#### Scenario: Conditions render as colored status badges
+- **WHEN** a pod's detail panel shows its conditions
+- **THEN** each condition renders as a badge colored by whether its status is `True`
+
+### Requirement: Raw YAML remains available as an alternate view
+The detail panel SHALL let the user switch to viewing the pod's raw YAML manifest without
+leaving the panel.
+
+#### Scenario: Switching to YAML view
+- **WHEN** the user toggles the detail panel's YAML view
+- **THEN** the panel shows the pod's YAML manifest in place of the structured field list
