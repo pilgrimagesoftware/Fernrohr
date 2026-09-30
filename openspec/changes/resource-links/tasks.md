@@ -68,18 +68,18 @@ Sections 5 and 6 were added when the scope widened to include viewers (see `desi
 
 ## 5. Generic object viewer
 
-- [ ] 5.1 Move the row layout and the text/chips/badges/list/reference value renderers pod detail
+- [x] 5.1 Move the row layout and the text/chips/badges/list/reference value renderers pod detail
   uses into a shared `ui/detail` module, with pod detail calling it. Verify: pod detail's render
   tests pass unchanged.
-- [ ] 5.2 Add `NavTarget::Object` (discovered kind, optional namespace, name) and the
+- [x] 5.2 Add `NavTarget::Object` (discovered kind, optional namespace, name) and the
   `ObjectDetailPanel` fetch: one `DynamicObject` `get` through the kind's `ApiResource`, plus its
   events, into Loading/Loaded/NotFound/Failed. Verify: a fixture-API-server test covers a found
   namespaced object, a found cluster-scoped object, forbidden events, and a 404.
-- [ ] 5.3 Render the panel: Overview (created, name, namespace link, labels, annotations, one
+- [x] 5.3 Render the panel: Overview (created, name, namespace link, labels, annotations, one
   link per owner), the kind's sections, Events, and a `y` YAML toggle with hint-bar keys and `g`
   go-to, both registry commands gated to the panel's key context. Verify: render tests for the
   Overview rows and owner links, and `simulate_keystrokes` tests for `y` and `g`.
-- [ ] 5.4 Open, dedup and restore: a per-context discovery registry
+- [x] 5.4 Open, dedup and restore: a per-context discovery registry
   (`k8s::cluster::discovery_registry`, loaded once the context connects) lets `viewer_for` resolve
   any discovered kind to `NavTarget::Object`; `nav::add_panel` builds the panel for it,
   `open_target_in` dedups it per context, and the dock restores it (`ObjectDetail`). References
@@ -90,19 +90,21 @@ Sections 5 and 6 were added when the scope widened to include viewers (see `desi
 
 ## 6. Kind-specific sections
 
-- [ ] 6.1 Node, ConfigMap and PersistentVolumeClaim sections (PVC's volume and storage class as
+- [x] 6.1 Node, ConfigMap and PersistentVolumeClaim sections (PVC's volume and storage class as
   references). Verify: projection tests per kind from fixture objects.
-- [ ] 6.2 Secret section and redaction: type and key sizes in the structured view, and `data`,
+- [x] 6.2 Secret section and redaction: type and key sizes in the structured view, and `data`,
   `stringData` and the last-applied-configuration annotation replaced with size placeholders in
   the stored object, so the YAML view can't show a value. Verify: tests assert no fixture value
-  appears in either view's output, and the sizes are right.
-- [ ] 6.3 ServiceAccount (secrets and image pull secrets as references) and workload sections
+  appears in either view's output, and the sizes are right. (Redaction itself landed with 5.2's
+  fetch, so no commit ever stored a value; the Secret section reads the redacted JSON, since the
+  placeholders aren't the base64 the typed `Secret` expects.)
+- [x] 6.3 ServiceAccount (secrets and image pull secrets as references) and workload sections
   (ReplicaSet, Deployment, StatefulSet, DaemonSet, Job: replicas, selector, conditions). Verify:
   projection tests per kind, including a ReplicaSet whose Deployment owner is a reference.
 
 ## 7. Full verification
 
-- [ ] 7.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
+- [x] 7.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
   pass.
 - [ ] 7.2 Manual smoke test: from a pod's detail, follow the namespace link by click and by `g`
   (keyboard only: `g`, arrows, Enter, and Escape to cancel), follow it again and confirm focus

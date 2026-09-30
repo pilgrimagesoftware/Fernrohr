@@ -176,6 +176,10 @@ and keys; PVC: status, capacity, access modes, storage class and volume as refer
 ServiceAccount: secrets and image pull secrets as references; workloads: replicas, selector,
 conditions). A kind not listed, or an object that doesn't deserialize, gets metadata only.
 Projection stays pure (`object in, fields out`) and testable without a window, like `pod_fields`.
+The Secret section is the exception to "typed": it reads the redacted object's JSON, because the
+size placeholders aren't the base64 `k8s-openapi`'s `Secret` deserializes. Condition tone is per
+condition, not per status: `Ready` is good news when True, while a Node's pressure conditions and
+a workload's `ReplicaFailure`/`Failed` are good news when False.
 
 ### Secrets never show values
 
