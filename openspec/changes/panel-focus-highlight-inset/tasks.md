@@ -39,9 +39,8 @@
 
 ## 4. Follow-up (out of scope here)
 
-- [ ] 4.2 Linux and Windows system accent lookups (today both use the theme's blue).
-
 - [ ] 4.1 A keyboard route for moving focus between panels (a registered command, e.g. next/previous
   panel), and deciding whether opening a panel from the keyboard should focus it. Today neither
   exists, so only the mouse can move focus from one panel to another. The indicator itself already
   follows focus from any source.
+- [ ] 4.2 Linux and Windows system accent lookups (today both use the theme's blue).

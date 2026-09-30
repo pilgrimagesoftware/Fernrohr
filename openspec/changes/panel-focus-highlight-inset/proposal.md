@@ -25,8 +25,8 @@ focus indicator as a whole, not only the inset.
 
 - The focused panel's tab label (and the single-panel title bar, which draws the same element)
   carries a 2px underline in the user's accent colour (macOS; the theme's blue elsewhere) while
-  keyboard focus is anywhere inside the panel. Unfocused tabs reserve the same 2px, drawn transparent, so labels never shift as focus
-  moves.
+  keyboard focus is anywhere inside the panel. Unfocused tabs reserve the same 2px, drawn
+  transparent, so labels never shift as focus moves.
 - Placeholder and Logs panels now track their focus handle on their content. Before this, a click
   could not focus them, so their tab could never be marked.
 - The no-op `focus_frame` wrapper left behind by the border's removal is deleted.
