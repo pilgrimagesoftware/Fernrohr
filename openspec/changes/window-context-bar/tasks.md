@@ -20,6 +20,11 @@
   for single-context windows. Verify: round-trip tests for a two-context window, a legacy file with
   no `contexts`, and a window whose second context has no panels.
 
+- [ ] 2.2 Save the live window's `contexts` in `WindowLayout`, and save a multi-context window's dock
+  arrangement under an order-insensitive composite key in `dock_layouts.json` (single-context windows
+  keep their context-name key). Verify: round-trip tests for a single-context window (unchanged) and a
+  two-context window restored with both contexts held and its arrangement key used.
+
 ## 3. Context bar
 
 - [ ] 3.1 Add `ui/context_bar.rs` rendered under the title bar in workspace mode, with one chip per
