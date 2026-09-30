@@ -1,19 +1,40 @@
 # Tasks
 
-## 1. Inset the focus border
+## 1. Inset the focus border (superseded)
 
 - [x] 1.1 Change `focus_frame` to draw its border against an inset inner element rather than the
-  full-size outer one, so the border never sits flush with a panel's outer edge. Verify: existing
-  `focus_border`/`a_focused_panel_uses_the_primary_border` tests still pass (the color logic is
-  unchanged; only the geometry wrapping it changes).
-- [ ] 1.2 Manual check: focus a panel occupying the window's bottom edge and confirm the border
-  is no longer visibly clipped by the window's rounded corner. **Needs user confirmation against
-  a running build.**
+  full-size outer one, so the border never sits flush with a panel's outer edge.
+- [x] 1.2 ~~Manual check: the inset border clears the window's rounded corner.~~ Moot: the border
+  itself was removed in App `198dcaa` after Paul's review, before this was checked. Section 2
+  replaces it.
 
-## 2. Full verification
+## 2. Focus indicator on the panel's tab
 
-- [x] 2.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
-  pass (185/185, excluding the pre-existing unrelated `placeholder_remembers_the_kind_it_was
-  _opened_for` flake).
-- [ ] 2.2 Manual smoke test: cycle focus between two panels, including one at the window's bottom
-  edge, and confirm the border reads cleanly in both cases. **Needs user confirmation.**
+- [x] 2.1 `title_element` takes the panel's focus state and draws a 2px underline in `theme.blue`
+  while focused, transparent otherwise (`focus_underline`). Unit test:
+  `only_the_focused_panel_underlines_its_title`.
+- [x] 2.2 Every panel's `title()` passes `focus_handle.contains_focused(window, cx)` (Pods, Pod
+  detail, Logs, Placeholder).
+- [x] 2.3 Placeholder and Logs track their focus handle, so a click focuses them. Tests:
+  `a_click_focuses_the_placeholder`, `a_click_focuses_the_logs_panel` (each fails without
+  `track_focus`).
+- [x] 2.4 Dock-level test through the app's real `DockSkin` dock: of two tabbed panels, only the
+  focused one's tab is underlined, and clicking the other tab moves the underline there
+  (`the_focused_panels_tab_is_the_one_underlined`; fails if a panel's title ignores focus).
+- [x] 2.5 Remove the no-op `focus_frame` and its four call sites.
+- [x] 2.6 Move `title.rs`'s colocated tests to `title/tests.rs` to stay under the 500-line limit.
+
+## 3. Full verification
+
+- [x] 3.1 `cargo fmt -- --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test`
+  all pass (371 passed, 2 ignored real-keychain tests).
+- [ ] 3.2 Manual check against a running build: with two or more panels open, click between them
+  and confirm the underline reads clearly in both light and dark mode, and that no tab label
+  shifts when focus moves. **Needs user confirmation.**
+
+## 4. Follow-up (out of scope here)
+
+- [ ] 4.1 A keyboard route for moving focus between panels (a registered command, e.g. next/previous
+  panel), and deciding whether opening a panel from the keyboard should focus it. Today neither
+  exists, so only the mouse can move focus from one panel to another. The indicator itself already
+  follows focus from any source.

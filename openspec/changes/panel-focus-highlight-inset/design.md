@@ -1,15 +1,45 @@
 # Design
 
-## Inset, not corner-radius matching
+## Where the indicator lives: the panel's title element
 
-Two ways to stop the border colliding with the OS's rounded corner: round the border itself to
-match the window's corner radius, or pull the border in a few pixels so it never reaches the
-window edge in the first place. Rounding requires knowing the OS's exact corner radius (an
-undocumented, version-dependent value) and only fixes the corner case specifically. Insetting
-(`.p_px()`/a small fixed margin on `focus_frame`'s outer `div`, applied to the content it wraps
-rather than the border's own edge) fixes it regardless of corner radius, and also reads better
-generally - a border flush with a window edge looks cramped independent of the rounding issue.
+The indicator has to be on the tab (Paul's review), and gpui-component 0.6.6 gives a panel exactly
+one way onto its tab: `render_tabs` draws `panel.title()` as the label whenever `tab_name()` is
+`None`. Fernrohr's panels already return `None` from `tab_name` so the tab carries the title's
+context tooltip. So the focus state goes into `panel_title::title_element`, which every panel's
+`title()` already calls. The single-panel title bar (`render_title`) draws the same element, so it
+is marked the same way.
 
-`focus_frame` keeps `.size_full()` on its outer element (so it still fills the space the dock
-gives it) but wraps `content` in an inset inner element that the border is drawn against, rather
-than drawing the border on the full-size outer element directly.
+What this cannot do is colour the tab's own background: that belongs to the library's `Tab`, and
+no per-panel style reaches it. An underline on the label is the strongest mark available without
+patching the crate.
+
+## Focus test: `contains_focused`, not `is_focused`
+
+Same reasoning as the removed border: a panel whose content takes focus itself (a table row, a
+text input) moves the window's focus to that child. An indicator lit only while the panel's own
+handle is focused would go dark the moment the panel was actually used.
+
+## Colour: `theme.blue`, not `theme.primary`
+
+The removed border used `primary`. In both default themes `primary` equals the selected tab's
+foreground (`neutral-900` / `neutral-50`), so a `primary` mark on a selected tab would be
+invisible. `blue` (`blue-600` light / `blue-400` dark) is defined in every theme and stands out
+against both tab bars.
+
+## No layout shift
+
+Every title reserves a 2px bottom border; only its colour changes (`transparent_black()` when
+unfocused). Moving focus therefore never moves any tab's label.
+
+## Redraw on focus change
+
+`Window::focus` calls `refresh()`, which sets `refreshing`, and the dock's cached panel views are
+re-rendered while `refreshing` is set. The tab strip therefore picks up the new focus state on the
+same frame.
+
+## Focusable panels
+
+`track_focus` does two things: it puts the handle in the dispatch tree (so `contains_focused` can
+see a focused child), and it focuses the handle on mouse-down. Pods and Pod detail already tracked
+their handle. Placeholder and Logs did not, so a click inside them focused nothing, and they gained
+it here.
