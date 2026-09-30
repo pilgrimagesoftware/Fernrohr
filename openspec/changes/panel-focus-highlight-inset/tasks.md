@@ -32,10 +32,10 @@
 
 - [x] 3.1 `cargo fmt -- --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test`
   all pass (374 passed, 2 ignored real-keychain tests).
-- [ ] 3.2 Manual check against a running build: with two or more panels open, click between them
+- [x] 3.2 Manual check against a running build: with two or more panels open, click between them
   and confirm the underline reads clearly in both light and dark mode, that no tab label shifts
   when focus moves, and that changing the accent colour in System Settings shows on switching
-  back. **Needs user confirmation.**
+  back. Confirmed by Paul, 2026-09-30.
 
 ## 4. Follow-up (out of scope here)
 
