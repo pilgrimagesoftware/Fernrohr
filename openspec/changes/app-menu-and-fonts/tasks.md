@@ -59,8 +59,5 @@
 
 - [x] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
   pass (200/200, keychain-lock tests excluded per the pre-existing hang logged elsewhere).
-- [ ] 4.2 Manual smoke test: launch the app, confirm the seven menus appear in order with App's
-  Quit/About and Window's Minimize/Zoom present, confirm at least one menu item's action matches
-  its palette behavior, confirm UI text renders in Manrope and a YAML/log view renders in Monaco
-  (or a real fallback), confirm About opens a small window with the correct name/version. **Needs
-  a real interactive desktop session.**
+- [x] 4.2 Manual smoke test: confirmed by Paul on a real desktop session - the seven menus,
+  Quit/About/Minimize/Zoom, Manrope UI text, and Monaco/fallback monospace all verified working.

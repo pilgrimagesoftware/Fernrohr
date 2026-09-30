@@ -63,11 +63,12 @@
   211/211 (a `tunnel::store` keychain-lock test intermittently hangs under parallel execution on
   this machine independent of this change - pre-existing, per `10-panel-title-bar`'s 8c0a1b7 -
   skipped when it does, not counted as a failure).
-- [ ] 6.2 Manual smoke test: open a Pods list (confirm its tab reads "Pods"), describe a pod
-  (opens a panel titled "Pod: <name>" with the structured field list, including Containers and
-  Volumes), toggle to YAML and back, confirm `y` opens straight into YAML, confirm the panel's
-  focus border stays visible while a child (a table row) has focus, close the Pods list panel,
-  confirm the detail panel is unaffected. **Needs a real interactive desktop session.**
+- [x] 6.2 Manual smoke test: confirmed by Paul on a real desktop session - the Pods list tab
+  reads "Pods", describing a pod opens a "Pod: <name>" panel with the structured field list
+  (Containers/Volumes included), YAML toggle and `y` both work, closing the Pods list panel
+  leaves the detail panel unaffected. (The focus-border check in the original task text is
+  superseded - that border was removed per Paul's later review; see
+  `openspec/changes/per-tab-close-button`.)
 
 ## 7. Follow-up (not this change)
 
