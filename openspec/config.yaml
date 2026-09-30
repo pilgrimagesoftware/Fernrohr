@@ -59,7 +59,7 @@ context: |
 
   Conventions:
     - American English in code, comments, docs.
-    - Keep functions under ~50 lines, files under ~700 lines.
+    - Keep functions under ~50 lines, files under ~500 lines.
     - Tests: cargo test, assertions that verify behavior, no live-cluster dependency
       (mock the kube client / use recorded fixtures).
     - i18n from the start for user-facing strings.

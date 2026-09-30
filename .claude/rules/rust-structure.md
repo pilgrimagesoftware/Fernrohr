@@ -10,7 +10,7 @@ paths:
 These rules are adopted from [pilgrimagesoftware/Knot](https://github.com/pilgrimagesoftware/Knot/blob/develop/.claude/rules/rust-structure.md).
 Each exists because it was violated and cost something; the cost is named so you can tell when the rule genuinely does not apply.
 
-## File size: 700 lines, enforced
+## File size: 500 lines, enforced
 
 Do not raise any equivalent line limit to make a change fit. Split files by concern, not by line count:
 
