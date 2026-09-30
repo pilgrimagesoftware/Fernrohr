@@ -23,18 +23,22 @@ Current state (see proposal.md for why this matters):
 - One typed reference representation, one "does this kind have a viewer" decision, and one render
   helper, shared by every detail view present and future.
 - Following a reference reuses the existing open/dedup/focus path, not a second one.
+- **Viewers for what pod detail references** (scope widened at the user's request, 2026-09-30,
+  replacing the original "no new viewers" non-goal): a generic single-object viewer for any kind
+  the cluster's discovery reports, so every reference to a discovered kind is live on the day this
+  lands, with structured sections for the kinds pod detail names most: Node, ConfigMap, Secret,
+  PersistentVolumeClaim, ServiceAccount, and the workload owners (ReplicaSet, Deployment,
+  StatefulSet, DaemonSet, Job). Specified by the new `object-detail` capability.
 
 **Non-Goals:**
-- **New viewers.** This change adds no Node, ConfigMap, ReplicaSet (etc.) panel. Consequence: on
-  the day it lands, the only live links from pod detail are Namespace, and any reference that
-  resolves to a Pod. Everything else shows as plain text until its viewer exists. A follow-up
-  generic single-object viewer (metadata + YAML for any discovered kind) would make every reference
-  live at once. It's deliberately a separate change, because it is its own capability with its own
-  fetch/watch and RBAC questions.
+- **List panels for other kinds.** Selecting ConfigMaps (etc.) in the Resource panel still opens
+  the placeholder. Links need single-object viewers, not lists; a generic list panel is the next
+  change.
+- **Live updates in the object viewer.** It reads its object once, like pod detail does, and
+  shows the not-found state for a 404. A watch per open detail panel is a separate decision.
 - Opening in a new window or split (modifier-click). Opening follows the normal open path.
 - Links out of the YAML view. Only the structured view has fields to link.
-- Showing secret values. Following a Secret link opens whatever the Secret viewer shows once it
-  exists; this change fetches nothing through a link.
+- Showing secret values, anywhere. See "Secrets never show values" below.
 
 ## Decisions
 
@@ -62,15 +66,36 @@ Node/Namespace/Service Account, several for owners). Volume rows and container c
 
 ### One predicate decides linkability: `nav::viewer_for`
 
-`fn viewer_for(&ObjectRef) -> Option<NavTarget>` in `ui/nav.rs` replaces `has_concrete_panel` as
-the single place that knows which kinds have panels. Today it resolves core `Pod` →
-`NavTarget::Pod`, and `Namespace` → the Pods list scoped to that namespace. `None` means plain
-text. A new viewer is registered by extending this one function, which is how the spec's "a kind
-gains a viewer" scenario holds without touching any reference site.
+`fn viewer_for(&ObjectRef, kinds: Option<&[DiscoveredKind]>) -> Option<NavTarget>` in `ui/nav.rs`
+replaces `has_concrete_panel` as the single place that knows which kinds have panels:
 
-- *Alternative considered:* a `NavTarget::Object(ObjectRef)` variant that absorbs `Pod(PodRef)`
-  now. Deferred. With one concrete object viewer, that abstraction has no second caller yet.
-  The first non-Pod viewer is when to fold `Pod` into it.
+- core `Pod` → `NavTarget::Pod`, which keeps its own richer panel;
+- core `Namespace` → the Pods list scoped to that namespace;
+- any other `(group, kind)` present in the context's discovery → `NavTarget::Object`, the generic
+  viewer, carrying the discovered kind (so the panel knows the version, plural and scope it needs
+  to build a `kube` `ApiResource`) plus namespace and name;
+- anything else, including every non-Pod kind while discovery hasn't loaded yet → `None`, plain
+  text.
+
+`None` means plain text. A new *kind-specific* viewer is registered where the generic viewer picks
+its sections (`object_detail::sections_for`), not at any reference site, which is how the spec's
+"a kind gains a viewer" scenario holds.
+
+- `Pod` is not folded into `NavTarget::Object`. It already has its own panel, dock-restore name
+  and tests; folding it in would be churn with no user-visible change. `viewer_for` is the one
+  place both are reached from.
+- *Alternative considered:* a static allow-list of viewable kinds. Rejected: with a generic viewer,
+  "the cluster reports this kind" is the real test, and it's the one that makes a removed CRD fall
+  back to plain text.
+
+### A per-context discovery registry
+
+Discovery results live today only inside each window's `ResourcePanel`. Links need them in any
+panel, so `k8s::cluster::discovery_registry` holds one `Entity<DiscoveredKinds>` per context, built
+the same way `NamespaceRegistry` holds namespace lists: created on first use, loaded once the
+context connects, observed by whoever renders links so a reference turns into a link when
+discovery lands. The `ResourcePanel` keeps its own copy for now; `resource-panel-grouping` is
+rewriting that file, and moving it onto the registry is a small follow-up once that lands.
 
 ### Opening goes through `open_target_with_view`, scoped to the source panel
 
@@ -116,13 +141,52 @@ to one reference per object per container, in first-seen order, so twenty keys f
 read as one link. Projected-volume sources (`projected.sources[].configMap/secret`) are volume
 references like any other.
 
+### The generic object viewer: `ObjectDetailPanel`
+
+A new dock panel over `NavTarget::Object`, fetched with one `Api::<DynamicObject>` `get` built from
+the discovered kind's `ApiResource` (namespaced or cluster-wide by the kind's scope), plus the
+events naming it (`involvedObject.kind/name/namespace/uid`, the same selector shape pod detail
+uses). States mirror `PodDetailState`: Loading, Loaded, NotFound, Failed.
+
+- **Structured view:** Overview (created, name, namespace as a link, labels, annotations, owners
+  as one link each) followed by the kind's own sections, then Events. **YAML view:** the manifest,
+  toggled with `y` like pod detail. Hint bar, `g` go-to, and focus behave as in pod detail.
+- **Shared row pieces.** The object viewer and pod detail both draw labelled rows of text, chips,
+  badges, lists and references. The row layout and those value renderers move to a shared
+  `ui/detail` module both panels call, instead of a second copy in the new panel. Each panel keeps
+  its own field model: pod detail's tabs and container/managed-field cards are its own.
+- **Dock restore:** `panel_name` "ObjectDetail", dumping context, group/version/kind/plural/scope,
+  namespace and name, the same way `PlaceholderPanel` dumps a kind.
+
+### Kind-specific sections, projected from typed objects
+
+`sections_for(&DiscoveredKind, &DynamicObject)` deserializes the object into its `k8s-openapi`
+type for the kinds listed under Goals and projects a few sections each (Node: addresses,
+capacity/allocatable, conditions, node info, taints; ConfigMap: data keys and values; Secret: type
+and keys; PVC: status, capacity, access modes, storage class and volume as references;
+ServiceAccount: secrets and image pull secrets as references; workloads: replicas, selector,
+conditions). A kind not listed, or an object that doesn't deserialize, gets metadata only.
+Projection stays pure (`object in, fields out`) and testable without a window, like `pod_fields`.
+
+### Secrets never show values
+
+A Secret viewer shows each key's name and decoded byte length, never the value, in the structured
+view **and** the YAML view: before rendering, `data` and `stringData` values are replaced with a
+`<redacted: N bytes>` placeholder, and so is the `kubectl.kubernetes.io/last-applied-configuration`
+annotation (which holds the full manifest, values included, when `kubectl apply` created the
+Secret). Redaction happens on the fetched object before it's stored in the panel, so no render
+path can reach a value.
+
 ## Risks / Trade-offs
 
-- [Most links render as plain text at first, so the feature looks small] → Deliberate (no dead
-  links). Say so in the PR, and propose the generic single-object viewer next.
-- [`pod_detail.rs` is ~2,600 lines against a 500-line limit, and this change adds to it] → Split it
-  first, in its own PR after `1-window-context-bar` merges (that branch edits the same file). The
-  reference projection goes into its own module either way.
+- [A reference is plain text until the context's discovery loads] → The link registry is
+  observed, so the reference becomes a link as soon as discovery lands; Pod and Namespace
+  references resolve without discovery.
+- [Every object viewer needs `get` on its kind] → A forbidden `get` is the Failed state with the
+  API's own message, same as pod detail; nothing is fetched until the link is followed.
+- [`pod_detail.rs` is ~2,800 lines against a 500-line limit, and this change adds to it] → Split it
+  first, in its own PR (section 0) after `1-window-context-bar` merges. The reference projection
+  goes into its own module either way.
 - [`open_target_with_view` signature change conflicts with `1-window-context-bar`] → Sequence
   after it merges. The change is additive (a context argument with the window's as default).
 - [A reference to a kind whose group isn't in discovery (CRD removed)] → `viewer_for` returns

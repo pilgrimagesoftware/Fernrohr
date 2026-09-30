@@ -24,6 +24,12 @@ panel-per-object workflow the app is built around, and the gap grows with every 
   secrets, and the containers' ConfigMap and Secret references in `envFrom` and `valueFrom`.
 - Later detail views (Node, workload controllers, ConfigMap, ...) must represent their references
   the same way, so this is one mechanism rather than one feature per panel.
+- **Viewers for the objects links lead to** (scope widened at the user's request, 2026-09-30): a
+  generic single-object panel for any kind the cluster's discovery reports (metadata, owners,
+  events, YAML, and a not-found state), with structured sections for Node, ConfigMap, Secret,
+  PersistentVolumeClaim, ServiceAccount, ReplicaSet, Deployment, StatefulSet, DaemonSet and Job.
+  Secret values are never shown, in fields or YAML. So every reference pod detail shows is live
+  on the day this lands, not only Namespace and Pod.
 
 ## Capabilities
 
@@ -31,6 +37,9 @@ panel-per-object workflow the app is built around, and the gap grows with every 
 - `resource-links`: how a detail view represents a reference to another object, when that
   reference is followable, and what following it opens (target panel, cluster context, dedup
   with open panels, keyboard reachability, targets that no longer exist).
+
+- `object-detail`: a dock panel over one object of any discovered kind, its kind-specific
+  sections, and how Secret values are kept out of it.
 
 ### Modified Capabilities
 - `pod-detail`: the fields that reference other objects become followable links under
@@ -48,4 +57,9 @@ panel-per-object workflow the app is built around, and the gap grows with every 
   target, and the one predicate that says whether a kind has a viewer.
 - `app/src/util/shell.rs`: opening a followed reference goes through the existing
   `open_target_with_view` dedup/focus path, scoped to the source panel's context.
-- No new dependencies.
+- `app/src/k8s/cluster/`: a per-context discovery registry, so any panel can ask whether a kind
+  exists in its cluster.
+- `app/src/k8s/resource/object_detail/` (new): the generic viewer, its fetch, and the per-kind
+  section projections. `app/src/ui/detail/` (new): row pieces shared with pod detail.
+- No new dependencies. `kube`'s `DynamicObject`/`ApiResource` and `k8s-openapi`'s typed objects
+  are already in the dependency tree.
