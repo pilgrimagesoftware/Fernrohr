@@ -89,15 +89,25 @@ multi-context windows, where the window's context and a panel's context can diff
 
 ### Keyboard: a "Go to…" picker per detail view
 
-`g` (panel key context, shown in the hint bar as "Go to…") opens a filterable list of that view's
-followable references: kind, name and the field they came from, with Enter to follow. That covers
-"reachable by keyboard" without making dozens of links tab stops (the panels deliberately use
-`tab_stop(false)` on in-body controls). It's built once in `ui/link.rs` from the same
-`Vec<ObjectRef>` the view renders, so the picker and the visible links can't disagree.
+Per the keyboard-first rule (`.claude/rules/keyboard-first.md`), both routes are specified: click
+a link, or press `g` for a "Go to…" picker. The picker is a registry `Command`
+(`links.go_to`, default `g`, gated to each detail panel's key context, no menu slot), so it gets a
+palette entry, a `keymap.toml` override, and a hint-bar key read from the live keymap with
+`Kbd::binding_for_action`. It lists the view's followable references (kind, name, the field
+they came from), filters as you type, moves one selection with arrow keys or clicks, follows on
+Enter or click, and closes on Escape with focus back on the detail panel.
 
+- **Hover never moves the selection.** gpui-component's `Command` list selects on hover, so the
+  picker follows the cluster picker's `follow_keyboard` pattern: it only takes on a highlight
+  change when `window.last_input_was_keyboard()` is true.
+- It's built once in `ui/link.rs` from the same `Vec<ObjectRef>` the view renders, so the picker
+  and the visible links can't disagree.
+- `FollowReference` stays an internal, data-carrying action and not a registry command: it has no
+  meaning without a specific reference, the same reason `ShowPodDetail` isn't registered. The
+  user-facing command is `links.go_to`.
 - *Alternative considered:* Tab/arrow focus cycling through links in place. Rejected for now:
-  focus is already hard to see (see `per-tab-close-button`), and a pod with many env sources
-  would make cycling slow.
+  focus is already hard to see (see `per-tab-close-button`), a pod with many env sources would make
+  cycling slow, and the panels use `tab_stop(false)` on in-body controls.
 
 ### Env references deduped per container
 

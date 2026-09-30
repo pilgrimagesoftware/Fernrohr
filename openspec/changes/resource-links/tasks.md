@@ -40,24 +40,31 @@ Reference projection code goes into its own module, not back into the detail fil
   reference opens its detail panel, following it again focuses the same panel, and the source
   panel's context is used, not the window's.
 - [ ] 3.2 Wire link clicks in `ui/link.rs` to dispatch `FollowReference` with the source panel's
-  `PanelScope.context_name`. Verify: a test clicks/dispatches a reference from a pod detail panel
-  and asserts the target panel is open and focused.
+  `PanelScope.context_name`. Verify: a test clicks a reference in a pod detail panel and asserts
+  the target panel is open and focused.
 - [ ] 3.3 Following a Namespace reference opens (or focuses) the Pods list scoped to that
   namespace. Verify: a shell test asserts the opened panel's namespace scope.
 
 ## 4. Keyboard
 
-- [ ] 4.1 Add the `g` "Go to…" picker in `ui/link.rs` listing a view's followable references
-  (kind, name, source field), filterable, Enter to follow, bound in the detail panel's key
-  context and shown in its hint bar. Verify: a test dispatches the picker action, selects an
-  entry and asserts `FollowReference` fired with that reference, and a view with no followable
-  references shows no picker hint.
+- [ ] 4.1 Register `links.go_to` (default `g`, gated to the detail panel's key context, no menu
+  slot) and show its key in the panel's hint bar via `Kbd::binding_for_action`, hidden when the
+  view has no followable references. Verify: a registry test asserts the command's id, context
+  and binding, and a render test asserts the hint appears only with followable references.
+- [ ] 4.2 Build the "Go to…" picker in `ui/link.rs`: lists the view's followable references
+  (kind, name, source field), filters as you type, arrow keys and clicks move one selection
+  (hover never does, gated on `window.last_input_was_keyboard()`), Enter or click follows, and
+  Escape closes with focus back on the detail panel. Verify: tests using
+  `VisualTestContext::simulate_keystrokes` press `g`, type a filter, `down`, `enter` and assert
+  `FollowReference` fired for the chosen reference; press `g` then `escape` and assert focus is
+  back on the panel; and simulate a hover and assert the selection didn't move.
 
 ## 5. Full verification
 
 - [ ] 5.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
   pass.
-- [ ] 5.2 Manual smoke test: from a pod's detail, follow the namespace link by click and by `g`,
+- [ ] 5.2 Manual smoke test: from a pod's detail, follow the namespace link by click and by `g`
+  (keyboard only: `g`, arrows, Enter, and Escape to cancel),
   follow it again and confirm focus moves to the existing panel rather than duplicating it, and
   confirm references with no viewer (owner ReplicaSet, Node, ConfigMaps) show as plain text.
   **Needs user confirmation against a running build.**

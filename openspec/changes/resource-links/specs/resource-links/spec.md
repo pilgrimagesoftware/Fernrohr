@@ -58,6 +58,18 @@ visible-shortcut-hint convention.
   follow-link key
 - **THEN** the user can choose any of that view's links and follow it without using the mouse
 
+#### Scenario: Choosing a link doesn't follow the pointer
+- **WHEN** the link chooser is open and the pointer moves over an entry without clicking
+- **THEN** the chosen entry doesn't change
+
+#### Scenario: Cancelling the link chooser
+- **WHEN** the link chooser is open and the user presses Escape
+- **THEN** the chooser closes without following a link, and focus returns to the detail view
+
+#### Scenario: The follow-link key is shown
+- **WHEN** a detail view with at least one link has focus
+- **THEN** the view shows its follow-link key, as currently bound, in its shortcut hints
+
 ### Requirement: A followed link survives its target's absence
 Following a link to an object that doesn't exist (deleted, or never created, like a Secret
 mounted as `optional`) SHALL open that object's panel showing that the object doesn't exist,
