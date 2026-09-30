@@ -124,3 +124,27 @@ in.
 - **WHEN** the user filters on an API group name such as `batch`
 - **THEN** kinds in that group match, even where the group name is in neither
   the row's label nor its kind
+
+### Requirement: The Resource panel is fully keyboard-operable
+
+Every Resource panel action SHALL be reachable from the keyboard as well as the mouse
+(`.claude/rules/keyboard-first.md`): moving between kinds, opening one, collapsing and
+expanding a section, and focusing, typing into and clearing the filter. One selection
+SHALL be moved by both clicks and the keyboard; hover SHALL NOT move it. The panel SHALL
+show its keys in a hint row.
+
+#### Scenario: Navigate and open from the keyboard
+
+- **WHEN** the Resource panel has focus and the user presses Down twice, then Enter
+- **THEN** the second visible kind below the current selection opens, as a double-click would open it
+
+#### Scenario: Collapse and expand a section from the keyboard
+
+- **WHEN** a kind in the Workloads section is selected and the user presses Left
+- **THEN** Workloads collapses, and Right expands it again
+
+#### Scenario: Filter from the keyboard
+
+- **WHEN** the Resource panel has focus and the user presses `/`, types `ingr` and presses Escape
+- **THEN** the filter field takes focus and narrows the list to matching kinds, and Escape clears it and returns focus to the list
+

@@ -13,6 +13,12 @@ the vendored crate source directly, twice now (once for the close button, again 
 the borrowed-content border in favor of "color the tab instead") - there is no builder flag or
 per-panel override that reaches the tab strip; it is how the component is built.
 
+> **Update (2026-09-30):** the focus-colour half of this is resolved by
+> `panel-focus-highlight-inset`. `render_tabs` ignores `title_style`, but it draws the panel's
+> own `title()` element as the label whenever `tab_name()` is `None` (every Fernrohr panel's is),
+> so a panel can mark its own tab on 0.6.6. What stays out of reach is styling the `Tab` itself
+> (background, a close control), so the close-button half below is unchanged.
+
 ## What Changes
 
 Nothing yet - this proposal documents the investigation and lays out the real options, since the
