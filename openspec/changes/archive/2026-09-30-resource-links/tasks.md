@@ -106,7 +106,7 @@ Sections 5 and 6 were added when the scope widened to include viewers (see `desi
 
 - [x] 7.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
   pass.
-- [ ] 7.2 Manual smoke test: from a pod's detail, follow the namespace link by click and by `g`
+- [x] 7.2 Manual smoke test: from a pod's detail, follow the namespace link by click and by `g`
   (keyboard only: `g`, arrows, Enter, and Escape to cancel), follow it again and confirm focus
   moves to the existing panel rather than duplicating it; follow the owner ReplicaSet, then its
   Deployment; follow the node, a mounted ConfigMap, and a Secret (confirming no value shows in
