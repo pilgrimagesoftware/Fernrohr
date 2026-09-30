@@ -73,8 +73,12 @@ over built layouts, with no window needed.
 `context: None`. They follow `resource.focus`: `MainWindow` handles both, because it owns the
 Resource panel and the `DockArea`, and both go in `MenuSlot::Navigate`.
 
-Default bindings: **`cmd-]`** next, **`cmd-[`** previous (`ctrl-]` / `ctrl-[` off macOS, following
-the platform mapping the keymap already applies). None of the app's registered commands use them.
+Default bindings: **`cmd-]`** next, **`cmd-[`** previous (`cmd` is GPUI's platform key, the same
+as `cmd-n` and `cmd-0`). None of the app's registered commands use them. gpui-component's text
+input binds the same keys to Indent/Outdent on macOS (`ctrl-]` / `ctrl-[` elsewhere), but only a
+multi-line input handles those actions. GPUI tries each matched binding in turn until one is
+handled, so in the app's single-line filter fields the key falls through to the panel command.
+A test pins this.
 *Alternatives:*
 - `F6` / `shift-F6` is the conventional "cycle panes" key on Windows and Linux, but on a Mac
   keyboard it needs `fn`.
@@ -99,6 +103,10 @@ actions. That's better than repeating it in each `nav::add_panel` arm, which re-
 - **[`open_target_with_view` is being edited by other in-flight work (typed references / object
   viewer).]** The focus call is a few lines at the end of the function. Whoever lands second
   rebases. Coordinate through Fernrohr Master.
+- **[In the default layout, every opened panel is a tab in the one center group.]** Next/previous
+  therefore steps between the Resource panel and the displayed tab until the user splits. The other
+  tabs stay keyboard-reachable by asking for them again (`cmd-1`, `cmd-2`, Enter on a Resource row,
+  `d`/`l`/`y`), which now focuses them. A next/previous-*tab* command is the natural follow-up.
 - **[A layout change mid-cycle (a panel closed) changes the order.]** Stops are rebuilt on every
   invocation from the live layout, so there's no stale index. A closed panel simply isn't a stop.
 - **[`cmd-[` / `cmd-]` inside a text input.]** Some editors use them for indent/outdent. Fernrohr's
