@@ -63,7 +63,7 @@ first-class target rather than a follow-up (see `bootstrap-fernrohr`'s task 9.1)
 ## Conventions
 
 - American English in code, comments, and docs.
-- Keep functions under ~50 lines, files under ~700 lines.
+- Keep functions under ~50 lines, files under ~500 lines.
 - Tests: `cargo test`, assertions that verify behavior, no live-cluster dependency (mock the kube
   client or use recorded fixtures).
 - i18n from the start for user-facing strings.
