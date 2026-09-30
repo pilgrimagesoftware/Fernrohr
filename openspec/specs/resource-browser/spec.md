@@ -44,7 +44,9 @@ persist the selection with the panel.
 ### Requirement: Filtering and sorting
 
 A resource-browser panel SHALL provide a text filter that narrows rows by substring match on the
-resource name, and SHALL let the user sort by any displayed column.
+resource name, and SHALL let the user sort by any displayed column, cycling ascending,
+descending, and unsorted, with the current sort column and direction shown by an indicator on
+that column's header.
 
 #### Scenario: Text filter
 
@@ -52,10 +54,43 @@ resource name, and SHALL let the user sort by any displayed column.
 - **THEN** only rows whose Pod name contains `nginx` remain visible
 - **AND** clearing the filter restores all rows
 
-#### Scenario: Column sort
+#### Scenario: Clicking a header sorts ascending
 
-- **WHEN** the user clicks the Age column header
-- **THEN** rows sort by age, and clicking again reverses the order
+- **WHEN** the user clicks an unsorted column's header
+- **THEN** the table's rows sort by that column ascending, and that header shows an ascending
+  indicator
+
+#### Scenario: Clicking again reverses direction
+
+- **WHEN** the user clicks an already-ascending-sorted column's header
+- **THEN** the table's rows sort by that column descending, and that header shows a descending
+  indicator
+
+### Requirement: Columns are resizable and reorderable
+
+A resource-browser table's columns SHALL be resizable by dragging a column boundary and
+reorderable by dragging a column header to a new position.
+
+#### Scenario: Resizing a column
+
+- **WHEN** the user drags a column boundary in the Pods table
+- **THEN** that column's width changes and neighboring columns adjust accordingly
+
+#### Scenario: Reordering a column
+
+- **WHEN** the user drags a column header to a new position
+- **THEN** the table's column order reflects the new position, and each cell still shows the
+  value for its own column, not the column now in that visual slot
+
+### Requirement: List panel titles use the kind's plural form
+
+A resource-browser panel showing a list of a kind SHALL title its tab and title bar with that
+kind's plural display name, not its singular Kubernetes Kind name.
+
+#### Scenario: Pods list panel is titled "Pods"
+
+- **WHEN** a Pods list panel is open
+- **THEN** its tab and title bar read "Pods", not "Pod"
 
 ### Requirement: Shared, reference-counted watches
 
