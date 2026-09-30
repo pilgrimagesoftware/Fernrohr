@@ -16,10 +16,15 @@ A feature that only one input can reach isn't done.
 - **Every action has both routes.** Anything you can do with a click (select, open, connect, edit,
   delete, confirm, cancel) also has a keyboard route, and vice versa. Write both down in the
   proposal's specs and tasks, not just the mouse one.
-- **Actions go through the command registry.** A user-facing action is a `Command` (id, title,
-  default binding, `KeyContext`, and `menu` slot if it belongs in the menu bar). That gives it a
-  keybinding, a palette entry and a menu item at once. Don't wire a one-off click handler with no
-  command behind it.
+- **Every action is a command-palette entry.** A user-facing action is a registered `Command`
+  (id, title, default binding, `KeyContext`, and `menu` slot if it belongs in the menu bar), so it
+  is in the **command palette** (⌘⇧P), has a keybinding `keymap.toml` can override, and gets a menu
+  item where one fits. The palette is the keyboard's catch-all, so "everything" really means
+  everything: opening windows and panels, connecting and disconnecting, tunnels, toggles, panel
+  actions. Panel-local actions are commands too, scoped to the panel's `KeyContext`, so the palette
+  offers them while that panel has focus. The one exception is pure cursor movement (↑/↓ one row).
+  `keymap::bindings` binds every registered command, so don't add raw `KeyBinding`s for actions,
+  and don't wire a one-off click handler with no command behind it.
 - **One selection model.** Clicks and keyboard navigation move the same selection; hover never does.
   gpui-component's `Command` selects on hover, so tell the two apart with
   `window.last_input_was_keyboard()` rather than copying its `on_select` straight into your state.

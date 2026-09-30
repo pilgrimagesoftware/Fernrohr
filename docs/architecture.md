@@ -65,7 +65,7 @@ first-class target rather than a follow-up (see `bootstrap-fernrohr`'s task 9.1)
 - American English in code, comments, and docs.
 - Keep functions under ~50 lines, files under ~500 lines.
 - Keyboard navigation is first-class: every feature is fully usable from both the keyboard and the
-  mouse, with one selection that both move (hover never does), actions in the command registry,
+  mouse, with one selection that both move (hover never does), every action a command-palette entry (a registered command),
   visible key hints, and keyboard-operable dialogs. Specs, tasks and tests cover the keyboard
   route, not just the mouse one. See `.claude/rules/keyboard-first.md`.
 - Tests: `cargo test`, assertions that verify behavior, no live-cluster dependency (mock the kube
