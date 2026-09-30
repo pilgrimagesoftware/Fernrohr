@@ -7,6 +7,14 @@ reach), just not shaped as an inline per-tab button.
 
 ## Cmd-W routing
 
+> **Note (2026-09-30, `tab-keyboard-navigation`):** step 1 below dispatches `ClosePanel` whenever
+> the center dock is non-empty, but `ClosePanel` is handled by the tab group, so it only fires with
+> focus inside one. With focus in the Resource panel it would close nothing. Implement step 1 with
+> `tab-keyboard-navigation`'s focused-group helper instead: focus that group's displayed tab, then
+> dispatch `ClosePanel`. The focused group is the one focus is in, else the first panel-focus stop.
+> Step 2 (the close-window path) runs only when there's no such group, i.e. the dock is empty.
+> Both changes' App tasks ship together as `tab-keyboard-app`.
+
 `Cmd-W`'s registered command keeps its single binding; only its handler's behavior changes:
 
 1. If `cx.active_window()`'s `MainWindow` has a non-empty `DockPlacement::Center` dock, dispatch
