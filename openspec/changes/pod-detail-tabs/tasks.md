@@ -38,4 +38,5 @@
   by click and by keyboard (1-5), confirm nothing from the flat list is missing, and that the
   Events tab shows the pod's recent events.
   Verified by the user 2026-09-30. Found in passing, out of scope here: which panel has focus
-  (and so receives 1-5) is not apparent - tracked as `panel-focus-tab-highlight`.
+  (and so receives 1-5) is not apparent - the per-tab focus highlight is already tracked in
+  `per-tab-close-button` (awaiting its Option A/B/C decision).
