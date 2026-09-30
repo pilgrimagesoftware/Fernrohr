@@ -58,9 +58,14 @@ context with no panels still belongs to the window.
 
 `WindowLayout` gains `contexts: Vec<String>` with a serde default. When it's missing (older files),
 it's derived from the distinct `cluster_context`s of the window's saved panels, in first-seen order.
-Restore takes a hold on each context before panels are rebuilt. Per-context dock layouts keep being
-saved and used **only** for single-context windows. A multi-context window's arrangement is
-already fully described by its own saved panels.
+Restore takes a hold on each context before panels are rebuilt.
+
+The save side was missing: `layout_from_bounds` only ever wrote geometry, so relaunch always showed
+the picker and a window's saved panels were always empty. Saving now records the live window's
+`contexts`, so a relaunch reconnects them directly. The dock arrangement stays in `dock_layouts.json`:
+a single-context window keeps its bare context-name key, and a multi-context window uses its
+contexts sorted and joined with U+001F, so the key doesn't depend on order. (An earlier draft said a
+multi-context arrangement lived in the window's saved panels; it can't, because panels aren't saved.)
 
 ### 4. Context bar placement and module
 
@@ -69,7 +74,9 @@ branch becomes a column: context bar, body row (`flex_1`), status bar. A chip cl
 which drives the Resource panel's cluster dropdown, and the dropdown writes `active` back, so the
 two stay in sync. The chip menu holds Disconnect. The "+" control opens a popover reusing the
 picker's context list filtered by `contexts`. It's a thin wrapper around the picker view, not a
-second implementation, so tunnel labels and connect progress come for free.
+second implementation, so tunnel labels and connect progress come for free. That includes a failed
+connect: the popover keeps showing the picker's own failure, and no chip is added until the context
+connects.
 
 ### 5. Disconnect confirmation
 

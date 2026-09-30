@@ -41,7 +41,7 @@ it the Resource panel's selected cluster.
 #### Scenario: Add fails
 
 - **WHEN** the chosen context cannot connect
-- **THEN** the chip shows the failure, the status bar shows it failed, and no panel is opened for it
+- **THEN** the add popover shows the connection failure, no chip is added for that context, and no panel is opened for it
 
 ### Requirement: Disconnect a context from a window
 
