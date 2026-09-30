@@ -12,16 +12,38 @@ layer what it needs to partition without re-deriving section membership from the
 
 ## Which fields go where
 
-- **Overview**: Created, Name, Namespace, Labels, Annotations, Controlled By, Managed Fields,
-  Status, Node, Host IPs, Pod IPs, Service Account, QoS Class, Termination Grace Period.
-- **Containers**: Containers, Init Containers, Volumes (volumes belong next to what mounts them,
-  not in Overview).
-- **Conditions**: Conditions, Tolerations (scheduling-related, reads naturally next to
-  conditions rather than buried in Overview).
+The first cut used three tabs (Overview, Containers, Conditions). Using it showed that grouping
+was wrong in two ways: Volumes and Managed Fields were each large enough to bury what shared a
+tab with them, and the view had no Events at all - the first thing a reader reaches for when a
+pod is misbehaving. The revised grouping, left to right:
 
-This is a starting grouping, not a mandate - worth a second look once tabs exist and the panel can
-actually be used, since "does this field belong here" is easier to judge looking at the real
-layout than reasoning about it in the abstract.
+- **Overview**: Created, Name, Namespace, Labels, Annotations, Controlled By, Status, Node,
+  Host IPs, Pod IPs, Service Account, QoS Class, Termination Grace Period, Tolerations,
+  Conditions. Conditions and Tolerations are short once they are not competing with container
+  cards, and read naturally beside Status and Node.
+- **Containers**: Containers, Init Containers.
+- **Volumes**: Volumes, always shown (`PodFieldValue::List`) rather than behind a Show/Hide - the
+  tab exists to show them, so a disclosure would only be an extra click.
+- **Events**: the events naming this pod, newest first (see below). Not a `PodField`: events are
+  not part of the `Pod` object `pod_fields` projects.
+- **Managed Fields**: one block per manager (name and operation), each independently expandable
+  to its pretty-printed `fieldsV1` ownership tree. Rightmost, as the tab read least often - it is
+  about who wrote a field, not what the pod is doing.
+
+## Events
+
+Fetched alongside the pod in the same `fetch_pod` call rather than a second fetch lifecycle - the
+tab has nothing to show until the pod has loaded anyway, and a 404 on the pod skips the lookup.
+
+- The field selector pins `involvedObject.kind=Pod` and, when present, `involvedObject.uid` as
+  well as namespace and name: a Service can share a pod's name, and a StatefulSet pod is recreated
+  under the same name, so name alone would mix in another object's (or a predecessor's) events.
+- A failed events list does not fail the panel: the pod still loads, and the Events tab says why
+  it has nothing to show rather than claiming "No events." - `get` on pods and `list` on events
+  are separate RBAC grants.
+- Timestamps and counts read the `events.k8s.io/v1` fields (`series.lastObservedTime`,
+  `eventTime`, `series.count`) when the legacy `lastTimestamp`/`count` are absent, as they are on
+  scheduler-written events.
 
 ## Which tab component
 
