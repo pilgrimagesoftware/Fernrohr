@@ -24,8 +24,8 @@ focus indicator as a whole, not only the inset.
 ## What Changes
 
 - The focused panel's tab label (and the single-panel title bar, which draws the same element)
-  carries a 2px underline in the theme's accent blue while keyboard focus is anywhere inside the
-  panel. Unfocused tabs reserve the same 2px, drawn transparent, so labels never shift as focus
+  carries a 2px underline in the user's accent colour (macOS; the theme's blue elsewhere) while
+  keyboard focus is anywhere inside the panel. Unfocused tabs reserve the same 2px, drawn transparent, so labels never shift as focus
   moves.
 - Placeholder and Logs panels now track their focus handle on their content. Before this, a click
   could not focus them, so their tab could never be marked.
@@ -49,6 +49,8 @@ focus indicator as a whole, not only the inset.
 
 - `app/src/ui/panel/title.rs`: `title_element` takes the focus state and draws the underline;
   `focus_frame` removed.
+- `app/src/ui/accent.rs` (new): the system accent colour, with its fallback and refresh points.
+  `app/Cargo.toml`: `objc2-app-kit =0.3.2` as a direct macOS-only dependency.
 - `app/src/ui/placeholder.rs`, `app/src/util/logs.rs`: track their focus handle.
 - `app/src/k8s/resource/pods.rs`, `app/src/k8s/resource/pod_detail.rs`: pass focus to
   `title_element`, drop `focus_frame`.

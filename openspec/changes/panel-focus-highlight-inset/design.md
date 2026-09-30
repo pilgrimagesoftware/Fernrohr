@@ -19,12 +19,19 @@ Same reasoning as the removed border: a panel whose content takes focus itself (
 text input) moves the window's focus to that child. An indicator lit only while the panel's own
 handle is focused would go dark the moment the panel was actually used.
 
-## Colour: `theme.blue`, not `theme.primary`
+## Colour: the user's accent colour
 
-The removed border used `primary`. In both default themes `primary` equals the selected tab's
-foreground (`neutral-900` / `neutral-50`), so a `primary` mark on a selected tab would be
-invisible. `blue` (`blue-600` light / `blue-400` dark) is defined in every theme and stands out
-against both tab bars.
+On macOS the underline uses the user's accent colour from System Settings
+(`NSColor.controlAccentColor`, converted to sRGB through `objc2-app-kit`'s safe bindings; the crate
+was already in the build through gpui's macOS backend). Elsewhere, or if AppKit refuses the
+conversion, it falls back to the theme's `blue` (`blue-600` light / `blue-400` dark). Not `primary`:
+the removed border used it, but in both default themes `primary` equals the selected tab's
+foreground (`neutral-900` / `neutral-50`), so it would mark nothing.
+
+The colour is cached in a global (`ui::accent`), since titles render every frame, and re-read at
+startup, on every light/dark change, and when a main window becomes active. Activation is how a
+change made in System Settings shows up: the user has to switch away to make it, and the colour is
+re-read when they come back. Linux and Windows accent lookups are future work.
 
 ## No layout shift
 

@@ -23,16 +23,23 @@
   (`the_focused_panels_tab_is_the_one_underlined`; fails if a panel's title ignores focus).
 - [x] 2.5 Remove the no-op `focus_frame` and its four call sites.
 - [x] 2.6 Move `title.rs`'s colocated tests to `title/tests.rs` to stay under the 500-line limit.
+- [x] 2.7 Use the user's accent colour on macOS (`ui::accent`: `NSColor.controlAccentColor`, cached,
+  re-read on startup, appearance change and window activation), falling back to `theme.blue`.
+  Tests: `a_system_accent_wins_over_the_theme`, `without_a_system_accent_the_theme_blue_is_used`,
+  `macos_reads_an_opaque_system_accent`.
 
 ## 3. Full verification
 
 - [x] 3.1 `cargo fmt -- --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test`
-  all pass (371 passed, 2 ignored real-keychain tests).
+  all pass (374 passed, 2 ignored real-keychain tests).
 - [ ] 3.2 Manual check against a running build: with two or more panels open, click between them
-  and confirm the underline reads clearly in both light and dark mode, and that no tab label
-  shifts when focus moves. **Needs user confirmation.**
+  and confirm the underline reads clearly in both light and dark mode, that no tab label shifts
+  when focus moves, and that changing the accent colour in System Settings shows on switching
+  back. **Needs user confirmation.**
 
 ## 4. Follow-up (out of scope here)
+
+- [ ] 4.2 Linux and Windows system accent lookups (today both use the theme's blue).
 
 - [ ] 4.1 A keyboard route for moving focus between panels (a registered command, e.g. next/previous
   panel), and deciding whether opening a panel from the keyboard should focus it. Today neither
