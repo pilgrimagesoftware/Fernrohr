@@ -34,6 +34,8 @@
 
 - [x] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
   pass.
-- [ ] 4.2 Manual smoke test: open a pod's detail, confirm tabs group fields sensibly, switch tabs
+- [x] 4.2 Manual smoke test: open a pod's detail, confirm tabs group fields sensibly, switch tabs
   by click and by keyboard (1-5), confirm nothing from the flat list is missing, and that the
   Events tab shows the pod's recent events.
+  Verified by the user 2026-09-30. Found in passing, out of scope here: which panel has focus
+  (and so receives 1-5) is not apparent - tracked as `panel-focus-tab-highlight`.
