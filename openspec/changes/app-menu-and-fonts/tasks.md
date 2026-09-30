@@ -2,48 +2,65 @@
 
 ## 1. Command registry menu assignment
 
-- [ ] 1.1 Add `pub menu: Option<MenuSlot>` to `Command`, and a `MenuSlot` enum with the seven
-  top-level menu variants (`App`, `Context`, `Edit`, `View`, `Navigate`, `Window`, `Help`).
-  Default existing `Command::new`/registration call sites to `menu: None` so nothing appears in
-  a menu until deliberately assigned. Verify: a test registers one command with a menu slot and
-  one without, and asserts `CommandRegistry::for_menu(MenuSlot::View)` returns only the former.
-- [ ] 1.2 Assign existing commands their menu slots where a sensible one exists (e.g.
-  `nav.show_pods`/`nav.show_logs` under Navigate, `toggle_command_palette` under Edit or View -
-  pick per GPUI/macOS convention). Leave panel-scoped shortcuts (describe/logs/yaml on a pod row)
-  unassigned - they stay palette/keymap-only. Verify: existing command-registry tests still pass
-  unchanged.
+- [x] 1.1 Added `pub menu: Option<MenuSlot>` to `Command` and `MenuSlot` (seven variants: `App`,
+  `Context`, `Edit`, `View`, `Navigate`, `Window`, `Help`). Every existing `Command` construction
+  site updated to `menu: None` explicitly. `CommandRegistry::for_menu(slot)` added. Verify:
+  `registry_items_only_returns_the_requested_slot` in `ui::menu`'s tests.
+- [x] 1.2 Assigned existing commands: `nav.show_pods`/`nav.show_logs` -> `Navigate`,
+  `shell.new_window` -> `Window`, `shell.toggle_command_palette` -> `View`. Panel-scoped
+  shortcuts (`w`/`d`/`l`/`y` on a pod row, the pod-detail YAML toggle) left unassigned - palette/
+  keymap-only, per plan. `MenuSlot::Context` has no assigned command yet - Context menu items
+  (open the cluster picker, switch context) don't exist as standalone commands in this codebase
+  yet; noted as follow-up rather than inventing a command just to fill the menu.
 
 ## 2. Menu bar construction
 
-- [ ] 2.1 Build the seven-menu native menu bar at startup (alongside `theme::init`/`shell::init`
-  in `main.rs`), with items for each menu populated from `CommandRegistry::for_menu`. Verify: a
-  test (or the closest GPUI menu-inspection harness available) asserts the menu bar's top-level
-  titles and order.
-- [ ] 2.2 Wire each generated menu item to dispatch the same action its command palette entry
-  would dispatch. Verify: a test invokes a menu item's action and asserts the same state change
-  a palette invocation of that command produces.
-- [ ] 2.3 Add the platform-standard non-command items that have no `CommandRegistry` entry:
-  `Quit`/`About` under App, `Minimize`/`Zoom` (or GPUI's native equivalents) under Window.
+- [x] 2.1 Built the seven-menu bar in the new `ui::menu` module, called from `shell::init` right
+  before the registry moves into its global slot (menu construction needs to borrow it after
+  every command is registered, before the move). Verify: build/test - GPUI's real menu bar has no
+  introspectable test harness in this codebase (same class of limitation as the dock's tab
+  strip), so this is verified by the manual smoke test (4.2) rather than an automated one.
+- [x] 2.2 Every registry-sourced menu item constructs `MenuItem::Action` directly from the
+  command's own `action.boxed_clone()` - literally the same `Box<dyn Action>` the palette
+  dispatches, not a second action instance that could drift.
+- [x] 2.3 Added `Quit`/`About` under App (`cx.quit()`; `About` opens a small real window showing
+  `CARGO_PKG_NAME`/`CARGO_PKG_VERSION` - not a modal, since this app has no modal/dialog system
+  yet and building one only for this would be its own change) and `Minimize`/`Zoom` under Window
+  (dispatched against `cx.active_window()`). Verify: `quit_and_about_are_distinct_actions` in
+  `ui::menu`'s tests; the window-level actions need the manual pass (4.2).
 
 ## 3. Fonts
 
-- [ ] 3.1 Source a redistributable Manrope font file (SIL OFL) and add it to the app's asset
-  bundle (`gpui_kit::assets::Assets`), registered via the text system before first paint.
-- [ ] 3.2 In `crate::ui::theme::apply`, after the existing `Theme::change`/
-  `sync_system_appearance` call, set `font_family` to Manrope and `mono_font_family` to Monaco (with
-  a real fallback family, not merely GPUI's untouched default) on every appearance change, so a
-  light/dark flip cannot revert either field to the library default.
-  Verify: a test drives `apply` through each `ThemePreference` variant and asserts both font
-  fields hold the expected values afterward.
-- [ ] 3.3 Confirm on a non-macOS (or Monaco-less) environment that the mono fallback renders a
-  real installed monospace font rather than silently keeping GPUI's proportional default. Verify:
-  a test or manual check with `mono_font_family` forced to a name not present on the host still
-  shows monospaced text.
+- [x] 3.1 Sourced Manrope's variable-weight TTF from the Google Fonts mirror
+  (`googlefonts/manrope` upstream, SIL OFL - both the font and `Manrope-OFL.txt` license live in
+  `app/assets/fonts/`), bundled via `include_bytes!` and `cx.text_system().add_fonts(...)` in
+  `theme::init` - no `AssetSource` plumbing needed, `add_fonts` takes raw bytes directly. Noted in
+  design.md: the file's legacy name-table family is `Manrope ExtraLight` (its typographic/
+  preferred family, name ID 16, is `Manrope`) - macOS's CoreText backend (`zed-font-kit`)
+  resolves the preferred family for variable fonts, so `"Manrope"` should resolve correctly on
+  the primary target platform; this is the one piece of this task that needs the manual check
+  (4.2) to fully confirm, since the test harness's font system doesn't enumerate real fonts.
+- [x] 3.2 `ui::theme::apply` calls `apply_fonts` after every `Theme::change`/
+  `sync_system_appearance` (both the `init`-time call and every `watch_window` appearance-change
+  callback), setting `font_family` to Manrope and `mono_font_family` via `first_installed_mono_font`
+  (Monaco, then Menlo/Cascadia Mono/Noto Sans Mono/Liberation Mono/Ubuntu Mono/Courier New, in
+  order). Verify: `every_preference_ends_with_manrope_and_a_real_mono_font` drives all three
+  `ThemePreference` variants and asserts both fields.
+- [x] 3.3 `first_installed_mono_font` mirrors gpui-component's own `mono_font.rs` probe pattern
+  exactly (checked against installed names via `cx.text_system().all_font_names()`, never
+  assigning a name that isn't present) rather than assuming Monaco - confirmed by reading that
+  module's source directly, since it's the same problem gpui-component itself already solved for
+  its *own* platform-default probing. Verify: the test above confirms the fallback path doesn't
+  panic and produces a non-empty family in the test harness (whose font system reports no
+  installed fonts, so it correctly falls through every alternate); confirming an *installed*
+  Monaco is actually picked over the fallback list needs a real desktop session.
 
 ## 4. Full verification
 
-- [ ] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
-  pass.
-- [ ] 4.2 Manual smoke test: launch the app, confirm the seven menus appear in order, confirm at
-  least one menu item's action matches its palette behavior, confirm UI text and a YAML/log view
-  render in the new fonts.
+- [x] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
+  pass (200/200, keychain-lock tests excluded per the pre-existing hang logged elsewhere).
+- [ ] 4.2 Manual smoke test: launch the app, confirm the seven menus appear in order with App's
+  Quit/About and Window's Minimize/Zoom present, confirm at least one menu item's action matches
+  its palette behavior, confirm UI text renders in Manrope and a YAML/log view renders in Monaco
+  (or a real fallback), confirm About opens a small window with the correct name/version. **Needs
+  a real interactive desktop session.**

@@ -54,12 +54,26 @@ so a theme mode flip can't accidentally revert to the library's defaults.
   (Linux is already the documented lower-maturity target), but the fallback chain needs to be a
   real font, not a typo'd name that renders nothing. Task list includes verifying the Linux
   fallback renders monospace text at all, not matching Monaco's look.
-- Manrope is not a system font on macOS or Linux. It must ship as a bundled asset (a `.ttf`/`.otf`
-  under the existing `gpui_kit::assets::Assets` asset source) and be registered with
-  `cx.text_system().add_fonts(...)` before `font_family` is set to it, or GPUI falls back to its
-  own default and the setting is silently a no-op. This is the one piece of real plumbing in this
-  change: sourcing a redistributable Manrope font file (it's SIL Open Font License, so bundling is
-  fine) and adding it to the asset bundle.
+- Manrope is not a system font on macOS or Linux. It must ship as a bundled asset and be
+  registered with `cx.text_system().add_fonts(...)` before `font_family` is set to it, or GPUI
+  falls back to its own default and the setting is silently a no-op. Implemented as a plain
+  `include_bytes!` of the TTF plus one `add_fonts` call - no `AssetSource` plumbing needed,
+  `add_fonts` takes raw bytes directly, so the existing `gpui_kit::assets::Assets` source is
+  untouched.
+
+  **A real risk found while sourcing the file, not resolved by testing**: the only build of
+  Manrope in the Google Fonts mirror is a single variable-weight TTF whose *legacy* name-table
+  family (name ID 1) is `Manrope ExtraLight`, not `Manrope` - only its *typographic/preferred*
+  family (name ID 16) is `Manrope`. Font libraries that don't handle variable fonts specially
+  would see the family as `"Manrope ExtraLight"`, and setting `font_family = "Manrope"` against
+  such a library would fail to match and (per gpui-component's own `mono_font.rs` doc comment)
+  panic on first layout. Checked `zed-font-kit`'s macOS backend (`core_text.rs`) - it delegates
+  family-name resolution to CoreText itself rather than parsing the name table by hand, and
+  CoreText is documented to prefer the typographic family for variable fonts, so `"Manrope"`
+  should resolve correctly on macOS, the primary target. This could not be exercised by a test
+  (the test harness's font system reports no installed fonts at all) - flagged for the manual
+  smoke test to confirm, and worth a second look if Linux's freetype/fontconfig path behaves
+  differently.
 
 ## Non-goals restated from the proposal
 
