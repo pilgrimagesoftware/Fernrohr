@@ -1,8 +1,9 @@
 # Design
 
-Option A/B/C (the tab-close-button / per-tab-focus-color question) stays undecided - see
-`proposal.md`'s decision note. This slice only covers the `Cmd-W` keyboard route, which is
-independent of that question.
+Option A/B/C (giving each tab its own visible close button and per-tab focus color) stays
+undecided - see `proposal.md`'s decision note. This slice covers the `Cmd-W` keyboard route, which
+is Option C's own fix for the close-button report's real complaint (the control being awkward to
+reach), just not shaped as an inline per-tab button.
 
 ## Cmd-W routing
 

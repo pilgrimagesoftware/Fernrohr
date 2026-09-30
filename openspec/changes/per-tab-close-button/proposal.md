@@ -44,9 +44,10 @@ Per the decision above:
   disconnect confirmation. Closing a window with no active tunnels needs no confirmation - this
   does not add a confirmation to plain `Cmd-W`/⛔ close-button use where nothing would be lost.
 
-The tab-close-button / per-tab-focus-color half of this proposal (Options A/B/C above) stays
-deferred - this slice only wires up the keyboard route to `ClosePanel`, which is orthogonal to
-whether tabs ever get their own inline close button.
+This is Option C's actual answer to the close-button report, not a separate concern: the report
+was that the close control is awkward to reach (buried in the ellipsis menu), and `Cmd-W` is a
+direct fix for that awkwardness, just not the inline-per-tab-button form the report pictured.
+Giving tabs their own visible close button (Option A/B territory) stays deferred.
 
 - **Option A - upgrade `gpui-kit` 0.6.6 -> 0.7.0.** Unknown whether the newer `gpui-component` it
   pulls in changes this behavior; needs checking the 0.7.0 changelog/source before committing to
