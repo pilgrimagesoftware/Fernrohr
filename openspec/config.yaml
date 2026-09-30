@@ -60,6 +60,11 @@ context: |
   Conventions:
     - American English in code, comments, docs.
     - Keep functions under ~50 lines, files under ~500 lines.
+    - Keyboard navigation is first-class: every feature is fully usable from both
+      keyboard and mouse, with one selection both move (hover never does), actions
+      in the command registry, visible key hints, keyboard-operable dialogs. Specs,
+      tasks and tests cover the keyboard route, not just the mouse one
+      (.claude/rules/keyboard-first.md).
     - Tests: cargo test, assertions that verify behavior, no live-cluster dependency
       (mock the kube client / use recorded fixtures).
     - i18n from the start for user-facing strings.
