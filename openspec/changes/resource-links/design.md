@@ -60,27 +60,31 @@ once at the boundary, so render code never re-derives a kind from a formatted st
   Rejected. It's the "validate, don't parse" shape that loses group and namespace, and the
   owner comma-join already shows how such strings drift.
 
-`PodFieldValue::Link(String)` becomes `PodFieldValue::References(Vec<ObjectRef>)` (one entry for
-Node/Namespace/Service Account, several for owners). Volume rows and container cards carry
+`PodFieldValue::Link(String)` becomes `PodFieldValue::References { targets, qualified }` (one
+entry for Node/Namespace/Service Account, several for owners). `qualified` says whether each
+reads as `Kind/name`: a row whose label already names the kind reads better without it. Volume rows and container cards carry
 `Vec<ObjectRef>` beside their text instead of folding the name into it.
 
-### One predicate decides linkability: `nav::viewer_for`
+### One predicate decides linkability: `viewer_for`
 
-`fn viewer_for(&ObjectRef, kinds: Option<&[DiscoveredKind]>) -> Option<NavTarget>` in `ui/nav.rs`
-replaces `has_concrete_panel` as the single place that knows which kinds have panels:
+`fn viewer_for(&ObjectRef) -> Option<Destination>` in `ui/viewer.rs` is the single place that knows
+which kinds a reference can be followed to. A `Destination` is a `NavTarget` plus the namespace
+scope to open it with:
 
 - core `Pod` → `NavTarget::Pod`, which keeps its own richer panel;
 - core `Namespace` → the Pods list scoped to that namespace;
-- any other `(group, kind)` present in the context's discovery → `NavTarget::Object`, the generic
-  viewer, carrying the discovered kind (so the panel knows the version, plural and scope it needs
-  to build a `kube` `ApiResource`) plus namespace and name;
+- once section 5 lands, any other `(group, kind)` present in the context's discovery →
+  `NavTarget::Object`, the generic viewer, carrying the discovered kind (so the panel knows the
+  version, plural and scope it needs to build a `kube` `ApiResource`) plus namespace and name;
 - anything else, including every non-Pod kind while discovery hasn't loaded yet → `None`, plain
   text.
 
-`None` means plain text. A new *kind-specific* viewer is registered where the generic viewer picks
-its sections (`object_detail::sections_for`), not at any reference site, which is how the spec's
-"a kind gains a viewer" scenario holds.
+A new *kind-specific* viewer is registered where the generic viewer picks its sections
+(`object_detail::sections_for`), not at any reference site, which is how the spec's "a kind gains
+a viewer" scenario holds.
 
+- `has_concrete_panel` stays. It answers a different question (which *list* panel a kind gets),
+  and the Resource panel, which `resource-panel-grouping` is rewriting, calls it.
 - `Pod` is not folded into `NavTarget::Object`. It already has its own panel, dock-restore name
   and tests; folding it in would be churn with no user-visible change. `viewer_for` is the one
   place both are reached from.
@@ -101,11 +105,12 @@ rewriting that file, and moving it onto the registry is a small follow-up once t
 
 A shared `ui/link.rs` renders an `ObjectRef` as a link (if `viewer_for` says so) or plain text.
 Activating a link dispatches a data-carrying action
-`FollowReference { context_name, target: ObjectRef }` that `MainWindow` handles by calling
-`open_target_with_view` with that `context_name`, not the window's. That makes the dedup/focus
-behaviour in the spec the existing behaviour rather than new logic.
-`open_target_with_view` gains an explicit context parameter; the window's own context becomes the
-default at its current call sites. This matters now: `1-window-context-bar` introduces
+`FollowReference { context_name, target: ObjectRef }` that `MainWindow` handles
+(`util/shell/follow.rs`) by calling `open_target_in` with that `context_name`, not the window's.
+That makes the dedup/focus behaviour in the spec the existing behaviour rather than new logic.
+`open_target_with_view` becomes a wrapper over `open_target_in(target, view, context, namespaces)`,
+passing the window's own choice of context, as before, at its existing call sites. A context the
+window doesn't hold is refused, not substituted. This matters now: `1-window-context-bar` introduces
 multi-context windows, where the window's context and a panel's context can differ.
 
 - *Alternative considered:* set a global "selected reference" and dispatch a dataless action, as
@@ -127,6 +132,10 @@ Enter or click, and closes on Escape with focus back on the detail panel.
   change when `window.last_input_was_keyboard()` is true.
 - It's built once in `ui/link.rs` from the same `Vec<ObjectRef>` the view renders, so the picker
   and the visible links can't disagree.
+- The picker opens in the window root's dialog layer, which sits outside the workspace's element
+  tree, so following refocuses the detail view first and dispatches `FollowReference` from there.
+- Enter follows the picker's own selection when the input was the keyboard; a click follows the
+  clicked row. `Command` reports its hover-following highlight for both.
 - `FollowReference` stays an internal, data-carrying action and not a registry command: it has no
   meaning without a specific reference, the same reason `ShowPodDetail` isn't registered. The
   user-facing command is `links.go_to`.
