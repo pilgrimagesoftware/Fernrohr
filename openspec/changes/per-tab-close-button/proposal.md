@@ -19,10 +19,34 @@ per-panel override that reaches the tab strip; it is how the component is built.
 > so a panel can mark its own tab on 0.6.6. What stays out of reach is styling the `Tab` itself
 > (background, a close control), so the close-button half below is unchanged.
 
+> **Decision (2026-09-30):** Option C. Option A can't be evaluated right now - no web access in
+> this session to check the `gpui-component` 0.7.0+ changelog, and the local `~/.cargo` cache only
+> has 0.6.x - so it isn't being picked blind given the blast radius already called out below.
+> Option B's fork-maintenance cost isn't justified for a close button and a focus color. Revisit A
+> once its changelog can actually be checked.
+>
+> What ships instead: a real keyboard route for the close path that already exists
+> (`ClosePanel`, presently reachable only via the ellipsis menu), on `Cmd-W`. `Cmd-W` closes the
+> focused window's active tab (dispatches `ClosePanel`) when its dock has a panel open, and closes
+> the window itself when it doesn't - matching how every other single-window Mac app scopes
+> `Cmd-W`. Closing the window gets a confirmation dialog when it would tear down an active tunnel,
+> reusing the `context_lifecycle` disconnect-confirmation pattern, since that's silent data loss
+> otherwise (an open port-forward or SSH tunnel dying with no warning).
+
 ## What Changes
 
-Nothing yet - this proposal documents the investigation and lays out the real options, since the
-fix is not free the way the other feedback items were:
+Per the decision above:
+
+- `Cmd-W` closes the active tab (`ClosePanel`) when the focused window's dock has an open panel;
+  otherwise it closes the window.
+- Closing a window with any tunnel still active on one of its contexts shows a confirm dialog
+  first (naming which context(s)/tunnel(s) will disconnect), matching the existing per-context
+  disconnect confirmation. Closing a window with no active tunnels needs no confirmation - this
+  does not add a confirmation to plain `Cmd-W`/⛔ close-button use where nothing would be lost.
+
+The tab-close-button / per-tab-focus-color half of this proposal (Options A/B/C above) stays
+deferred - this slice only wires up the keyboard route to `ClosePanel`, which is orthogonal to
+whether tabs ever get their own inline close button.
 
 - **Option A - upgrade `gpui-kit` 0.6.6 -> 0.7.0.** Unknown whether the newer `gpui-component` it
   pulls in changes this behavior; needs checking the 0.7.0 changelog/source before committing to
@@ -50,4 +74,10 @@ chosen)
 
 ## Impact
 
-None yet. Decision needed on Option A vs B vs C before any implementation proposal is written.
+- `app/src/util/shell.rs`: `Cmd-W` handler (replaces/wraps today's always-`CloseWindow` binding),
+  active-tunnel check reused from `context_lifecycle`.
+- `app/src/ui/context_bar.rs` or `app/src/util/context_lifecycle.rs`: the confirmation body/dialog,
+  shared with (or copied from) `disconnect_confirmation_body`.
+- `app/src/keymap.rs` / command registry: `Cmd-W`'s registered command changes behavior, not
+  binding - still one registry entry, one key.
+- Options A/B/C above remain open; no further impact until one is picked.
