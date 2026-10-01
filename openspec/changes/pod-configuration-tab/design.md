@@ -30,8 +30,11 @@
 
 - **Large ConfigMap values collapse; Secret values never do** (amendment, 2026-10-01). Secrets keep
   a single state machine (hidden until revealed, then shown in full) so "collapsed" can never be
-  mistaken for "hidden". Collapse state is per value on the panel, never persisted. The object
-  viewer's ConfigMap section is out of scope here; it can adopt the same rendering later.
+  mistaken for "hidden". A value is large past 100 characters or one line; the collapsed preview is
+  its first 20 characters. The two numbers are separate, since the threshold decides when a value
+  is worth hiding and the preview only how much of it stays visible. Collapse state is per value on
+  the panel, never persisted. The object viewer's ConfigMap section is out of scope here; it can
+  adopt the same rendering later.
 
 ### What the tab lists, and in what order
 

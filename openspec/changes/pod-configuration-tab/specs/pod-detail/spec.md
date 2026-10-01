@@ -56,7 +56,7 @@ Volumes, 5 Events, 6 Managed Fields.
 - **THEN** the Configuration tab is shown
 
 ### Requirement: Large ConfigMap values start collapsed
-In the Configuration tab, a ConfigMap value longer than 20 characters or spanning more than one line
+In the Configuration tab, a ConfigMap value longer than 100 characters or spanning more than one line
 SHALL be shown collapsed by default, as its first 20 characters of its first line followed by an
 ellipsis, with a control placed directly beside the key's name, reachable by Tab and operable with
 Enter, Space or a click, that expands it to its full contents and collapses it again. Values SHALL start collapsed again when the tab is
@@ -69,7 +69,7 @@ value is shown in full.
   expand control beside the key's name, not at the far edge of the row
 
 #### Scenario: A short value has no control
-- **WHEN** a ConfigMap key holds a value of 20 characters or fewer on one line
+- **WHEN** a ConfigMap key holds a value of 100 characters or fewer on one line
 - **THEN** the full value is shown with no expand control
 
 #### Scenario: Expanding one value
