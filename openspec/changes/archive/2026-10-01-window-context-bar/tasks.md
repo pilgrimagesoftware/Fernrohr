@@ -50,10 +50,10 @@
 
 - [x] 5.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
   pass.
-- [x] 5.2 Manual check against QA: in one window add `greedygoat` and `carefulcrab`, arrange panels for
-  both, quit and relaunch (both restored), open a second window with `greedygoat`, disconnect it from
+- [x] 5.2 Manual check against QA: in one window add `cluster-a` and `cluster-b`, arrange panels for
+  both, quit and relaunch (both restored), open a second window with `cluster-a`, disconnect it from
   the first window (confirmation mentions the other window, and its panels stay live), then
-  disconnect `carefulcrab` (window returns to the picker, and `ps` shows its `ssh` forward gone).
+  disconnect `cluster-b` (window returns to the picker, and `ps` shows its `ssh` forward gone).
 
 ## 6. Fixes found during review (landed with this change)
 

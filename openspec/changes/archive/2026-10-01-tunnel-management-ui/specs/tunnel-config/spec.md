@@ -39,7 +39,7 @@ currently running, without offering any control there to change which contexts u
 
 #### Scenario: Usage count
 
-- **WHEN** contexts `greedygoat` and `carefulcrab` are bound to `qa-bastion`
+- **WHEN** contexts `cluster-a` and `cluster-b` are bound to `qa-bastion`
 - **THEN** the Tunnels panel shows `qa-bastion` in use by two contexts
 
 #### Scenario: Running state

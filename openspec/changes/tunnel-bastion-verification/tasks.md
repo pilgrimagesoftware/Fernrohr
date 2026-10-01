@@ -3,16 +3,16 @@
 - [ ] 1.1 End to end on macOS and Linux: define two tunnels, bind three contexts (two sharing one
       tunnel, one on the other, one unbound), connect all four, confirm two underlying `ssh` forwards
       and one direct connection, and confirm `tunnels.toml` holds no secrets - **macOS passed
-      2026-09-29; Linux still open.** Against the Kochava QA IAP bastions: `tunnels.toml` defined
-      `qa-bastion` (`ko-q-network-cin-uw1a-bastion-c64h` -> greedygoat `10.193.223.242:443`) and
-      `qa-bastion-ops` (`...-bastion-ops-8fj4` -> carefulcrab `10.193.15.242:443`); `bastion_host`
+      2026-09-29; Linux still open.** Against the QA IAP bastions: `tunnels.toml` defined
+      `qa-bastion` (`qa-bastion-host` -> cluster-a `10.0.0.10:443`) and
+      `qa-bastion-ops` (`qa-bastion-ops-host` -> cluster-b `10.0.0.20:443`); `bastion_host`
       is a `~/.ssh/config` alias whose `ProxyCommand` is `gcloud compute start-iap-tunnel ... 22
-      --listen-on-stdin`, so the app's own `ssh -N -L` rides IAP with no app change. `greedygoat`
-      and its `gke_..._greedygoat` alias both bind `qa-bastion`; `carefulcrab` binds
-      `qa-bastion-ops`; `ire-1` (public endpoint) is unbound. All four connected; `ps` showed
-      exactly two `ssh -N -L` children (one per tunnel id, the two greedygoat contexts sharing one
+      --listen-on-stdin`, so the app's own `ssh -N -L` rides IAP with no app change. `cluster-a`
+      and its `gke_..._cluster-a` alias both bind `qa-bastion`; `cluster-b` binds
+      `qa-bastion-ops`; `cluster-c` (public endpoint) is unbound. All four connected; `ps` showed
+      exactly two `ssh -N -L` children (one per tunnel id, the two cluster-a contexts sharing one
       via `ForwardRegistry`), `lsof` showed tunneled contexts talking only to their loopback
-      forwards and `ire-1` directly to `35.227.164.133:443`, and `tunnels.toml` contains no key
+      forwards and `cluster-c` directly to `203.0.113.10:443`, and `tunnels.toml` contains no key
       matching the `no_secret_fields` pattern
 - [x] 1.2 Flap test: kill one bastion's `ssh` forward mid-session, confirm the two dependent
       connections pause and their panels stay open, restore the bastion, confirm both resume and
@@ -20,8 +20,8 @@
       killing each respawn; the supervisor's retries landed 1s/2s/4s apart (backoff as designed),
       the first ~4s after the kill (the 10s health-check tick), and the forward came back ~8s
       after release on the **same** local port, so the rewritten `cluster_url` stayed valid. Both
-      greedygoat panels stayed open showing "paused, reconnecting", then cleared and their Pods tables
-      refilled after the reconnect with no panel reopened; `carefulcrab` and `ire-1` were untouched
+      cluster-a panels stayed open showing "paused, reconnecting", then cleared and their Pods tables
+      refilled after the reconnect with no panel reopened; `cluster-b` and `cluster-c` were untouched
 - [ ] 1.3 Credential test against a cluster using an exec plugin (or a faithful stand-in): force a
       token expiry, confirm re-auth resumes watches with no panel loss
 - [x] 1.4 Confirm TLS: connect a bastioned context and assert the connection validates against the

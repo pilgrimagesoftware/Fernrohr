@@ -86,8 +86,8 @@ servers each get their own.
 
 #### Scenario: Target from the kubeconfig server
 
-- **WHEN** a context whose kubeconfig server is `https://10.193.223.242` connects through `qa-bastion`
-- **THEN** the tunnel forwards to `10.193.223.242:443` through the bastion
+- **WHEN** a context whose kubeconfig server is `https://10.0.0.10` connects through `qa-bastion`
+- **THEN** the tunnel forwards to `10.0.0.10:443` through the bastion
 
 #### Scenario: One bastion, two clusters
 
