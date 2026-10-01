@@ -22,9 +22,9 @@ unchanged, and no kind SHALL appear in more than one subgroup.
 
 ### Requirement: Subgroup collapse and expand
 
-Each subgroup SHALL have a header that collapses and expands its kinds. Subgroup collapse state
-SHALL be held per window alongside section collapse state and SHALL NOT be written to the user's
-preference file.
+Each subgroup SHALL have a header that collapses and expands its kinds. Every subgroup SHALL start
+collapsed. Subgroup collapse state SHALL be held per window alongside section collapse state and
+SHALL NOT be written to the user's preference file.
 
 #### Scenario: Collapsing a subgroup hides its kinds
 
@@ -32,10 +32,15 @@ preference file.
 - **THEN** that subgroup's kinds are hidden and only its header remains visible
 - **AND** other subgroups and sections are unaffected
 
-#### Scenario: A new window starts expanded
+#### Scenario: A new window starts collapsed
 
 - **WHEN** a new window opens
-- **THEN** every subgroup is expanded
+- **THEN** every subgroup is collapsed, showing only its header
+
+#### Scenario: A newly discovered group starts collapsed
+
+- **WHEN** discovery reports a CRD in an API group not shown before
+- **THEN** that group's subgroup appears collapsed
 
 ### Requirement: Filtering overrides collapsed subgroups
 
@@ -70,3 +75,20 @@ focused item.
 - **WHEN** the user invokes "toggle group" while a kind within a subgroup has focus
 - **THEN** that subgroup collapses or expands
 - **AND** if it collapses, focus moves to its header
+
+### Requirement: Collapse and expand all subgroups
+
+The Resource panel SHALL provide "collapse all" and "expand all" commands, each bound to a key,
+that set every Custom Resources subgroup's collapsed state at once. They SHALL NOT fire while the
+filter has focus, and SHALL NOT change the top-level category sections.
+
+#### Scenario: Expand all
+
+- **WHEN** some subgroups are collapsed and the user invokes "expand all"
+- **THEN** every subgroup is expanded
+
+#### Scenario: Collapse all moves focus to a header
+
+- **WHEN** a kind inside a subgroup has focus and the user invokes "collapse all"
+- **THEN** every subgroup is collapsed
+- **AND** focus moves to that kind's subgroup header

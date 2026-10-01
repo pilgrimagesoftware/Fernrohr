@@ -33,6 +33,19 @@
 
 ## 5. Manual verification
 
-- [ ] 5.1 Open the Resource panel against a cluster (or fixture) with multiple CRD groups and
+- [x] 5.1 Open the Resource panel against a cluster (or fixture) with multiple CRD groups and
       confirm visually that subgrouping, collapse/expand, filtering, and keyboard navigation
-      behave as specified; record the result here
+      behave as specified; record the result here - passed 2026-10-01 on macOS against a
+      cluster with several CRD groups: subgroups ordered alphabetically under Custom Resources,
+      click/Space collapse, filter forces matches open and restores on clear, arrow keys step
+      through headers
+
+## 6. Collapsed by default, collapse/expand all
+
+- [ ] 6.1 Start every Custom Resources subgroup collapsed in a new window (including groups that
+      appear later via discovery), keeping state per window, and verify with a unit test that a
+      fresh panel reports every subgroup collapsed and that expanding one leaves the rest collapsed
+- [ ] 6.2 Add "Collapse All Resource Groups" and "Expand All Resource Groups" commands through the
+      existing command/keybinding system, scoped like the toggle (not while typing in the filter),
+      shown in the hint row, and verify with tests that each sets every subgroup's state and that a
+      collapse-all moves a focused kind's cursor to its subgroup header

@@ -27,6 +27,9 @@ outside the built-in categories.
   existing `HashSet<Category>`.** Alternative considered: per-cluster-connection session state, as
   first proposed - rejected for consistency with section collapse, which the `resource-browser`
   spec already fixes as per-window and not persisted.
+- **Subgroups default to collapsed, so the stored set tracks *expanded* subgroups** (starting
+  empty) rather than collapsed ones; groups discovered later are collapsed with no extra work.
+  Collapse/expand all clears or fills that set.
 - **Filtering computes visibility per-kind first, then derives subgroup visibility and forced
   expansion from the matched set**, without mutating the stored collapsed set, so clearing the
   filter restores prior state for free.
