@@ -47,14 +47,14 @@ next key isn't lost. The reveal state (`secret_value::Reveal`) and the key row
 
 Added 2026-10-01 at the user's request after 4.2: long values made the cards hard to scan.
 
-- [ ] 5.1 Treat a ConfigMap value as large when it is longer than 20 characters or spans more than
+- [x] 5.1 Treat a ConfigMap value as large when it is longer than 20 characters or spans more than
   one line, and render it collapsed by default as its first 20 characters of the first line plus
   an ellipsis, with an expand/collapse control (tab stop; Enter/Space toggle; click). Secret values
   are never collapsed: they stay hidden until revealed and show in full when revealed. Verify:
   render tests that a long and a multi-line ConfigMap value show only the preview, that a short
   value has no control, and `simulate_keystrokes` tests that Tab + Space expands one value and
   leaves the others collapsed.
-- [ ] 5.2 Reset ConfigMap values to collapsed when the tab is shown again or the panel closes, and
+- [x] 5.2 Reset ConfigMap values to collapsed when the tab is shown again or the panel closes, and
   keep Secret keys free of any collapse control. Verify: a tab-switch test, and tests that a Secret
   key has no collapse control whether hidden or revealed and that a revealed long Secret value is
   shown in full.
