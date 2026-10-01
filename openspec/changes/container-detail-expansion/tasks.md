@@ -11,14 +11,14 @@
 
 ## 2. Expand/collapse UI
 
-- [ ] 2.1 Each container card gets an expand/collapse control, using the same label-keyed
+- [x] 2.1 Each container card gets an expand/collapse control, using the same label-keyed
   `open_sections` state the Managed Fields/Tolerations/Volumes disclosures already use (keyed by
   container name, not field label, to stay distinct from those). Verify: a test expands one
   container and asserts only that container's extended fields render.
 
 ## 3. Full verification
 
-- [ ] 3.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
+- [x] 3.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
   pass.
 - [ ] 3.2 Manual smoke test: expand a container with env vars, volume mounts, and a probe;
   confirm a Secret-sourced env var shows its reference, not its value.
