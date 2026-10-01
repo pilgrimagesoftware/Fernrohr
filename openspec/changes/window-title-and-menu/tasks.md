@@ -38,17 +38,17 @@ name. `cargo test` and `cargo clippy -- -D warnings` are the gates.
 
 ## 4. Tests
 
-- [ ] 4.1 In `util/shell/contexts/tests.rs`, extend the existing `TestAppContext` cases to assert
+- [x] 4.1 In `util/shell/contexts/tests.rs`, extend the existing `TestAppContext` cases to assert
       `window.window_title()` after each transition: entering a workspace names the context; adding
       a second context switches to the count; disconnecting one back to a single names the survivor;
       disconnecting the last returns the app name. Verify with `cargo test contexts`.
-- [ ] 4.2 Add a case covering a window restored from a multi-context layout, asserting it is titled
+- [x] 4.2 Add a case covering a window restored from a multi-context layout, asserting it is titled
       with the count from its first frame (the `app-shell` spec's "Restored windows come back
       titled"). Verify with the same command.
-- [ ] 4.3 Run the full gate: `cargo fmt && cargo clippy -- -D warnings && cargo test`.
+- [x] 4.3 Run the full gate: `cargo fmt && cargo clippy -- -D warnings && cargo test`.
 
 ## 5. Proposal bookkeeping
 
-- [ ] 5.1 Tick off the completed tasks in this repo's
+- [x] 5.1 Tick off the completed tasks in this repo's
       `openspec/changes/window-title-and-menu/tasks.md` as each section lands, per the meta repo's
       two-repo workflow.
