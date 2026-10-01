@@ -42,10 +42,10 @@
 
 ## 6. Collapsed by default, collapse/expand all
 
-- [ ] 6.1 Start every Custom Resources subgroup collapsed in a new window (including groups that
+- [x] 6.1 Start every Custom Resources subgroup collapsed in a new window (including groups that
       appear later via discovery), keeping state per window, and verify with a unit test that a
       fresh panel reports every subgroup collapsed and that expanding one leaves the rest collapsed
-- [ ] 6.2 Add "Collapse All Resource Groups" and "Expand All Resource Groups" commands through the
+- [x] 6.2 Add "Collapse All Resource Groups" and "Expand All Resource Groups" commands through the
       existing command/keybinding system, scoped like the toggle (not while typing in the filter),
       shown in the hint row, and verify with tests that each sets every subgroup's state and that a
       collapse-all moves a focused kind's cursor to its subgroup header
