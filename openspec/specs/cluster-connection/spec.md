@@ -119,15 +119,15 @@ the context, and SHALL be shut down when the last such window disconnects the co
 
 #### Scenario: Shared by two windows
 
-- **WHEN** two windows both use `greedygoat`
+- **WHEN** two windows both use `cluster-a`
 - **THEN** one connection, one set of watches, and at most one tunnel forward serve both
 
 #### Scenario: One window lets go
 
-- **WHEN** one of those windows disconnects `greedygoat`
-- **THEN** the other window's `greedygoat` panels keep receiving live updates without reconnecting
+- **WHEN** one of those windows disconnects `cluster-a`
+- **THEN** the other window's `cluster-a` panels keep receiving live updates without reconnecting
 
 #### Scenario: Last window lets go
 
-- **WHEN** the last window using `greedygoat` disconnects it or closes
-- **THEN** `greedygoat`'s connection and watches stop, and its tunnel forward is released
+- **WHEN** the last window using `cluster-a` disconnects it or closes
+- **THEN** `cluster-a`'s connection and watches stop, and its tunnel forward is released
