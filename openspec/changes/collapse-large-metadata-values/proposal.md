@@ -10,7 +10,7 @@ full text is rarely what the user needs at a glance, and the YAML view already h
 
 ## What Changes
 
-- A label or annotation chip whose value is longer than 20 characters or spans more than one line
+- A label or annotation chip whose value is longer than 100 characters or spans more than one line
   shows `key=` followed by the first 20 characters of the value's first line and an ellipsis.
 - Hovering a shortened chip shows the full value in a tooltip. The YAML view is unchanged and still
   shows every value in full. Chips are not expandable in place.

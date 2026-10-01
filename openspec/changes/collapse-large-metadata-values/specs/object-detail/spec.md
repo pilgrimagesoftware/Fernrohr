@@ -4,7 +4,7 @@
 
 ### Requirement: Large label and annotation values are shortened in the object viewer
 The object panel's structured view SHALL shorten label and annotation chips exactly as the pod
-detail panel does: a value longer than 20 characters or spanning more than one line shows its first
+detail panel does: a value longer than 100 characters or spanning more than one line shows its first
 20 characters of the first line and an ellipsis, with the full value in a hover tooltip. A value the
 panel redacts, such as a Secret's last-applied-configuration annotation, SHALL show only its
 redacted placeholder in both the chip and the tooltip.
