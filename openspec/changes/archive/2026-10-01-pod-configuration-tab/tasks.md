@@ -65,6 +65,7 @@ Added 2026-10-01 at the user's request after 4.2: long values made the cards har
   check: 20 put a control on values that didn't need one), keeping the 20-character preview, with
   the threshold and preview length as separate constants. Verify: a 100-character value has no
   control, a 101-character value and a short two-line value do.
-- [ ] 5.3 Manual check: open a pod with a long ConfigMap value and a long Secret value; confirm the
+- [x] 5.3 Manual check: open a pod with a long ConfigMap value and a long Secret value; confirm the
   ConfigMap value starts collapsed showing a short preview and expands and collapses by mouse and
-  keyboard, and the Secret value starts hidden and shows in full when revealed.
+  keyboard, and the Secret value starts hidden and shows in full when revealed. - passed 2026-10-01 on
+  macOS after 5.4 and 5.5: the expand control beside the key, the 100-character threshold.
