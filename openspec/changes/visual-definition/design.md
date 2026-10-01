@@ -31,6 +31,13 @@ else stays gpui-component's. Why not a full JSON theme: a theme file pins every 
 the ones the library tunes between versions, for the sake of the handful that matter here. If the
 overrides grow past a dozen, revisit.
 
+*As built:* each override is set on both the theme's colours and its resolved `tokens`, because
+gpui-component's widgets read `tokens.*` and `Theme::change` builds those from the colours only
+once. Two more groups proved necessary. Primary's hover and active shades and the primary-button
+tokens derive from `primary` when the theme is applied, so they don't follow a later override.
+`muted_foreground` misses 4.5:1 on the card fill (4.39:1) and on a selected row (4.08:1) in
+light mode as shipped, so it's moved until it meets both.
+
 ### Surfaces are derived from the background, not picked
 
 `surface_raised` and `surface_card` are the background shifted by a small lightness step (lighter
