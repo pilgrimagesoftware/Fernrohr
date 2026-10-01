@@ -47,18 +47,17 @@ next key isn't lost. The reveal state (`secret_value::Reveal`) and the key row
 
 Added 2026-10-01 at the user's request after 4.2: long values made the cards hard to scan.
 
-- [ ] 5.1 Treat a value as large when it is longer than 20 characters or spans more than one line,
-  and render it collapsed by default as its first 20 characters of the first line plus an
-  ellipsis, with an expand/collapse control (tab stop; Enter/Space toggle; click). Applies to
-  ConfigMap values and revealed Secret values in the Configuration tab and to revealed values in
-  the object viewer's Secret section, through the shared key row. Verify: render tests that a long
-  and a multi-line value show only the preview, that a short value has no control, and
-  `simulate_keystrokes` tests that Tab + Space expands one value and leaves the others collapsed.
-- [ ] 5.2 Reset to collapsed when the tab is shown again or the panel closes, and when a revealed
-  Secret value is hidden (re-revealing starts collapsed); collapsing never hides a value, and an
-  expanded Secret value is still hidden by Hide Secret Values. Verify: tests for tab switch, hide
-  and re-reveal, and that a collapsed revealed value's preview never appears in the YAML view or
-  the dock layout dump.
-- [ ] 5.3 Manual check: open a pod with a long ConfigMap value and a long Secret value; confirm
-  both start collapsed showing a short preview, expand and collapse by mouse and keyboard, and the
-  Secret value still hides as before.
+- [ ] 5.1 Treat a ConfigMap value as large when it is longer than 20 characters or spans more than
+  one line, and render it collapsed by default as its first 20 characters of the first line plus
+  an ellipsis, with an expand/collapse control (tab stop; Enter/Space toggle; click). Secret values
+  are never collapsed: they stay hidden until revealed and show in full when revealed. Verify:
+  render tests that a long and a multi-line ConfigMap value show only the preview, that a short
+  value has no control, and `simulate_keystrokes` tests that Tab + Space expands one value and
+  leaves the others collapsed.
+- [ ] 5.2 Reset ConfigMap values to collapsed when the tab is shown again or the panel closes, and
+  keep Secret keys free of any collapse control. Verify: a tab-switch test, and tests that a Secret
+  key has no collapse control whether hidden or revealed and that a revealed long Secret value is
+  shown in full.
+- [ ] 5.3 Manual check: open a pod with a long ConfigMap value and a long Secret value; confirm the
+  ConfigMap value starts collapsed showing a short preview and expands and collapses by mouse and
+  keyboard, and the Secret value starts hidden and shows in full when revealed.

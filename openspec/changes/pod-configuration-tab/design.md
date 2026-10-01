@@ -28,11 +28,10 @@
 
 ## Decisions
 
-- **Large values collapse in the shared key row** (amendment, 2026-10-01). The 20-character,
-  first-line preview and the expand control live in `ui::detail::secret_key_row`'s value rendering,
-  so both panels get it. Collapse state is per value on the panel, alongside `secret_value::Reveal`,
-  never persisted, and independent of reveal: collapsing only shortens what's drawn. The object
-  viewer's ConfigMap section is out of scope here; it can adopt the same row later.
+- **Large ConfigMap values collapse; Secret values never do** (amendment, 2026-10-01). Secrets keep
+  a single state machine (hidden until revealed, then shown in full) so "collapsed" can never be
+  mistaken for "hidden". Collapse state is per value on the panel, never persisted. The object
+  viewer's ConfigMap section is out of scope here; it can adopt the same rendering later.
 
 ### What the tab lists, and in what order
 
