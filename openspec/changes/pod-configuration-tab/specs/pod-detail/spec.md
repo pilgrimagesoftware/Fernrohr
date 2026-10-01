@@ -54,3 +54,30 @@ Volumes, 5 Events, 6 Managed Fields.
 #### Scenario: The Configuration tab key
 - **WHEN** a pod detail panel has focus and the user presses `3`
 - **THEN** the Configuration tab is shown
+
+### Requirement: Large values start collapsed
+In the Configuration tab, a value longer than 20 characters or spanning more than one line SHALL be
+shown collapsed by default, as its first 20 characters of its first line followed by an ellipsis,
+with a control, reachable by Tab and operable with Enter, Space or a click, that expands it to its
+full contents and collapses it again. This applies to ConfigMap values and to revealed Secret
+values. Collapsing SHALL NOT hide a value: a collapsed Secret value is still revealed, and only the
+reveal control or Hide Secret Values hides it. Values SHALL start collapsed again when the tab is
+shown again, and a re-revealed Secret value SHALL start collapsed.
+
+#### Scenario: A long value starts collapsed
+- **WHEN** a ConfigMap key holds a multi-line value and the user opens the Configuration tab
+- **THEN** that key shows the first 20 characters of the value's first line and an ellipsis, with an
+  expand control
+
+#### Scenario: A short value has no control
+- **WHEN** a ConfigMap key holds a value of 20 characters or fewer on one line
+- **THEN** the full value is shown with no expand control
+
+#### Scenario: Expanding one value
+- **WHEN** the user tabs to one value's expand control and presses Space
+- **THEN** that value is shown in full and every other large value stays collapsed
+
+#### Scenario: Collapsing is not hiding
+- **WHEN** a revealed Secret value is collapsed
+- **THEN** its preview is shown, and the value is hidden only by its reveal control or Hide Secret
+  Values

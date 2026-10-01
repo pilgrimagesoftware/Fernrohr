@@ -10,7 +10,8 @@
 ### Requirement: Secret values are hidden until revealed
 The object panel SHALL NOT display a Secret value in its YAML view. In its structured view it SHALL
 show each key's name and the value's size, with a reveal control per key that shows that one value
-until it is hidden, the panel closes, or Hide Secret Values runs. A value SHALL NOT be written to
+until it is hidden, the panel closes, or Hide Secret Values runs. A revealed value longer than 20
+characters or spanning more than one line SHALL start collapsed, as in the pod Configuration tab. A value SHALL NOT be written to
 disk, logged, or placed in a window title, tab name, palette entry or notification.
 
 #### Scenario: Structured view of a Secret
@@ -20,6 +21,11 @@ disk, logged, or placed in a window title, tab name, palette entry or notificati
 #### Scenario: Revealing one value
 - **WHEN** the user activates the reveal control on one key
 - **THEN** that key's value is shown, and no other
+
+#### Scenario: A long revealed value starts collapsed
+- **WHEN** the user reveals a key whose value spans several lines
+- **THEN** the first 20 characters of its first line are shown with an ellipsis and an expand
+  control
 
 #### Scenario: YAML view of a Secret
 - **WHEN** a Secret's panel shows its YAML view

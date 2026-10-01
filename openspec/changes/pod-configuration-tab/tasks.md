@@ -39,6 +39,26 @@ next key isn't lost. The reveal state (`secret_value::Reveal`) and the key row
 ## 4. Verification
 
 - [x] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test`.
-- [ ] 4.2 Manual check against a cluster: open a pod's Configuration tab, reveal and hide a Secret
-  value by mouse and by keyboard, confirm the YAML stays redacted.
-  **Needs user confirmation against a running build.**
+- [x] 4.2 Manual check against a cluster: open a pod's Configuration tab, reveal and hide a Secret
+  value by mouse and by keyboard, confirm the YAML stays redacted - confirmed by the user
+  2026-10-01.
+
+## 5. Collapsed large values (amendment)
+
+Added 2026-10-01 at the user's request after 4.2: long values made the cards hard to scan.
+
+- [ ] 5.1 Treat a value as large when it is longer than 20 characters or spans more than one line,
+  and render it collapsed by default as its first 20 characters of the first line plus an
+  ellipsis, with an expand/collapse control (tab stop; Enter/Space toggle; click). Applies to
+  ConfigMap values and revealed Secret values in the Configuration tab and to revealed values in
+  the object viewer's Secret section, through the shared key row. Verify: render tests that a long
+  and a multi-line value show only the preview, that a short value has no control, and
+  `simulate_keystrokes` tests that Tab + Space expands one value and leaves the others collapsed.
+- [ ] 5.2 Reset to collapsed when the tab is shown again or the panel closes, and when a revealed
+  Secret value is hidden (re-revealing starts collapsed); collapsing never hides a value, and an
+  expanded Secret value is still hidden by Hide Secret Values. Verify: tests for tab switch, hide
+  and re-reveal, and that a collapsed revealed value's preview never appears in the YAML view or
+  the dock layout dump.
+- [ ] 5.3 Manual check: open a pod with a long ConfigMap value and a long Secret value; confirm
+  both start collapsed showing a short preview, expand and collapse by mouse and keyboard, and the
+  Secret value still hides as before.

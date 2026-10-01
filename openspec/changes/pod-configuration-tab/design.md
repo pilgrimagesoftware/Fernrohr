@@ -28,6 +28,12 @@
 
 ## Decisions
 
+- **Large values collapse in the shared key row** (amendment, 2026-10-01). The 20-character,
+  first-line preview and the expand control live in `ui::detail::secret_key_row`'s value rendering,
+  so both panels get it. Collapse state is per value on the panel, alongside `secret_value::Reveal`,
+  never persisted, and independent of reveal: collapsing only shortens what's drawn. The object
+  viewer's ConfigMap section is out of scope here; it can adopt the same row later.
+
 ### What the tab lists, and in what order
 
 One card per referenced ConfigMap or Secret, deduplicated by object across all the ways the pod uses
