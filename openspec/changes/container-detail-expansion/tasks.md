@@ -20,5 +20,5 @@
 
 - [x] 3.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
   pass.
-- [ ] 3.2 Manual smoke test: expand a container with env vars, volume mounts, and a probe;
+- [x] 3.2 Manual smoke test: expand a container with env vars, volume mounts, and a probe;
   confirm a Secret-sourced env var shows its reference, not its value.
