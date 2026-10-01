@@ -3,9 +3,9 @@
 ## 1. Shortened metadata chips
 
 - [ ] 1.1 Add a metadata-chip variant to `ui::detail` that takes `(key, value)` pairs and shortens
-  any value longer than 20 characters or spanning more than one line to its first 20 characters of
+  any value longer than 100 characters or spanning more than one line to its first 20 characters of
   the first line plus an ellipsis, counting characters rather than bytes. Verify: unit tests for a
-  multi-line value, a 300-character single-line value, a value of exactly 20 characters, and a
+  multi-line value, a 300-character single-line value, a value of exactly 100 characters, and a
   multi-byte value cut on a character boundary.
 - [ ] 1.2 Give a shortened chip a hover tooltip with the full value, wrapped and width-capped, and
   no tooltip on a short chip. Verify: a render test that a shortened chip has a tooltip carrying the

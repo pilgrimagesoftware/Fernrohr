@@ -11,7 +11,8 @@ drawn in full, so a large value sets the chip's size. GPUI elements already supp
 
 **Goals:**
 - Keep every label/annotation chip one line and bounded in width.
-- Keep the full value one hover away, and in the YAML view.
+- Keep the full value one hover away, and in the YAML view, which is also its keyboard route: the
+  panel's existing YAML toggle shows every value in full, so no chip needs to be a tab stop.
 
 **Non-Goals:**
 - No click-to-expand or copy action on chips.
@@ -23,8 +24,9 @@ drawn in full, so a large value sets the chip's size. GPUI elements already supp
 - **Shorten at the chip, from structured input.** Label/annotation callers pass `(key, value)` pairs
   to a metadata-chip variant rather than preformatted strings, so the split never guesses at an `=`
   inside the key or value. Capacity chips keep the existing string path.
-- **Same 20-character, first-line rule as the pod Configuration tab's ConfigMap values**, so large
-  values read the same everywhere. The preview counts characters, not bytes, so it never splits a
+- **Same rule as the pod Configuration tab's ConfigMap values** (large past 100 characters or one
+  line, previewed as the first 20 characters of the first line), so large values read the same
+  everywhere. The preview counts characters, not bytes, so it never splits a
   UTF-8 sequence.
 - **The tooltip is built from the same value the chip was given.** For a Secret, callers already
   pass the redacted placeholder, so the tooltip can't reveal more than the chip.
