@@ -5,14 +5,14 @@ name. `cargo test` and `cargo clippy -- -D warnings` are the gates.
 
 ## 1. The title function
 
-- [ ] 1.1 Add `util/shell/window_title.rs` with a pure `title_for(&WindowMode) -> String` returning
+- [x] 1.1 Add `util/shell/window_title.rs` with a pure `title_for(&WindowMode) -> String` returning
       the app name alone in `Picker` mode, `"<context> - <app>"` for a single context, and
       `"<n> clusters - <app>"` for several (design.md decision 4). Take the app name from the same
       source `ui/menu.rs`'s About view uses, so the two cannot disagree on casing.
-- [ ] 1.2 Unit-test `title_for` in `util/shell/window_title/tests.rs` for all three modes and for
+- [x] 1.2 Unit-test `title_for` in `util/shell/window_title/tests.rs` for all three modes and for
       the multi-context case naming the count rather than a context. Pin the exact expected strings,
       including the app name's casing (design.md Risks, last bullet). Verify with `cargo test window_title`.
-- [ ] 1.3 Declare the new module in `util/shell.rs` so it compiles in the shell's module tree, and
+- [x] 1.3 Declare the new module in `util/shell.rs` so it compiles in the shell's module tree, and
       verify `cargo build` is clean before moving on.
 
 ## 2. Titling at open
