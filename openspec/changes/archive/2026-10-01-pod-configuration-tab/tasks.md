@@ -39,6 +39,33 @@ next key isn't lost. The reveal state (`secret_value::Reveal`) and the key row
 ## 4. Verification
 
 - [x] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test`.
-- [ ] 4.2 Manual check against a cluster: open a pod's Configuration tab, reveal and hide a Secret
-  value by mouse and by keyboard, confirm the YAML stays redacted.
-  **Needs user confirmation against a running build.**
+- [x] 4.2 Manual check against a cluster: open a pod's Configuration tab, reveal and hide a Secret
+  value by mouse and by keyboard, confirm the YAML stays redacted - confirmed by the user
+  2026-10-01.
+
+## 5. Collapsed large values (amendment)
+
+Added 2026-10-01 at the user's request after 4.2: long values made the cards hard to scan.
+
+- [x] 5.1 Treat a ConfigMap value as large when it is longer than 100 characters or spans more than
+  one line, and render it collapsed by default as its first 20 characters of the first line plus
+  an ellipsis, with an expand/collapse control (tab stop; Enter/Space toggle; click). Secret values
+  are never collapsed: they stay hidden until revealed and show in full when revealed. Verify:
+  render tests that a long and a multi-line ConfigMap value show only the preview, that a short
+  value has no control, and `simulate_keystrokes` tests that Tab + Space expands one value and
+  leaves the others collapsed.
+- [x] 5.2 Reset ConfigMap values to collapsed when the tab is shown again or the panel closes, and
+  keep Secret keys free of any collapse control. Verify: a tab-switch test, and tests that a Secret
+  key has no collapse control whether hidden or revealed and that a revealed long Secret value is
+  shown in full.
+- [x] 5.4 Place the expand control directly beside the key's name rather than at the row's far
+  edge (from the 5.3 check: it was easy to miss on a wide panel). Verify: a layout test that the
+  control sits beside the key in a wide panel.
+- [x] 5.5 Raise the large-value threshold to over 100 characters or multi-line (from the 5.3
+  check: 20 put a control on values that didn't need one), keeping the 20-character preview, with
+  the threshold and preview length as separate constants. Verify: a 100-character value has no
+  control, a 101-character value and a short two-line value do.
+- [x] 5.3 Manual check: open a pod with a long ConfigMap value and a long Secret value; confirm the
+  ConfigMap value starts collapsed showing a short preview and expands and collapses by mouse and
+  keyboard, and the Secret value starts hidden and shows in full when revealed. - passed 2026-10-01 on
+  macOS after 5.4 and 5.5: the expand control beside the key, the 100-character threshold.

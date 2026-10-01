@@ -28,6 +28,14 @@
 
 ## Decisions
 
+- **Large ConfigMap values collapse; Secret values never do** (amendment, 2026-10-01). Secrets keep
+  a single state machine (hidden until revealed, then shown in full) so "collapsed" can never be
+  mistaken for "hidden". A value is large past 100 characters or one line; the collapsed preview is
+  its first 20 characters. The two numbers are separate, since the threshold decides when a value
+  is worth hiding and the preview only how much of it stays visible. Collapse state is per value on
+  the panel, never persisted. The object viewer's ConfigMap section is out of scope here; it can
+  adopt the same rendering later.
+
 ### What the tab lists, and in what order
 
 One card per referenced ConfigMap or Secret, deduplicated by object across all the ways the pod uses
@@ -75,9 +83,9 @@ saved layout. A `grep` for `expose(` lists every place a value is read.
 
 ### Keyboard
 
-- Reveal buttons are tab stops, with Enter or Space toggling one. They are the only in-body tab
-  stops in the panel, and the one exception to the panels' `tab_stop(false)` convention, because a
-  reveal has no other keyboard route that picks which value.
+- Reveal buttons and ConfigMap expand buttons are tab stops, with Enter or Space toggling one.
+  They are the only in-body tab stops in the panel, and the exceptions to the panels'
+  `tab_stop(false)` convention, because neither has another keyboard route that picks which value.
 - A registry command, `pod_detail.hide_secret_values` (Hide Secret Values, gated to the panel's
   key context, no menu slot, default `h`), hides every revealed value at once. The object panel
   registers the same command in its own context.
