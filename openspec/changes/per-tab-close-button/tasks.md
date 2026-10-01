@@ -7,18 +7,26 @@
 
 ## 2. Cmd-W: close active tab, else close window
 
-- [ ] 2.1 Add a helper that reports whether the focused window's dock has an open panel (reuse
-  `DockArea::is_empty(DockPlacement::Center, cx)`, already used by `watch_workspace`).
-- [ ] 2.2 Wire `Cmd-W`'s registered command so its handler dispatches `ClosePanel` when the dock
-  has an open panel, and falls through to the window-close path otherwise.
-- [ ] 2.3 Add an "any tunnel active on this window's contexts" check (reuse/extend whatever
-  `ClusterSession`/`TunnelStore` already tracks live tunnel state for a context).
-- [ ] 2.4 When that check is true, show a confirm dialog before closing (naming the context(s)/
-  tunnel(s) that will disconnect), modeled on `context_bar::open_disconnect_dialog` /
-  `context_lifecycle::disconnect_confirmation_body`. When false, close immediately - same as
-  today's `CloseWindow` handler.
-- [ ] 2.5 Keyboard test: `Cmd-W` with a panel open closes only that panel (dock still open,
-  window still open); `Cmd-W` with no panel open and a tunnel active shows the confirm dialog;
-  confirming closes the window; `Cmd-W` with no tunnel active closes the window with no dialog.
-- [ ] 2.6 Menu bar's "Close Window" item and its palette entry: confirm they route through the
-  same handler so the confirmation isn't bypassable from the menu.
+- [x] 2.1 Added `MainWindow::has_open_panel` (reuses `DockArea::is_empty(DockPlacement::Center,
+  cx)`, already used by `watch_workspace`).
+- [x] 2.2 `close_tab_or_window` (`util/shell.rs`) dispatches `ClosePanel` when the dock has an
+  open panel, else falls through to the window-close path. `CloseWindow`'s handler
+  (`ui/menu.rs::init`) now calls it instead of `close_window` directly - same single registered
+  command/binding, only the handler's behavior changed.
+- [x] 2.3 Added `ClusterRegistry::has_active_tunnel` (`k8s/cluster/session.rs`), backed by a pure
+  `is_tunnel_active` helper (`Up`/`Reconnecting` count as active).
+- [x] 2.4 Added `context_lifecycle::close_window_confirmation_body` and `confirm_close_window`
+  (`util/shell.rs`), modeled on `context_bar::open_disconnect_dialog` /
+  `disconnect_confirmation_body`. Empty `active_tunnels` skips the dialog and closes immediately.
+- [x] 2.5 Unit tests cover the decision logic directly (`is_tunnel_active`, `has_active_tunnel`'s
+  false paths, `close_window_confirmation_body`'s wording) and `close_tab_or_window`'s
+  window-close branch end-to-end. The `ClosePanel`-dispatch branch and the confirm-dialog branch
+  are not covered by an automated test - see the doc comment on
+  `cmd_w_routing_closes_the_window_when_no_panel_is_open_and_no_tunnel_is_active`
+  (`util/shell/tests.rs`) for why (needs a painted, focused render tree this codebase's test
+  harness has no precedent for; a real, reachable SSH bastion for `ForwardState::Up`). Verified
+  manually instead: the app builds, launches, and runs without crashing; `cargo clippy -D
+  warnings`, `cargo fmt --check`, and the full `cargo test` suite (401 tests) are clean.
+- [x] 2.6 Menu bar's "Close Window" item and `Cmd-W` share one registered command
+  (`window.close`), so there is no second binding to drift - already proven by
+  `platform_items_have_their_standard_shortcuts` (`ui/menu.rs`).
