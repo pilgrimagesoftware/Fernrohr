@@ -35,14 +35,16 @@ per-panel override that reaches the tab strip; it is how the component is built.
 
 ## What Changes
 
-Per the decision above:
+Per the decision above, shipped in `App` commit `9949805` (`feat(ui): switch tabs from the
+keyboard; Cmd-W closes the focused tab`, `app/src/util/shell/tabs.rs`):
 
-- `Cmd-W` closes the active tab (`ClosePanel`) when the focused window's dock has an open panel;
+- `Cmd-W` focuses the dock's active tab and closes it (`ClosePanel`) when one is on screen;
   otherwise it closes the window.
-- Closing a window with any tunnel still active on one of its contexts shows a confirm dialog
-  first (naming which context(s)/tunnel(s) will disconnect), matching the existing per-context
-  disconnect confirmation. Closing a window with no active tunnels needs no confirmation - this
-  does not add a confirmation to plain `Cmd-W`/⛔ close-button use where nothing would be lost.
+- Closing a window tears down a tunnel only when this window is the *last* holder of a context
+  bound to one (`tabs::losing_a_tunnel`) - a context another window still holds keeps its tunnel,
+  so closing needs no warning for it. Only when at least one context would actually lose its
+  tunnel does a confirm dialog appear first, naming those contexts; otherwise the window closes
+  with no dialog, same as before.
 
 This is Option C's actual answer to the close-button report, not a separate concern: the report
 was that the close control is awkward to reach (buried in the ellipsis menu), and `Cmd-W` is a
@@ -75,10 +77,7 @@ chosen)
 
 ## Impact
 
-- `app/src/util/shell.rs`: `Cmd-W` handler (replaces/wraps today's always-`CloseWindow` binding),
-  active-tunnel check reused from `context_lifecycle`.
-- `app/src/ui/context_bar.rs` or `app/src/util/context_lifecycle.rs`: the confirmation body/dialog,
-  shared with (or copied from) `disconnect_confirmation_body`.
-- `app/src/keymap.rs` / command registry: `Cmd-W`'s registered command changes behavior, not
-  binding - still one registry entry, one key.
+- `app/src/util/shell/tabs.rs` (new): `MainWindow::on_action_close_window`, `losing_a_tunnel`,
+  `open_close_window_dialog`/`close_window_confirmation_body`. Same registered `window.close`
+  command and `Cmd-W` binding as before - only the handler's behavior changed.
 - Options A/B/C above remain open; no further impact until one is picked.
