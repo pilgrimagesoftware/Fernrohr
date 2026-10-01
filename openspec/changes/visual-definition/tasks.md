@@ -30,5 +30,5 @@
 ## 5. Review
 
 - [x] 5.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test`.
-- [ ] 5.2 Before/after screenshots of the Pods list, a pod's detail and the Resource panel, in light
-  and dark mode, reviewed with the user. **Needs user sign-off.**
+- [x] 5.2 Before/after screenshots of the Pods list, a pod's detail and the Resource panel, in light
+  and dark mode, reviewed with the user. Signed off by Paul, 2026-09-30.
