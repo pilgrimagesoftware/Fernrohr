@@ -61,7 +61,7 @@ Added 2026-10-01 at the user's request after 4.2: long values made the cards har
 - [x] 5.4 Place the expand control directly beside the key's name rather than at the row's far
   edge (from the 5.3 check: it was easy to miss on a wide panel). Verify: a layout test that the
   control sits beside the key in a wide panel.
-- [ ] 5.5 Raise the large-value threshold to over 100 characters or multi-line (from the 5.3
+- [x] 5.5 Raise the large-value threshold to over 100 characters or multi-line (from the 5.3
   check: 20 put a control on values that didn't need one), keeping the 20-character preview, with
   the threshold and preview length as separate constants. Verify: a 100-character value has no
   control, a 101-character value and a short two-line value do.
