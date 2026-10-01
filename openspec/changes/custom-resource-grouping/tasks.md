@@ -2,10 +2,10 @@
 
 ## 1. Subgroup data model
 
-- [ ] 1.1 Bucket the Custom Resources section's kinds into `(api_group, Vec<DiscoveredKind>)`
+- [x] 1.1 Bucket the Custom Resources section's kinds into `(api_group, Vec<DiscoveredKind>)`
       subgroups (core first, others alphabetical, existing kind order within each), and verify
       with a unit test asserting subgroup order and membership for a mixed input
-- [ ] 1.2 Add a per-window `HashSet<String>` of collapsed subgroups next to the existing
+- [x] 1.2 Add a per-window `HashSet<String>` of collapsed subgroups next to the existing
       `HashSet<Category>`, starting empty, and verify with a unit test that a new window starts
       with every subgroup expanded
 
