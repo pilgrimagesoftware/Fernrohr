@@ -18,10 +18,10 @@
 
 ## 3. Filtering across subgroups
 
-- [ ] 3.1 Compute filter matches per-kind, then derive which subgroups have a match, and verify
+- [x] 3.1 Compute filter matches per-kind, then derive which subgroups have a match, and verify
       with a unit test that a filter matching kinds in two of three subgroups yields exactly those
       two
-- [ ] 3.2 Force a matching collapsed subgroup open while a filter is active and restore its prior
+- [x] 3.2 Force a matching collapsed subgroup open while a filter is active and restore its prior
       state when cleared, and verify with a test covering filter-applied then filter-cleared
 
 ## 4. Keyboard navigation
