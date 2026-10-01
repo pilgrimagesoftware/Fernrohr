@@ -17,12 +17,12 @@ name. `cargo test` and `cargo clippy -- -D warnings` are the gates.
 
 ## 2. Titling at open
 
-- [ ] 2.1 In `util/shell/window.rs`, replace `open_window`'s `..Default::default()` with
+- [x] 2.1 In `util/shell/window.rs`, replace `open_window`'s `..Default::default()` with
       `titlebar: Some(TitlebarOptions { title: Some(title_for(&mode).into()), appears_transparent:
       false, traffic_light_position: None })` (design.md decision 2), building the initial mode
       before the window opens so a restored multi-context window is titled correctly on its first
       frame rather than blank.
-- [ ] 2.2 Verify by inspection that no other `WindowOptions` in `util/shell/window.rs` still relies
+- [x] 2.2 Verify by inspection that no other `WindowOptions` in `util/shell/window.rs` still relies
       on `titlebar: None`, and that the workspace and picker paths both reach the same options.
 
 ## 3. Titling on change
