@@ -29,3 +29,7 @@ security context, command/args - none of which the summary shows or has anywhere
   separate `ContainerDetail` fetched/computed only on expansion, if the full field set is large
   enough to not want it computed unconditionally for every container - a design.md decision), and
   `PodFieldValue::Containers`' render gains an expand/collapse affordance per card.
+
+## Tracking
+
+- Issue: pilgrimagesoftware/Fernrohr#54
