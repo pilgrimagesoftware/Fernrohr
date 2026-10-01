@@ -2,39 +2,39 @@
 
 ## Why
 
-Resource discovery already sorts kinds by API group then kind name with core first, but the
-resource picker presents them as one flat list. As clusters accumulate CRDs (cert-manager,
-Istio, Argo, vendor operators), the flat list grows long and mixes unrelated APIs together,
-making it hard to find a kind by scanning. Grouping by API group turns an alphabetic scan into a
-recognizable landmark search.
+The Resource panel already groups discovered kinds into seven fixed category sections (Workloads
+… Access Control, Custom Resources), but Custom Resources is itself one flat list of every CRD the
+cluster serves. As clusters accumulate CRDs (cert-manager, Istio, Argo, vendor operators), that
+section grows long and mixes unrelated APIs, making a kind hard to find by scanning. Sub-grouping
+it by API group turns an alphabetic scan into a recognizable landmark search.
 
 ## What Changes
 
-- Present the resource kind picker as sections headed by API group (`core` first, then other
-  groups alphabetically), with kinds listed under their group in the existing sort order.
-- Collapse/expand a group's section, remembered per cluster connection for the session.
-- Keep the picker's existing fuzzy filter working across all groups at once; a matching filter
-  temporarily expands any collapsed groups containing a match and shows only groups with at
-  least one match.
-- Keyboard navigation (arrow keys, type-ahead) moves between kinds within and across groups in
-  the same order the groups are drawn, and a keybinding toggles the focused group's
-  collapsed state.
+- Within the Custom Resources section only, present kinds as subgroups headed by API group,
+  ordered alphabetically, with kinds in the existing sort order. Any core-group kind that falls
+  into Custom Resources (uncategorized) is shown first. The seven top-level categories are
+  unchanged.
+- Collapse/expand each subgroup, held per window alongside the existing section collapse state.
+- The panel's existing filter works across subgroups: while a filter is active only subgroups
+  with a match are shown, a collapsed subgroup with a match is shown expanded, and its prior
+  state returns when the filter clears.
+- Keyboard navigation includes subgroup headers in the existing focus order, and a keybinding
+  toggles the focused subgroup's collapsed state.
 
 ## Capabilities
 
 ### New Capabilities
 
-- `resource-group-navigation`: the resource kind picker's grouping of discovered kinds by API
-  group, including collapse/expand state and how filtering and keyboard navigation interact
-  with groups.
+- `resource-group-navigation`: API-group subgrouping within the Resource panel's Custom
+  Resources section, including subgroup collapse state and how filtering and keyboard navigation
+  interact with subgroups.
 
 ### Modified Capabilities
 
-(none)
+(none - `resource-browser`'s category sections and "a section SHALL NOT be inferred from the API
+group alone" requirement are preserved; subgroups live inside a section)
 
 ## Impact
 
-- `App/src/ui/picker.rs` (or wherever the kind/resource picker list is rendered) and its
-  `DiscoveredKind` consumption.
-- `App/src/cluster/discovery.rs`'s existing group-then-kind sort (reused, not changed).
-- Per-cluster-connection session state (new: collapsed-group set).
+- `App/src/ui/panel/resource/{category,section}.rs` and `resource.rs` (rendering, collapse state).
+- `App/src/k8s/cluster/discovery.rs`'s existing group-then-kind sort (reused, not changed).
