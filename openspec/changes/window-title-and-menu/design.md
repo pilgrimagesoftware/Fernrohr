@@ -24,8 +24,9 @@ See proposal.md for motivation. The mechanics this change rides on, all read out
 - **Every edit to a window's contexts already funnels through one method.**
   `MainWindow::sync_context_children` (`util/shell/contexts.rs`) is documented as the one place that
   pushes `contexts`/`active` to the Resource panel, the status bar and the context bar;
-  `enter_workspace`, `enter_picker`, `add_context` and `disconnect_context` all reach it (the last
-  two indirectly, through it). The title can hang off the same hook rather than off four call sites.
+  `add_context`, `disconnect_context` and `set_active_context` reach it; `enter_workspace` and
+  `enter_picker` do not. The title can hang off the same hook, with those two titling the window
+  themselves.
 
 ## Goals / Non-Goals
 
@@ -92,9 +93,12 @@ ellipsis, so the distinguishing part would be the part that gets cut. A count is
 
 ### 5. Re-titling hangs off `sync_context_children`
 
-`enter_workspace`, `add_context`, `disconnect_context` (with contexts remaining) and
-`set_active_context` all call it, so the title follows every one of them from a single hook. Two
-edits are still needed outside it:
+`add_context`, `disconnect_context` (with contexts remaining) and `set_active_context` all call
+it, so the title follows every one of them from a single hook. Two edits are still needed outside
+it:
+
+- `enter_workspace` sets `Workspace` mode without calling `sync_context_children`, so connecting
+  from the picker titles the window itself, once the mode is set.
 
 - `enter_picker` sets `Picker` mode directly and does not sync children (it has none), so it
   titles the window itself.
