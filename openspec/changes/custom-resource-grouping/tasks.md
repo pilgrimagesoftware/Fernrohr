@@ -11,9 +11,9 @@
 
 ## 2. Subgroup rendering
 
-- [ ] 2.1 Render subgroup headers inside Custom Resources, hiding a subgroup's kinds when
+- [x] 2.1 Render subgroup headers inside Custom Resources, hiding a subgroup's kinds when
       collapsed, and verify with a UI test that collapsing one subgroup leaves others visible
-- [ ] 2.2 Wire a click on a subgroup header to toggle it in the collapsed set, and verify with a
+- [x] 2.2 Wire a click on a subgroup header to toggle it in the collapsed set, and verify with a
       test that toggling updates both rendered state and the set
 
 ## 3. Filtering across subgroups
