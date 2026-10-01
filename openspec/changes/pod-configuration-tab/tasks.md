@@ -58,6 +58,9 @@ Added 2026-10-01 at the user's request after 4.2: long values made the cards har
   keep Secret keys free of any collapse control. Verify: a tab-switch test, and tests that a Secret
   key has no collapse control whether hidden or revealed and that a revealed long Secret value is
   shown in full.
+- [ ] 5.4 Place the expand control directly beside the key's name rather than at the row's far
+  edge (from the 5.3 check: it was easy to miss on a wide panel). Verify: a layout test that the
+  control sits beside the key in a wide panel.
 - [ ] 5.3 Manual check: open a pod with a long ConfigMap value and a long Secret value; confirm the
   ConfigMap value starts collapsed showing a short preview and expands and collapses by mouse and
   keyboard, and the Secret value starts hidden and shows in full when revealed.
