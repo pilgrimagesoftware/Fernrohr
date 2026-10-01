@@ -56,7 +56,7 @@ launch, reconnecting every context a window used.
 
 #### Scenario: Multi-context window restored
 
-- **WHEN** a window used `greedygoat` and `carefulcrab` with panels for both when the application quit
+- **WHEN** a window used `cluster-a` and `cluster-b` with panels for both when the application quit
 - **THEN** on relaunch that window reconnects both contexts, shows both chips, and restores both contexts' panels in their previous arrangement
 
 #### Scenario: Earlier single-context state loads
@@ -79,13 +79,13 @@ Items in a non-connected state SHALL be listed before connected ones.
 
 #### Scenario: One item per cluster in the window
 
-- **WHEN** a window uses `greedygoat` and `carefulcrab`
+- **WHEN** a window uses `cluster-a` and `cluster-b`
 - **THEN** its status bar shows one item for each, and no item for contexts only other windows use
 
 #### Scenario: Problem items first
 
-- **WHEN** `carefulcrab` is connected and `greedygoat` is paused
-- **THEN** the `greedygoat` item is listed before the `carefulcrab` item
+- **WHEN** `cluster-b` is connected and `cluster-a` is paused
+- **THEN** the `cluster-a` item is listed before the `cluster-b` item
 
 #### Scenario: Closing panels keeps the item
 
@@ -130,13 +130,13 @@ tunnel if any, and a health indicator matching that context's status bar severit
 
 #### Scenario: Chips for each context
 
-- **WHEN** a window uses `greedygoat` (through `qa-bastion`) and `ire-1` (direct)
-- **THEN** its context bar shows a `greedygoat` chip naming `qa-bastion` and an `ire-1` chip with no tunnel name
+- **WHEN** a window uses `cluster-a` (through `qa-bastion`) and `cluster-c` (direct)
+- **THEN** its context bar shows a `cluster-a` chip naming `qa-bastion` and an `cluster-c` chip with no tunnel name
 
 #### Scenario: Health mirrors the status bar
 
-- **WHEN** `greedygoat`'s tunnel drops and the status bar shows it reconnecting
-- **THEN** the `greedygoat` chip's health indicator shows the same warning severity
+- **WHEN** `cluster-a`'s tunnel drops and the status bar shows it reconnecting
+- **THEN** the `cluster-a` chip's health indicator shows the same warning severity
 
 ### Requirement: Add a context to a window
 
@@ -147,13 +147,13 @@ it the Resource panel's selected cluster.
 
 #### Scenario: Add a second context
 
-- **WHEN** a window using `greedygoat` adds `carefulcrab`
-- **THEN** a `carefulcrab` chip appears, a Pods panel for `carefulcrab` opens in the same dock, and the Resource panel lists `carefulcrab`'s kinds
+- **WHEN** a window using `cluster-a` adds `cluster-b`
+- **THEN** a `cluster-b` chip appears, a Pods panel for `cluster-b` opens in the same dock, and the Resource panel lists `cluster-b`'s kinds
 
 #### Scenario: Already-used contexts are not offered
 
-- **WHEN** the user opens the add control in a window using `greedygoat`
-- **THEN** `greedygoat` is not in the list
+- **WHEN** the user opens the add control in a window using `cluster-a`
+- **THEN** `cluster-a` is not in the list
 
 #### Scenario: Reuse another window's connection
 
@@ -175,7 +175,7 @@ the cluster picker.
 
 #### Scenario: Confirm and close panels
 
-- **WHEN** the user disconnects `carefulcrab`, which has three panels in this window, and confirms
+- **WHEN** the user disconnects `cluster-b`, which has three panels in this window, and confirms
 - **THEN** those three panels close, the chip is removed, and panels for other contexts are unchanged
 
 #### Scenario: Cancel
@@ -185,8 +185,8 @@ the cluster picker.
 
 #### Scenario: Context used elsewhere
 
-- **WHEN** the user disconnects `greedygoat` while another window also uses it
-- **THEN** the confirmation says `greedygoat` stays connected in one other window, and after confirming the other window keeps its live `greedygoat` panels
+- **WHEN** the user disconnects `cluster-a` while another window also uses it
+- **THEN** the confirmation says `cluster-a` stays connected in one other window, and after confirming the other window keeps its live `cluster-a` panels
 
 #### Scenario: Last context
 

@@ -61,6 +61,6 @@
   pass - 279 passed, 2 ignored. The real-keychain tests are now opt-in (`cargo test -- --ignored`; macOS CI runs them with `--include-ignored`); every other test uses an in-memory secret store under `cfg(test)`.
 - [x] 5.2 Manual check against the QA IAP bastions: starting from an empty `tunnels.toml`, create
   `qa-bastion` in the Tunnels window pointing at the `fernrohr-qa-bastion` SSH alias, Test it, then
-  set `greedygoat` and `carefulcrab` to use it from the picker (no `qa-bastion-ops` needed), connect
+  set `cluster-a` and `cluster-b` to use it from the picker (no `qa-bastion-ops` needed), connect
   both, and confirm two `ssh` forwards through one bastion, both clusters connected, and the Tunnels
   window showing `qa-bastion` in use by two contexts and running - Paul verified on 2026-09-29: one `qa-bastion` tunnel created from an empty `tunnels.toml`, Test reachable, both contexts bound from the picker, two `ssh` forwards (one per API server) through the one bastion, Tunnels window showing two contexts and Running.

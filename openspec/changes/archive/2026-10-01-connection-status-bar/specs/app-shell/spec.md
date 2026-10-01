@@ -9,13 +9,13 @@ Items in a non-connected state SHALL be listed before connected ones.
 
 #### Scenario: One item per cluster in the window
 
-- **WHEN** a window uses `greedygoat` and `carefulcrab`
+- **WHEN** a window uses `cluster-a` and `cluster-b`
 - **THEN** its status bar shows one item for each, and no item for contexts only other windows use
 
 #### Scenario: Problem items first
 
-- **WHEN** `carefulcrab` is connected and `greedygoat` is paused
-- **THEN** the `greedygoat` item is listed before the `carefulcrab` item
+- **WHEN** `cluster-b` is connected and `cluster-a` is paused
+- **THEN** the `cluster-a` item is listed before the `cluster-b` item
 
 #### Scenario: Closing panels keeps the item
 
