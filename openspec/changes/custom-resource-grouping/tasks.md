@@ -26,9 +26,9 @@
 
 ## 4. Keyboard navigation
 
-- [ ] 4.1 Add subgroup headers to the panel's flattened focus order, and verify with a test that
+- [x] 4.1 Add subgroup headers to the panel's flattened focus order, and verify with a test that
       down-arrow at a subgroup's last visible kind moves focus to the next subgroup's header
-- [ ] 4.2 Add a "toggle group" action through the existing command/keybinding system, moving focus
+- [x] 4.2 Add a "toggle group" action through the existing command/keybinding system, moving focus
       to the header on collapse, and verify with a test asserting both the collapse and focus move
 
 ## 5. Manual verification
