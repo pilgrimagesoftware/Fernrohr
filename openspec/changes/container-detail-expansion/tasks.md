@@ -2,7 +2,7 @@
 
 ## 1. Extended container data
 
-- [ ] 1.1 Extend `summarize_containers`'s output with the fields expansion needs: env (literal
+- [x] 1.1 Extend `summarize_containers`'s output with the fields expansion needs: env (literal
   values verbatim, `value_from` as a reference string), volume mounts, probes (one summarized
   line each), command/args, security context - computed unconditionally alongside the existing
   summary fields (design.md: the data is already in hand, no second fetch). Verify: a test with a
