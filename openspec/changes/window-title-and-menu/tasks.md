@@ -27,13 +27,13 @@ name. `cargo test` and `cargo clippy -- -D warnings` are the gates.
 
 ## 3. Titling on change
 
-- [ ] 3.1 Add a helper in `util/shell/window_title.rs` that pushes a window's current title through
+- [x] 3.1 Add a helper in `util/shell/window_title.rs` that pushes a window's current title through
       `window.window_handle().update(cx, |_, window, _| window.set_window_title(&title))`, taking
       the title from the window's own mode so no caller can pass a stale one.
-- [ ] 3.2 Call it from `MainWindow::sync_context_children`, inside the existing `cx.defer` and after
+- [x] 3.2 Call it from `MainWindow::sync_context_children`, inside the existing `cx.defer` and after
       the `Picker`/`contexts[active]` early returns (design.md decision 5), so `enter_workspace`,
       `add_context`, `disconnect_context` and `set_active_context` are all covered by one hook.
-- [ ] 3.3 Call it from `MainWindow::enter_picker`, which sets `Picker` mode without syncing children,
+- [x] 3.3 Call it from `MainWindow::enter_picker`, which sets `Picker` mode without syncing children,
       so a window that loses its last context drops back to the plain app-name title.
 
 ## 4. Tests
