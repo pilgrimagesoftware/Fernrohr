@@ -37,5 +37,5 @@
 
 ## 7. Verification
 
-- [ ] 7.1 Run cargo test to ensure no regressions. Verify all tests pass.
-- [ ] 7.2 Run linting/type checks as per project conventions. Verify the codebase remains clean.
+- [ ] 7.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` pass.
+- [ ] 7.2 Manual check: a pod with a waiting init container, a crashing container's color, folding a large YAML, copying a name and an image, expanding one managed-fields row.

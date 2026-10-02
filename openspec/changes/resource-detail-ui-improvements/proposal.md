@@ -20,7 +20,8 @@ None.
 
 ### Modified Capabilities
 
-- `resource-details`: Extends the resource detail pane UI to support copy actions (resource name, per-field values), improved YAML rendering (scrolling and folding), colored status indicators, and a collapsible managed fields view.
+- `pod-detail`: init container states, status colors, collapsed managed fields.
+- `object-detail`: YAML view scrolling and folding, and copy actions (both detail panels).
 
 ## Impact
 
