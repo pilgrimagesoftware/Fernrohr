@@ -22,6 +22,11 @@ expire.
 - **WHEN** the events browser is open and a deployment is scaled, producing new events
 - **THEN** those events appear at the top within a few seconds
 
+#### Scenario: Default sort is newest first
+- **WHEN** an events browser opens with no saved sort
+- **THEN** it is sorted by age ascending (newest first), with the age column's header showing that
+  sort, and the user can sort by any other column; a changed sort is saved with the panel
+
 #### Scenario: Both event APIs read
 - **WHEN** an event was recorded only through `events.k8s.io/v1` fields
 - **THEN** it shows its last seen time, reason and message like any other

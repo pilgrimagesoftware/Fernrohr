@@ -6,7 +6,7 @@
 
 ## 2. Panel
 
-- [ ] 2.1 Add the events browser panel: live table newest first, column set above, namespace scope, routing of the core Event kind to it, and an "Events" command. Verify with window-level tests for opening from the Resource panel and live updates.
+- [ ] 2.1 Add the events browser panel: live table sorted by age ascending (newest first) by default, re-sortable, with the sort saved, column set above, namespace scope, routing of the core Event kind to it, and an "Events" command. Verify with window-level tests for opening from the Resource panel and live updates.
 - [ ] 2.2 Involved object as a link opening its detail panel; a detail strip showing the selected event's full, selectable message. Verify with tests following a link and reading a long message.
 
 ## 3. Filters and search
