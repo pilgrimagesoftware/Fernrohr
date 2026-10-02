@@ -28,7 +28,7 @@
 
 - [ ] 5.1 Bind describe (`d`) and YAML (`y`) on every list panel, panel-scoped, as registered palette commands shown in the hint row, matching the Pods table's keys. Verify with a window-level test that `d` and `y` on a selected Services row open its detail (YAML view for `y`).
 - [ ] 5.2 Down/Up on a focused list with no selection selects the first/last visible row, for the object list and the Pods table. Verify with a window-level keystroke test for each.
-- [ ] 5.3 A custom resource list's tab and title bar show the plural kind only, with the API group in the tab tooltip. Verify with a test on a CRD kind's title and tooltip.
+- [x] 5.3 A custom resource list's tab and title bar show the plural kind only, with the API group in the tab tooltip. Verify with a test on a CRD kind's title and tooltip.
 
 ## 4. Integration verification
 
