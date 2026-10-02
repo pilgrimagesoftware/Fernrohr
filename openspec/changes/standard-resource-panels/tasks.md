@@ -11,10 +11,10 @@
 
 ## 2. Per-kind list columns (needs 1)
 
-- [ ] 2.1 Add `object_list/columns.rs` with the column-definition type and `Cell` variants (Text, Number, Ratio, Age) with numeric sorting, computing cells once per watch event. Verify with unit tests for sort order of Number and Ratio cells.
-- [ ] 2.2 Add Workloads columns: Deployment, ReplicaSet, StatefulSet, DaemonSet, Job, CronJob. Verify each with a fixture-object extractor test.
-- [ ] 2.3 Add Config and Network columns: ConfigMap, Secret, Service, Ingress, Endpoints, EndpointSlice, NetworkPolicy. Verify each with a fixture-object extractor test.
-- [ ] 2.4 Add Storage, Cluster and Access Control columns: PersistentVolumeClaim, PersistentVolume, StorageClass, Node, Namespace, ServiceAccount, RoleBinding, ClusterRoleBinding. Verify each with a fixture-object extractor test, including a malformed object yielding empty cells rather than a panic.
+- [x] 2.1 Add `object_list/columns.rs` with the column-definition type and `Cell` variants (Text, Number, Ratio, Age) with numeric sorting, computing cells once per watch event. Verify with unit tests for sort order of Number and Ratio cells.
+- [x] 2.2 Add Workloads columns: Deployment, ReplicaSet, StatefulSet, DaemonSet, Job, CronJob. Verify each with a fixture-object extractor test.
+- [x] 2.3 Add Config and Network columns: ConfigMap, Secret, Service, Ingress, Endpoints, EndpointSlice, NetworkPolicy. Verify each with a fixture-object extractor test.
+- [x] 2.4 Add Storage, Cluster and Access Control columns: PersistentVolumeClaim, PersistentVolume, StorageClass, Node, Namespace, ServiceAccount, RoleBinding, ClusterRoleBinding. Verify each with a fixture-object extractor test, including a malformed object yielding empty cells rather than a panic.
 
 ## 3. Object-detail sections (independent of 1 and 2)
 
