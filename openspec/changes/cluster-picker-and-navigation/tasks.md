@@ -258,15 +258,16 @@ look using the app's existing design system rather than bare `div`s.
   has no focus-aware style hook, so the three center dock panels share a primary-color
   focus border around their content and otherwise use the normal border. Verify:
   `panel_title::a_focused_panel_uses_the_primary_border` covers both branches.
-  Correction: when ticked, there was no border and the cited test didn't exist. There was
-  only an accent underline on the tab title, and its test checked only the colour function.
-  App#84 adds `ui::panel::focus_ring`, a 2px ring in the accent colour (the system accent,
-  not the theme primary) around the content of every dock panel kind and the Resource
-  panel. It's drawn while focus is inside the panel. The tab underline stays as a second
-  cue. Verified on rendered output by
-  `resource_edge::tests::the_focus_ring_follows_focus_between_the_dock_and_the_resource_panel`
-  (clicking a dock panel rings it, cmd-0 moves the ring to the Resource panel), and for the
-  Resource panel by `resource_edge::tests::a_clicked_panel_shows_focus_and_its_keys_work`.
+  Correction: when ticked, there was no border and the cited test didn't exist. App#84 added a
+  2px accent ring around every panel's content, but that brought back the inner framing Paul
+  rejected (`panel-focus-highlight-inset`), so App#86 removed it again. The focus indicator is
+  the panel's tab title, underlined in the accent colour (the system accent on macOS, not the
+  theme primary) while focus is anywhere inside the panel; the single-panel title bar draws the
+  same element. The Resource panel has no tab and therefore no indicator of its own. Verified
+  on rendered output by
+  `resource_edge::tests::the_tab_underline_follows_focus_between_the_dock_and_the_resource_panel`
+  (clicking the Pods title underlines it, cmd-0 moves focus to the Resource panel and the
+  underline goes).
 - [x] 12.2 Confirm panel-scoped keyboard shortcuts dispatch to the focused panel only.
   Verify: a test focuses one of two open panels, invokes a panel-scoped shortcut, and
   asserts only the focused panel received it.
