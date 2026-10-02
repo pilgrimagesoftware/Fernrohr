@@ -17,7 +17,7 @@ it. The result works, but it isn't pleasant to read for long.
   a step roomier than today, that every panel draws from instead of hard-coded pixels.
 - **Configurable text size.** A text-size preference, defaulting to today's sizes, that scales all
   three roles together. It's adjustable in Settings and through Increase / Decrease / Reset Text
-  Size commands (⌘= / ⌘- / ⌘0), and persisted in the preference file.
+  Size commands (⌘= / ⌘- / ⌘⇧0), and persisted in the preference file.
 - **Smoother text rendering.** A short investigation finds out why GPUI-rendered text looks rougher
   than Knot's (font, size, line height, weight, or glyph rasterization), and the change applies
   the fix that makes the difference.

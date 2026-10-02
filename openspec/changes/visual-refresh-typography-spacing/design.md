@@ -36,7 +36,7 @@ and the command registry exist, and the preference file already holds the theme 
   GPUI and in a web view, changes one variable at a time, and records which ones close the gap. The
   fix is whichever ones do; the requirement stays at the observable level.
 - **Commands**: `view.increase_text_size` (⌘=), `view.decrease_text_size` (⌘-),
-  `view.reset_text_size` (⌘0), global key context, in the View menu, and in the palette. Settings
+  `view.reset_text_size` (⌘⇧0; ⌘0 is Focus Resources), global key context, in the View menu, and in the palette. Settings
   shows the same value with a stepper that's keyboard-operable.
 
 ## Risks / Trade-offs

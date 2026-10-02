@@ -46,7 +46,7 @@
 - [ ] 4.1 Add the text-size preference (scale factor, bounded, default 100%), persisted in the
   preference file, applied to every open window live and to the spacing tokens. Verify: tests for
   bounds, persistence round-trip, and that a size change re-renders an open window larger.
-- [ ] 4.2 Add Increase / Decrease / Reset Text Size commands (⌘= / ⌘- / ⌘0) in the View menu and
+- [ ] 4.2 Add Increase / Decrease / Reset Text Size commands (⌘= / ⌘- / ⌘⇧0) in the View menu and
   palette, and a keyboard-operable stepper in Settings. Verify: `simulate_keystrokes` tests for
   each command and for the Settings stepper.
 
