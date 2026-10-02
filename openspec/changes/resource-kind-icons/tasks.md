@@ -9,10 +9,10 @@
 
 ## 2. Icon set and lookup
 
-- [ ] 2.1 Vendor the set's unlabeled SVGs and its licence under `app/assets/icons/kubernetes/`,
+- [x] 2.1 Vendor the set's unlabeled SVGs and its licence under `app/assets/icons/kubernetes/`,
   plus container, custom-resource and generic fallbacks in the same style. Verify: a test that every
   bundled icon file loads and parses.
-- [ ] 2.2 Add `ui::icon::for_kind(group, kind)`, covering every built-in kind the set has and
+- [x] 2.2 Add `ui::icon::for_kind(group, kind)`, covering every built-in kind the set has and
   falling back otherwise. Verify: unit tests for core kinds, an apps-group kind, a CRD named like a
   built-in kind in another group, and a container.
 

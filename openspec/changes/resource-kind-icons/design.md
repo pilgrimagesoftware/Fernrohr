@@ -33,7 +33,10 @@ choice of Apache-2.0 or CC-BY-4.0.
   custom resource (the set's CRD shape with a generic glyph), generic kind. They're small SVGs
   committed alongside the set, under the project's licence.
 - **One lookup**, `ui::icon::for_kind(group, kind) -> IconRef`, keyed by group and kind so a CRD
-  named `Pod` in another group doesn't get the Pod icon.
+  named `Pod` in another group doesn't get the Pod icon. A kind the set
+  doesn't cover gets the generic kind icon if its group is one the API server itself serves (an
+  explicit list), and the custom-resource icon otherwise - not a `*.k8s.io` suffix rule, which would
+  misfile Gateway API and volume-snapshot CRDs as built-in.
 
 ## Risks / Trade-offs
 
