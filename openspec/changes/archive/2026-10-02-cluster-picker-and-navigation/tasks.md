@@ -119,7 +119,7 @@
   confirmed pre-existing on unmodified `develop` (verified via a throwaway stash) and already
   logged in `~/code/papercuts.md` (2026-09-25: sandboxed vs. real `$TMPDIR` mismatch pollutes
   keychain-adjacent test state across runs). Not introduced by this change.
-- [ ] 6.2 Manual smoke test: launch the app fresh (no `workspace.toml`), confirm the picker
+- [x] 6.2 Manual smoke test: launch the app fresh (no `workspace.toml`), confirm the picker
   appears, pick a context, confirm it lands in a Pods view, switch to Logs via the sidebar,
   close the panel, confirm it returns to the picker.
   Attempted from this session: backed up the real `~/Library/Application Support/
@@ -130,6 +130,8 @@
   verify against. **Needs a real interactive desktop session** to complete; not something
   this environment can confirm. Leaving unchecked rather than claiming a visual result
   that was never observed.
+  Superseded by 15.2, which covers the same fresh-launch path; the sidebar Logs step predates the
+  Resource panel. Closed with 15.2 (2026-10-02).
 
 ## 7. Theme and picker/main-window design polish
 
@@ -304,9 +306,13 @@ recorded in Section 6.
   all pass. Re-run the full gate after every section from 8 onward lands, and record the
   result here (Section 6.1's run predates 1.2/3.2/4.4's dedicated tests, so its counts are
   not a valid baseline for this gate).
-- [ ] 15.2 Manual smoke test: launch the app fresh (no `workspace.toml`), confirm the
+- [x] 15.2 Manual smoke test: launch the app fresh (no `workspace.toml`), confirm the
   picker appears, pick a context, confirm the Resource panel shows full discovery
   including any CRDs, open a Pods panel via double-click, confirm its title bar, move and
   collapse the Resource panel, maximize the Pods panel and restore it, close the panel,
   confirm the window stays connected with the Resource panel focused (amended 2026-10-02: the
   user wants the picker only after disconnecting the last context, not after closing panels).
+  Passed 2026-10-02 (user), over three runs. They found the Resource panel move/collapse/focus
+  gaps (App#83, #84), tab focus (#85), close targeting and staying connected (#92, #94, #93), Tab
+  traversal (#91) and nested split restore (#88), all fixed before this pass.
+
