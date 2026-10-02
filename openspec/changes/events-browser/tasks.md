@@ -9,6 +9,8 @@
 - [ ] 2.1 Add the events browser panel: live table sorted by age ascending (newest first) by default, re-sortable, with the sort saved, column set above, namespace scope, routing of the core Event kind to it, and an "Events" command. Verify with window-level tests for opening from the Resource panel and live updates.
 - [ ] 2.2 Involved object as a link opening its detail panel; a detail strip showing the selected event's full, selectable message. Verify with tests following a link and reading a long message.
 
+- [ ] 2.3 Add an Event section to object-detail (`sections/` dispatch): type badge, reason, full message, count, first/last seen, reporting component/instance, action, involved and related objects as references, falling back to `events.k8s.io/v1` fields via `events.rs::event_time` and friends. Verify with section tests for a legacy-field event and a v1-only event.
+
 ## 3. Filters and search
 
 - [ ] 3.1 Type, kind and reason multi-select filters built from present values, shown as active chips, clearable singly and together, saved with the panel. Verify with tests for warnings-only, combined filters, and restore.

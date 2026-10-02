@@ -17,6 +17,7 @@ about, the message - and offers no way to narrow thousands of events down to the
   object kind, and reason - each a multi-select built from the events present.
 - Search: the standard list search box from `resource-list-search`, defaulting to the visible columns
   so the message is searchable.
+- An Event's own detail panel gets a real section instead of metadata only.
 - The involved object is a link to its detail panel; the selected event's full message is shown
   untruncated in a detail strip.
 
@@ -28,8 +29,9 @@ about, the message - and offers no way to narrow thousands of events down to the
 
 ### Modified Capabilities
 
-(none - the Resource panel's routing of the Event kind is an implementation detail of opening this
-panel)
+- `object-detail`: Event gains a kind-specific section (type, reason, full message, count, times,
+  reporter, involved and related objects as links). The Resource panel's routing of the Event kind
+  to this browser is an implementation detail of opening the panel.
 
 ## Impact
 
