@@ -2,10 +2,26 @@
 
 ## 1. Rendering investigation
 
-- [ ] 1.1 Render the same strings (a table row, a panel title, a chip) in GPUI and in a web view at
+- [x] 1.1 Render the same strings (a table row, a panel title, a chip) in GPUI and in a web view at
   the same size, vary one of font weight, line height, size rounding and rasterization at a time,
   and record in this file which changes close the visible gap. Verify: before/after screenshots
   attached to the PR, with the chosen fixes listed.
+
+  **Findings.** GPUI captured via the Metal renderer at 2x, against WKWebView at 2x, same strings,
+  sizes, weights and colours; measured as ink coverage and mean absolute difference (MAD) from WebKit.
+
+  | Variable | Effect |
+  |---|---|
+  | Font weight (variable font) | **The whole gap.** GPUI has no font-variation support and picks one face per family; `Manrope-Variable.ttf`'s default instance is wght 200, so every weight drew ExtraLight. Static instances bring MAD vs WebKit from 0.181 to 0.030 (WebKit's own smoothing on/off noise is 0.026). |
+  | Line height (1.25 / 1.5 / 1.618) | None on glyphs; box height only. |
+  | Size rounding (+0.25px) | None on sharpness. |
+  | Fractional y (+0.25px) | None; GPUI snaps glyphs vertically. |
+  | Rasterization / smoothing | Already matches WebKit (ink 3607 vs 3610). |
+
+  **Fixes (2.3):** bundle Manrope as static per-weight instances (400/500/600/700, 800 if used)
+  registered under family "Manrope" instead of the variable file, and never bundle a variable font
+  for GPUI. No changes to line height, size rounding or rasterization. Screenshots:
+  `assets/compare-before-after.png`, `assets/zoom-4x-before-after-webkit.png`.
 
 ## 2. Fonts
 
