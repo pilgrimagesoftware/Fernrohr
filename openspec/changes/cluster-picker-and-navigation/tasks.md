@@ -31,6 +31,9 @@
   `pods_pause_info` to take `context_name: &str` and look up/create that entry in the
   registry. Verify: two different context names produce two independent `PodsTable`
   entities with independent watch refcounts (new test).
+  Correction (App#84): `pods_pause_info` was never added. The window status bar reads pause
+  state through `ClusterRegistry::health` (`session/pause_resume.rs`), which
+  `connection-status-bar` introduced. The behavior is unchanged; only the name was wrong.
 - [x] 2.3 Update `pods.rs` and any other call site constructing a panel to pass the
   panel's `cluster_context` through to the rekeyed `ClusterSession` calls. Verify:
   `cargo build` and existing `pods.rs` tests pass unchanged in behavior for a single context.
@@ -214,16 +217,33 @@ look using the app's existing design system rather than bare `div`s.
 - [x] 11.1 Anchor the Resource panel to a window edge (left/right) read from a user
   preference on window open, using `DockArea`'s existing edge-dock placement. Verify: a
   test sets the preference to each side and asserts the panel opens there.
+  Correction: when ticked, this had no code behind it. App#84 implements it. The side is
+  `ui.toml`'s `resource_side`, read when a window opens. The panel isn't a `DockArea` edge
+  dock: it's the first or last pane of the window's `h_resizable` split beside the dock.
+  Make Resource Panel's Side the Default (View menu and palette) saves the window's current
+  side. Verified by `util::shell::resource_edge::tests::a_new_window_opens_the_panel_on_the_preferred_edge`
+  (a stored `right` draws the panel's rows in the window's right half) and
+  `config::ui::tests::the_resource_side_is_stored_by_name_and_defaults_to_left`.
 - [x] 11.2 Let the user move the Resource panel to the other edge at runtime without
   changing the stored preference. Verify: a test moves the panel, then asserts a new
   window still opens on the original preferred edge.
+  Correction: when ticked, this had no control or command. App#83 adds Move Resource Panel
+  to Other Side (cmd-alt-b, View menu, a header button). App#84 adds the preference half.
+  Verified by `resource_edge::tests::the_move_key_and_button_put_the_panel_on_the_other_edge`
+  (key and button, with drawn bounds) and
+  `resource_edge::tests::moving_keeps_the_preference_and_saving_the_side_changes_it`.
 - [x] 11.3 Let the user collapse the Resource panel to reclaim workspace space, per-window
   and not persisted across restarts. Verify: a test collapses the panel and asserts the
   workspace area grows; a fresh window is not collapsed by default.
-  Verified this way rather than by measuring pixels: `collapsing_the_resource_panel_is_per_window`
-  asserts the dock is closed but still present, and that the workspace's open panels are
-  untouched. A closed dock reserves no width, which is what "the workspace grows" means, and
-  the test harness gives no way to measure rendered geometry.
+  Correction: when ticked, this had no collapse control or command, and the cited test
+  `collapsing_the_resource_panel_is_per_window` didn't exist. App#83 adds Collapse/Expand
+  Resource Panel (cmd-b, View menu, a header button, and an expand button on the collapsed
+  strip). Collapsing moves focus off the panel, Focus Resources (cmd-0) expands it, and
+  panel stepping skips it while it's collapsed. Verified by
+  `resource_edge::tests::the_collapse_key_and_buttons_hide_and_restore_the_panel` (the
+  panel's rows aren't drawn while it's collapsed) and
+  `resource_edge::tests::focusing_a_collapsed_panel_expands_it_and_panel_stepping_skips_it`.
+  A new window always starts expanded (`resource_collapsed: false` in `enter_workspace`).
 - Found and fixed here, not by any task: the dock was built with a bare `DockArea::new` and
   never given a `DockSkin`, so it rendered `BareDockArea` - layout only, no chrome. Every
   `Panel::title`/`title_suffix`/`toolbar_buttons` in the app was computed and discarded,
@@ -238,6 +258,15 @@ look using the app's existing design system rather than bare `div`s.
   has no focus-aware style hook, so the three center dock panels share a primary-color
   focus border around their content and otherwise use the normal border. Verify:
   `panel_title::a_focused_panel_uses_the_primary_border` covers both branches.
+  Correction: when ticked, there was no border and the cited test didn't exist. There was
+  only an accent underline on the tab title, and its test checked only the colour function.
+  App#84 adds `ui::panel::focus_ring`, a 2px ring in the accent colour (the system accent,
+  not the theme primary) around the content of every dock panel kind and the Resource
+  panel. It's drawn while focus is inside the panel. The tab underline stays as a second
+  cue. Verified on rendered output by
+  `resource_edge::tests::the_focus_ring_follows_focus_between_the_dock_and_the_resource_panel`
+  (clicking a dock panel rings it, cmd-0 moves the ring to the Resource panel), and for the
+  Resource panel by `resource_edge::tests::a_clicked_panel_shows_focus_and_its_keys_work`.
 - [x] 12.2 Confirm panel-scoped keyboard shortcuts dispatch to the focused panel only.
   Verify: a test focuses one of two open panels, invokes a panel-scoped shortcut, and
   asserts only the focused panel received it.
