@@ -29,10 +29,10 @@
 
 ## 3. Where icons appear
 
-- [ ] 3.1 Panel title bars and tabs. Verify: a render test that a Pods tab and a ConfigMap tab
+- [x] 3.1 Panel title bars and tabs. Verify: a render test that a Pods tab and a ConfigMap tab
   each show their icon before the title, and a `simulate_keystrokes` test that tab order is
   unchanged.
-- [ ] 3.2 The Resource panel's kind list, including Custom Resources subgroups. Verify: a render
+- [x] 3.2 The Resource panel's kind list, including Custom Resources subgroups. Verify: a render
   test for a core kind and a CRD.
 - [ ] 3.3 Configuration-tab and object-viewer cards, container cards, and resource links. Verify:
   render tests for each.
