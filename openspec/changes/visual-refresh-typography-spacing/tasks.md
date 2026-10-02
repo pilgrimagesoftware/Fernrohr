@@ -53,6 +53,6 @@
 ## 5. Verification
 
 - [x] 5.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test`.
-- [ ] 5.2 Manual check: compare a few panels before and after side by side; confirm frame text is
+- [x] 5.2 Manual check: compare a few panels before and after side by side; confirm frame text is
   Adamina and data is Manrope, spacing is roomier and even, text reads smoothly, and text size
   changes by command and in Settings and survives a relaunch.
