@@ -2,10 +2,21 @@
 
 ## 1. Rendering spike
 
-- [ ] 1.1 Render three of the set's unlabeled SVGs through GPUI's `img()` at 16, 20 and 24px on 1x
+- [x] 1.1 Render three of the set's unlabeled SVGs through GPUI's `img()` at 16, 20 and 24px on 1x
   and 2x displays and compare against the source artwork. Verify: screenshots in the PR, and a note
   here on whether colour and edges are faithful (if not, fall back to pre-rasterized PNGs at
   build time and record that decision).
+
+  **Findings.** `img()` with an SVG source keeps colour (#326CE5) but not edges: it rasterizes once
+  at the SVG's intrinsic size x2 (about 136x132 px for this set) and lets the GPU downsample with no
+  mipmaps, 4-8x at 16 px. At 1x that turns the Pod cube into a blob. Rasterizing at the exact
+  device size with GPUI's own `svg_renderer().render_parsed` and drawing it 1:1 matches a Chrome
+  reference: antialiased-edge share 0.198 vs Chrome's 0.182 at 2x and 0.372 vs 0.334 at 1x, against
+  0.131 and 0.163 for `img()`. Captured through the Metal renderer at 16/20/24 px for pod, deploy
+  and cm. Screenshots: `assets/compare-1x-zoom.png`, `assets/compare-2x-zoom.png`.
+
+  **Decision:** neither `img()`-with-SVG nor build-time PNGs (which would need every size x scale
+  x text-size step). Rasterize at runtime at the exact device size, cache by (icon, device px).
 
 ## 2. Icon set and lookup
 

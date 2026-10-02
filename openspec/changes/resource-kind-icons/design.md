@@ -21,12 +21,15 @@ choice of Apache-2.0 or CC-BY-4.0.
 
 ## Decisions
 
-- **Unlabeled variants, rendered in colour.** The labeled variants bake the kind's abbreviation
-  into the artwork, which duplicates the adjacent text and doesn't scale to small sizes. Colour
-  rendering goes through GPUI's image path (`img()` with SVG source, rasterized at the display's
-  scale factor and cached per size) instead of `svg()`, since `svg()` is a mask. A short spike
-  confirms `img()` renders the set's SVGs faithfully at 16-24px on 1x and 2x displays before the
-  rest is built.
+- **Unlabeled variants, rasterized at the exact device size.** The labeled variants bake the kind's
+  abbreviation into the artwork, which duplicates the adjacent text and doesn't scale to small sizes.
+  `svg()` is a single-colour mask, and the 1.1 spike showed `img()` with an SVG source rasterizes
+  once at the SVG's intrinsic size and downsamples on the GPU, smearing edges at 16-24 px. Instead,
+  each icon's SVG is parsed once and rasterized with GPUI's `svg_renderer()` at
+  round(logical size x window scale factor), drawn 1:1 as an `ImageSource::Render`, and cached by
+  (icon, device px). That follows text-size steps and moves between 1x and 2x displays with no build
+  step; evicted rasters are released with `drop_image`. The icons aren't square, so the element is
+  sized from the raster's height.
 - **Apache-2.0 option.** Its obligations (ship the licence text and attribution) are simple to
   meet in a desktop bundle; the About credit covers attribution either way.
 - **Fallbacks drawn to match the set's style** (blue heptagon, white glyph): container (a box),
