@@ -18,11 +18,11 @@
 
 ## 3. Object-detail sections (independent of 1 and 2)
 
-- [ ] 3.1 Add `sections/network.rs`: Service, Ingress, Endpoints, EndpointSlice and NetworkPolicy sections, with backend Services, TLS Secrets and target Pods as references. Verify with section tests in `object_detail/tests/sections.rs`.
-- [ ] 3.2 Extend `storage.rs` with PersistentVolume (claim and StorageClass as references) and StorageClass (including the default-class annotation). Verify with section tests.
-- [ ] 3.3 Extend `workloads.rs` with CronJob (active Jobs as references) and add the Namespace section. Verify with section tests.
-- [ ] 3.4 Add `sections/rbac.rs`: Role and ClusterRole rules, and RoleBinding and ClusterRoleBinding role and subjects as references. Verify with section tests.
-- [ ] 3.5 Register every new kind in the `sections/mod.rs` dispatch. Verify with a test that each listed kind returns a non-empty section set.
+- [x] 3.1 Add `sections/network.rs`: Service, Ingress, Endpoints, EndpointSlice and NetworkPolicy sections, with backend Services, TLS Secrets and target Pods as references. Verify with section tests in `object_detail/tests/sections.rs`.
+- [x] 3.2 Extend `storage.rs` with PersistentVolume (claim and StorageClass as references) and StorageClass (including the default-class annotation). Verify with section tests.
+- [x] 3.3 Extend `workloads.rs` with CronJob (active Jobs as references) and add the Namespace section. Verify with section tests.
+- [x] 3.4 Add `sections/rbac.rs`: Role and ClusterRole rules, and RoleBinding and ClusterRoleBinding role and subjects as references. Verify with section tests.
+- [x] 3.5 Register every new kind in the `sections/mod.rs` dispatch. Verify with a test that each listed kind returns a non-empty section set.
 
 ## 4. Integration verification
 
