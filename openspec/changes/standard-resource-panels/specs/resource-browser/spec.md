@@ -109,3 +109,40 @@ focused instead.
 
 - **WHEN** the user double-clicks a Service row whose detail panel is already open
 - **THEN** the existing panel is focused and no second panel opens
+
+### Requirement: Every list panel can describe the selected object
+
+Every list panel SHALL bind the same object keys as the Pods table, scoped to that panel:
+describe (`d`) opens the selected object's detail panel, and YAML (`y`) opens it showing its YAML.
+Each SHALL be a registered command, reachable from the command palette, and shown in the panel's
+hint row.
+
+#### Scenario: Describing a Service from its list
+
+- **WHEN** a Services list panel has focus with a row selected and the user presses `d`
+- **THEN** that Service's detail panel opens, or is focused if already open
+
+#### Scenario: YAML from a list
+
+- **WHEN** a ConfigMaps list panel has focus with a row selected and the user presses `y`
+- **THEN** that ConfigMap's detail panel opens showing its YAML
+
+### Requirement: Arrow keys start selection in a focused list
+
+When a list panel has focus and no row is selected, Down SHALL select the first visible row and Up
+SHALL select the last, so the keyboard reaches the rows without tabbing into the table first.
+
+#### Scenario: Down on a freshly focused list
+
+- **WHEN** a list panel has just received focus with no row selected and the user presses Down
+- **THEN** the first visible row is selected, and Enter opens it
+
+### Requirement: Custom resource list tabs show the kind only
+
+A list panel for a kind outside the built-in API groups SHALL title its tab and title bar with the
+kind's plural display name only, and SHALL show the kind's API group in the tab's tooltip.
+
+#### Scenario: A CRD list tab
+
+- **WHEN** a list panel for `certificates.cert-manager.io` is open
+- **THEN** its tab reads "Certificates", and hovering the tab shows `cert-manager.io`
