@@ -25,10 +25,10 @@
 
 ## 2. Fonts
 
-- [ ] 2.1 Bundle Adamina (with its OFL text) next to Manrope and register it at startup, adding
+- [x] 2.1 Bundle Adamina (with its OFL text) next to Manrope and register it at startup, adding
   frame, data and code font roles to the theme. Verify: a test that all three families are
   registered and resolve to bundled files.
-- [ ] 2.2 Apply the frame role to panel titles, tabs, section headers, buttons, menus, the context
+- [x] 2.2 Apply the frame role to panel titles, tabs, section headers, buttons, menus, the context
   bar, the status bar and dialogs, and the data role to table cells, field values, chips and cards.
   Verify: render tests asserting the family on a panel title, a tab, a table cell and a chip.
 - [ ] 2.3 Apply the rendering fixes found in 1.1. Verify: the tests or screenshots named in 1.1.
