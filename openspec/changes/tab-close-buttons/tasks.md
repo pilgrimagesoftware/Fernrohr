@@ -14,7 +14,14 @@
 
 - [ ] 4.1 Closing the last panel keeps the window connected (no picker): the Resource panel shows beside an empty area naming the key to open a kind, and takes focus, expanding if collapsed. Update `cluster-picker-and-navigation`'s spec deltas to match (done in this change's proposal commit). Verify with window-level tests for the close control and `Cmd-W`, and that disconnecting the last context still returns to the picker.
 - [ ] 4.2 A lone panel's close control sits beside its title, not at the group's far edge. Verify with a test on the drawn control's position relative to the title.
-- [ ] 4.3 Fix focus after closing the focused panel with the Resource panel collapsed and one tab group: focus intermittently lands nowhere, and `Cmd-]`/`Cmd-0` then can't recover it. Every close must leave a focused panel (`app-shell`: the active panel tab holds keyboard focus), and focus-cycling commands must work from an unfocused window. Verify with a test that closes the focused tab repeatedly (mouse and `Cmd-W`, alternating) and asserts a panel has focus after each.
+- [x] 4.3 Fix focus after closing the focused panel with the Resource panel collapsed and one tab group: focus intermittently lands nowhere, and `Cmd-]`/`Cmd-0` then can't recover it. Every close must leave a focused panel (`app-shell`: the active panel tab holds keyboard focus), and focus-cycling commands must work from an unfocused window. Verify with a test that closes the focused tab repeatedly (mouse and `Cmd-W`, alternating) and asserts a panel has focus after each.
+  App#93. Closing a restored focused panel left focus on its dead handle, where no key
+  dispatches: the close handler asked the closed panel, which a restored panel has no handle
+  for, or whether nothing was focused, but the dead handle stays focused until the next frame.
+  It now asks whether any remaining panel holds focus. Focus Next / Previous Panel and Focus
+  Resources gained app-level fallbacks for a window with nothing focused. Verified by
+  `util::shell::tab_focus::close_tests` (built and restored panels, close control and `Cmd-W`
+  alternating; root-focused and unfocused recovery).
 
 ## 3. Verification
 
