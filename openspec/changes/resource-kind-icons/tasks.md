@@ -39,7 +39,7 @@
 - [x] 3.4 Size icons to the adjacent text and scale them with the text-size preference (if
   `visual-refresh-typography-spacing` has landed; otherwise to the current text size). Verify: a
   test that icon size follows text size.
-- [ ] 3.5 A larger icon beside the resource's name in the pod detail and object viewer headers,
+- [x] 3.5 A larger icon beside the resource's name in the pod detail and object viewer headers,
   sized to the header's title block (about twice body text) and scaled with the text-size
   preference, rasterized through the same exact-size path. Verify: render tests that both headers
   lead with their kind's icon at the larger size, at 100% and 150% text size.
