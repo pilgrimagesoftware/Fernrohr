@@ -8,6 +8,7 @@ When closing a focused panel tab, focus is lost and the next click on a panel ta
 
 - **Bugfix**: Ensure focus is properly transferred when closing a focused panel tab (transfer focus to an adjacent tab, the dock area, or a sensible fallback) so focus doesn't disappear.
 - **Focus restoration**: Fix the interaction so that clicking a panel tab after a close correctly gives it focus (keyboard input works immediately).
+- **Focus on activation**: Some tabs don't accept focus until the user switches to another tab and back (reported 2026-10-02 smoke test). Every way a tab becomes active - click, keyboard, newly opened, restored - SHALL focus its panel.
 
 ## Capabilities
 
@@ -17,7 +18,7 @@ None.
 
 ### Modified Capabilities
 
-- `window-management`: Updates panel/tab close behavior to maintain keyboard focus and ensure tab activation properly grants focus to the panel.
+- `app-shell`: adds a requirement that the active panel tab always holds keyboard focus (there is no `window-management` spec; this is where docked-panel behavior lives).
 
 ## Impact
 

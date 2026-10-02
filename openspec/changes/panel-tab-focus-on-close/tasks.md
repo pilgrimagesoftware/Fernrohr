@@ -14,6 +14,7 @@
 
 - [ ] 3.1 Ensure clicking a panel tab sets keyboard focus to the tab/panel content. Verify keyboard input works immediately after clicking.
 - [ ] 3.2 Ensure keyboard-driven tab activation also sets focus correctly. Verify keyboard-first behavior is preserved.
+- [ ] 3.3 Fix tabs that only accept focus after switching to another tab and back: find which panels' focus handles aren't focused on first activation (newly opened, restored from layout, first click), and focus on every activation path. Verify with a test that opens a panel and, without any tab switch, dispatches a panel-scoped keystroke that reaches it - for each panel type (Pods, object list, object detail, pod detail, logs).
 
 ## 4. Testing
 
