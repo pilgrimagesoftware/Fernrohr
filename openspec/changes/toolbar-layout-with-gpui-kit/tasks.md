@@ -30,6 +30,10 @@
   `ui::toolbar::window_toolbar`: a gpui-kit `TitleBar` (drag, zoom, traffic lights) holding a `Toolbar`.
   Verified by `util::shell::render::toolbar_tests::the_toolbar_shows_the_icon_and_name_and_no_context_chips`.
 
+## 5. First manual check
+
+- [ ] 5.1 The theme switcher isn't visible in the status bar on a real build (user, 2026-10-02). Find why (overflow behind the scrolling capsule row, zero width, drawn only in some state) and make it always visible at the status bar's far end. Verify with a test on its drawn bounds inside the window at a normal and a narrow window width.
+
 ## 4. Verification
 
 - [x] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` pass.
