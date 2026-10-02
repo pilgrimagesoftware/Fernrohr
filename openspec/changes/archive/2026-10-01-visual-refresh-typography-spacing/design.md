@@ -30,13 +30,15 @@ and the command registry exist, and the preference file already holds the theme 
 - **Spacing tokens live in one module** (`ui::space`): `panel_inset`, `card_padding`, `row_height`,
   `section_gap`, `control_gap`. Rendering code calls these instead of literal pixels; a grep for
   literal `px(` in `ui/` that isn't a token is the review check.
+  Spacing inside a single element (chip or badge padding, a key-to-label gap, a row's own
+  padding) stays inline; the tokens govern insets and gaps between elements.
 - **Rendering quality is investigated before it's specified in detail.** Candidates: Manrope's
   variable-font weight axis rendering thinner than expected, tight line height, sizes landing on
   half pixels, and GPUI's glyph rasterization mode. The investigation renders the same strings in
   GPUI and in a web view, changes one variable at a time, and records which ones close the gap. The
   fix is whichever ones do; the requirement stays at the observable level.
 - **Commands**: `view.increase_text_size` (⌘=), `view.decrease_text_size` (⌘-),
-  `view.reset_text_size` (⌘0), global key context, in the View menu, and in the palette. Settings
+  `view.reset_text_size` (⌘⇧0; ⌘0 is Focus Resources), global key context, in the View menu, and in the palette. Settings
   shows the same value with a stepper that's keyboard-operable.
 
 ## Risks / Trade-offs
