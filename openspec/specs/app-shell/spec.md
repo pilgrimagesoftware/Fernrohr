@@ -13,7 +13,8 @@ by docking and splitting, and resized by dragging their separators.
 #### Scenario: First launch shows an empty workspace
 
 - **WHEN** the application starts with no saved workspace state
-- **THEN** a single main window opens with an empty panel area and a visible way to add a panel
+- **THEN** a single main window opens showing the cluster picker (see `cluster-picker`)
+  rather than an empty panel area
 
 #### Scenario: Panels can be split and resized
 
@@ -25,6 +26,24 @@ by docking and splitting, and resized by dragging their separators.
 
 - **WHEN** the user closes a panel
 - **THEN** the panel is removed and the remaining panels reflow to fill the space
+
+#### Scenario: Closing the last panel keeps the window connected
+
+- **WHEN** the user closes a window's last remaining panel
+- **THEN** the window stays connected to its cluster contexts and shows its Resource panel beside
+  an empty panel area, not the cluster picker
+- **AND** the window returns to the picker only when the user disconnects its last context
+
+#### Scenario: Saved layout is restored per cluster
+
+- **WHEN** a window connects to a cluster it has a saved layout for
+- **THEN** that layout is restored instead of showing the full Resource panel
+
+#### Scenario: No saved layout for this cluster shows the Resource panel
+
+- **WHEN** a window connects to a cluster it has no saved layout for
+- **THEN** the workspace shows the Resource panel listing that cluster's discovered
+  resources (see `resource-browser`) instead of restoring an unrelated layout
 
 ### Requirement: Multiple windows
 
@@ -262,3 +281,162 @@ click or tab switch. Keyboard focus SHALL NOT be left on no panel while any pane
 #### Scenario: Clicking a tab after a close gives it focus
 - **WHEN** a tab has just been closed and the user clicks another panel tab
 - **THEN** that tab's panel receives keyboard focus and keyboard input works immediately
+
+### Requirement: Resource panel placement
+
+The Resource panel SHALL be anchored to either edge of the main window, defaulting to a
+user preference, movable to the other edge at runtime, and collapsible to reclaim window
+space.
+
+#### Scenario: Default anchor follows preference
+
+- **WHEN** a window opens with a workspace
+- **THEN** the Resource panel appears on the edge set by the user's preference
+
+#### Scenario: Moving the Resource panel at runtime
+
+- **WHEN** the user moves the Resource panel to the opposite edge
+- **THEN** it re-anchors there for that window without affecting the user's saved
+  preference unless the user also updates that preference
+
+#### Scenario: Collapsing the Resource panel
+
+- **WHEN** the user collapses the Resource panel
+- **THEN** the workspace reclaims that space and other panels are unaffected
+
+### Requirement: Panel focus
+
+Exactly one dockable panel in a workspace SHALL hold focus at a time, be visually
+distinguished as focused, and receive panel-scoped keyboard shortcuts.
+
+#### Scenario: Clicking a panel focuses it
+
+- **WHEN** the user clicks a dockable panel that does not have focus
+- **THEN** that panel becomes focused, is visually distinguished from unfocused panels,
+  and the previously focused panel loses that distinction
+
+#### Scenario: Keyboard shortcuts target the focused panel
+
+- **WHEN** a panel-scoped keyboard shortcut is invoked
+- **THEN** it is dispatched to the currently focused panel, not any other open panel
+
+### Requirement: Panel maximize
+
+A dockable panel other than the Resource panel SHALL be maximizable to fill the
+workspace area, excluding the Resource panel's space, with at most one panel maximized
+per window at a time.
+
+#### Scenario: Maximizing a panel
+
+- **WHEN** the user maximizes a dockable panel
+- **THEN** that panel fills the workspace area other than the Resource panel, and any
+  other open panels are hidden until it is restored
+
+#### Scenario: Maximizing a second panel restores the first
+
+- **WHEN** the user maximizes a panel while another panel is already maximized
+- **THEN** the previously maximized panel returns to its prior position and the newly
+  maximized panel fills the workspace instead
+
+### Requirement: Keyboard focus navigation between panels
+
+The application SHALL let the user move keyboard focus between the visible panels of a window
+from the keyboard, as registered commands offered in the command palette, bound to default keys
+the user's keymap can override, and listed in the application menu. "Next" and "previous" SHALL
+follow one stable order over the window's visible panels, wrapping from the last panel to the
+first and from the first to the last. Panels the user cannot see - in a collapsed dock, or behind
+another panel that is zoomed - SHALL NOT receive focus this way.
+
+#### Scenario: Focus moves to the next panel
+
+- **WHEN** a window shows two or more panels and one of them has keyboard focus
+- **AND** the user invokes "focus next panel"
+- **THEN** keyboard focus moves to the next panel in the order
+- **AND** that panel's tab shows it has focus
+
+#### Scenario: Focus wraps around
+
+- **WHEN** the last panel in the order has keyboard focus
+- **AND** the user invokes "focus next panel"
+- **THEN** keyboard focus moves to the first panel
+- **AND** invoking "focus previous panel" from the first panel moves focus to the last
+
+#### Scenario: Previous reverses next
+
+- **WHEN** the user invokes "focus next panel" and then "focus previous panel"
+- **THEN** keyboard focus is back on the panel it started on
+
+#### Scenario: No panel has focus yet
+
+- **WHEN** no panel in the window has keyboard focus
+- **AND** the user invokes "focus next panel"
+- **THEN** keyboard focus moves to the first panel in the order
+
+#### Scenario: Hidden panels are skipped
+
+- **WHEN** a dock is collapsed, or another panel is zoomed
+- **AND** the user moves focus with "focus next panel" or "focus previous panel"
+- **THEN** focus only ever lands on panels that are visible
+
+#### Scenario: Only one panel
+
+- **WHEN** a window shows exactly one panel
+- **AND** the user invokes "focus next panel" or "focus previous panel"
+- **THEN** that panel has keyboard focus and nothing else changes
+
+#### Scenario: Available from the command palette
+
+- **WHEN** the user opens the command palette in a window with panels
+- **THEN** "focus next panel" and "focus previous panel" are offered, each showing its key binding
+
+### Requirement: An opened panel takes focus
+
+When the user opens a panel, or shows one that is already open, the application SHALL move
+keyboard focus to that panel, whichever route opened it (a click, a command, or a panel's own
+shortcut).
+
+#### Scenario: Opening a panel from the keyboard focuses it
+
+- **WHEN** the user opens a pod's detail panel from a Pods panel with its keyboard shortcut
+- **THEN** the pod detail panel has keyboard focus
+- **AND** its own shortcuts respond without the user clicking it first
+
+#### Scenario: Re-showing an open panel focuses it
+
+- **WHEN** the user asks for a panel that is already open in the window
+- **THEN** that panel is brought to the front of its tab group and has keyboard focus
+
+### Requirement: Closing a panel closes the panel the user pointed at
+Every docked panel tab SHALL carry its own close control that closes that tab's panel. Any close
+control drawn for a tab group SHALL close that group's active panel. No close control SHALL close
+a panel in a different tab group, whichever panel has focus.
+
+#### Scenario: Closing the unfocused group's panel
+- **WHEN** two tab groups are stacked, the upper group's Pods panel has focus, and the user clicks
+  the close control of the lower group's RoleBindings tab
+- **THEN** RoleBindings closes and Pods stays open with focus
+
+#### Scenario: Closing a background tab
+- **WHEN** a tab group holds Pods (active) and Services, and the user clicks the close control on
+  the Services tab
+- **THEN** Services closes and Pods stays the active tab
+
+### Requirement: The last panel can be closed
+Closing the last open panel in a window SHALL close it like any other. The window SHALL stay
+connected to its cluster contexts, showing its Resource panel beside an empty panel area that
+names the key to open a kind. Keyboard focus SHALL move to the Resource panel, expanding it if it
+was collapsed.
+
+#### Scenario: Closing the only panel
+- **WHEN** a window has exactly one open panel and the user clicks its close control or presses
+  `Cmd-W`
+- **THEN** the panel closes, the window stays connected, and the Resource panel has focus
+
+### Requirement: A lone panel keeps its close control beside its title
+A tab group holding a single panel SHALL still show that panel's close control immediately beside
+its title, where the tab's own close control sits when the group has several, not at the far edge
+of the group.
+
+#### Scenario: Closing down to one tab
+- **WHEN** a tab group with two panels has one closed, leaving one
+- **THEN** the remaining panel's close control is still drawn next to its title

@@ -26,4 +26,6 @@
 ## 3. Verification
 
 - [x] 3.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` pass.
-- [ ] 3.2 Manual check: stacked groups, close the unfocused group's tab; close a background tab; close the last panel and stay connected with the Resource panel focused; repeatedly close the focused tab and confirm focus always lands on a panel.
+- [x] 3.2 Manual check: stacked groups, close the unfocused group's tab; close a background tab; close the last panel and stay connected with the Resource panel focused; repeatedly close the focused tab and confirm focus always lands on a panel.
+  Passed 2026-10-02 (user).
+

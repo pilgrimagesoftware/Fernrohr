@@ -46,7 +46,11 @@
 - [x] 4.1 `cargo fmt -- --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` all
   pass (407 passed, 2 ignored). New files stay under the 500-line limit. `util/shell.rs` was
   already over it and grows by 16 lines; its handlers live in `util/shell/panel_focus.rs`.
-- [ ] 4.2 Manual check on a running build: with the Resource panel and two or more dock panels,
+- [x] 4.2 Manual check on a running build: with the Resource panel and two or more dock panels,
   cycle with `cmd-]` / `cmd-[` and confirm the tab underline follows. Collapse a dock and zoom a
   panel, and confirm hidden panels are skipped. Open a pod's detail with `d` and confirm it has
   focus. **Needs user confirmation.**
+  Passed 2026-10-02 (user): Cmd-]/Cmd-[ cycle with the underline or Resource header bar
+  following; collapsed and zoom-hidden panels skipped; `d` opens a focused detail. Tab stays
+  inside a panel (App#91).
+
