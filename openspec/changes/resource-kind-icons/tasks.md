@@ -47,6 +47,6 @@
 
 ## 5. Verification
 
-- [ ] 5.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test`.
+- [x] 5.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test`.
 - [ ] 5.2 Manual check: a busy window with several kinds open; icons are recognizable, crisp at the
   default and a larger text size, and don't distract from the accent colour.
