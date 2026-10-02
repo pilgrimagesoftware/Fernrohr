@@ -34,7 +34,7 @@
   unchanged.
 - [x] 3.2 The Resource panel's kind list, including Custom Resources subgroups. Verify: a render
   test for a core kind and a CRD.
-- [ ] 3.3 Configuration-tab and object-viewer cards, container cards, and resource links. Verify:
+- [x] 3.3 Configuration-tab and object-viewer cards, container cards, and resource links. Verify:
   render tests for each.
 - [x] 3.4 Size icons to the adjacent text and scale them with the text-size preference (if
   `visual-refresh-typography-spacing` has landed; otherwise to the current text size). Verify: a
@@ -42,7 +42,7 @@
 
 ## 4. Credit
 
-- [ ] 4.1 Ship the licence with the app bundle and credit the set in the About window. Verify: a
+- [x] 4.1 Ship the licence with the app bundle and credit the set in the About window. Verify: a
   render test of the About credits.
 
 ## 5. Verification
