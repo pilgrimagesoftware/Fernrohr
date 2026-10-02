@@ -258,16 +258,17 @@ look using the app's existing design system rather than bare `div`s.
   has no focus-aware style hook, so the three center dock panels share a primary-color
   focus border around their content and otherwise use the normal border. Verify:
   `panel_title::a_focused_panel_uses_the_primary_border` covers both branches.
-  Correction: when ticked, there was no border and the cited test didn't exist. App#84 added a
-  2px accent ring around every panel's content, but that brought back the inner framing Paul
-  rejected (`panel-focus-highlight-inset`), so App#86 removed it again. The focus indicator is
-  the panel's tab title, underlined in the accent colour (the system accent on macOS, not the
-  theme primary) while focus is anywhere inside the panel; the single-panel title bar draws the
-  same element. The Resource panel has no tab and therefore no indicator of its own. Verified
-  on rendered output by
+  Correction: the ticked text above is stale. A content border was tried and rejected: the user
+  turned down inner framing around panel content on 2026-09-29 (`panel-focus-highlight-inset`,
+  App#24 / b269832). App#84 brought a 2px ring back by mistake, and App#86 removed it again. The
+  dock panels' focus indicator is the focused tab's title, underlined in the accent colour (the
+  system accent on macOS, not the theme primary) while focus is anywhere inside the panel; the
+  single-panel title bar draws the same element. The Resource panel has no tab, so it keeps a
+  2px accent bar along the top of its header (App#83) - a bar, not a frame. Verified on rendered
+  output by
   `resource_edge::tests::the_tab_underline_follows_focus_between_the_dock_and_the_resource_panel`
-  (clicking the Pods title underlines it, cmd-0 moves focus to the Resource panel and the
-  underline goes).
+  (clicking the Pods title underlines it and no ring is drawn; cmd-0 moves the indicator to the
+  Resource header bar) and `resource_edge::tests::a_clicked_panel_shows_focus_and_its_keys_work`.
 - [x] 12.2 Confirm panel-scoped keyboard shortcuts dispatch to the focused panel only.
   Verify: a test focuses one of two open panels, invokes a panel-scoped shortcut, and
   asserts only the focused panel received it.
