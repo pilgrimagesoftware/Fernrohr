@@ -27,12 +27,18 @@ instances, and one generic kind icon for anything else. No kind SHALL be drawn w
 
 ### Requirement: Icons appear where kinds do
 An icon SHALL be shown beside the kind's name in panel title bars and tabs, the Resource panel's
-kind list, Configuration-tab and object-viewer cards, and resource links, sized to the adjacent
-text and scaled with it.
+kind list, Configuration-tab and object-viewer cards, resource links, and the header of a detail
+panel (pod detail and object viewer), sized to the adjacent text - or, in a detail header, to its
+title block - and scaled with it.
 
 #### Scenario: Panel tab
 - **WHEN** a window has a Pods panel and a ConfigMap panel open as tabs
 - **THEN** each tab shows its kind's icon before its title
+
+#### Scenario: Detail panel header
+- **WHEN** a pod detail or object viewer panel shows a resource
+- **THEN** a larger icon of that resource's kind sits beside its name in the panel's header, sized to
+  the header's title block rather than to a single line of text
 
 #### Scenario: Icon scales with text
 - **WHEN** the user increases the text size
