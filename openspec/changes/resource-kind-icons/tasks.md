@@ -13,7 +13,7 @@
   device size with GPUI's own `svg_renderer().render_parsed` and drawing it 1:1 matches a Chrome
   reference: antialiased-edge share 0.198 vs Chrome's 0.182 at 2x and 0.372 vs 0.334 at 1x, against
   0.131 and 0.163 for `img()`. Captured through the Metal renderer at 16/20/24 px for pod, deploy
-  and cm. Screenshots: `assets/compare-1x-zoom.png`, `assets/compare-2x-zoom.png`.
+  and cm. Screenshots: `assets/pr-before-after.png`, `assets/compare-1x-zoom.png`, `assets/compare-2x-zoom.png`.
 
   **Decision:** neither `img()`-with-SVG nor build-time PNGs (which would need every size x scale
   x text-size step). Rasterize at runtime at the exact device size, cache by (icon, device px).
@@ -36,7 +36,7 @@
   test for a core kind and a CRD.
 - [ ] 3.3 Configuration-tab and object-viewer cards, container cards, and resource links. Verify:
   render tests for each.
-- [ ] 3.4 Size icons to the adjacent text and scale them with the text-size preference (if
+- [x] 3.4 Size icons to the adjacent text and scale them with the text-size preference (if
   `visual-refresh-typography-spacing` has landed; otherwise to the current text size). Verify: a
   test that icon size follows text size.
 
