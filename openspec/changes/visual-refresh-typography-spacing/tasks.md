@@ -31,7 +31,7 @@
 - [x] 2.2 Apply the frame role to panel titles, tabs, section headers, buttons, menus, the context
   bar, the status bar and dialogs, and the data role to table cells, field values, chips and cards.
   Verify: render tests asserting the family on a panel title, a tab, a table cell and a chip.
-- [ ] 2.3 Apply the rendering fixes found in 1.1. Verify: the tests or screenshots named in 1.1.
+- [x] 2.3 Apply the rendering fixes found in 1.1. Verify: the tests or screenshots named in 1.1.
 
 ## 3. Spacing tokens
 
