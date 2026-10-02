@@ -24,10 +24,12 @@ by docking and splitting, and resized by dragging their separators.
 - **WHEN** the user closes a panel
 - **THEN** the panel is removed and the remaining panels reflow to fill the space
 
-#### Scenario: Closing the last panel returns to the picker
+#### Scenario: Closing the last panel keeps the window connected
 
 - **WHEN** the user closes a window's last remaining panel
-- **THEN** that window shows the cluster picker again instead of an empty panel area
+- **THEN** the window stays connected to its cluster contexts and shows its Resource panel beside
+  an empty panel area, not the cluster picker
+- **AND** the window returns to the picker only when the user disconnects its last context
 
 #### Scenario: Saved layout is restored per cluster
 

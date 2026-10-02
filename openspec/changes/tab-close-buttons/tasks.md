@@ -8,7 +8,13 @@
 
 ## 2. Last panel
 
-- [x] 2.1 Find what refuses to close the last panel (a locked or last-panel guard in the dock, or our own close handling) and allow it; the window returns to the picker. Verify with a window-level test for both the close control and `Cmd-W`.
+- [x] 2.1 Find what refuses to close the last panel (a locked or last-panel guard in the dock, or our own close handling) and allow it; the window returns to the picker. (Superseded by 4.1: the window stays connected.) Verify with a window-level test for both the close control and `Cmd-W`.
+
+## 4. Second smoke test
+
+- [ ] 4.1 Closing the last panel keeps the window connected (no picker): the Resource panel shows beside an empty area naming the key to open a kind, and takes focus, expanding if collapsed. Update `cluster-picker-and-navigation`'s spec deltas to match (done in this change's proposal commit). Verify with window-level tests for the close control and `Cmd-W`, and that disconnecting the last context still returns to the picker.
+- [ ] 4.2 A lone panel's close control sits beside its title, not at the group's far edge. Verify with a test on the drawn control's position relative to the title.
+- [ ] 4.3 Fix focus after closing the focused panel with the Resource panel collapsed and one tab group: focus intermittently lands nowhere, and `Cmd-]`/`Cmd-0` then can't recover it. Every close must leave a focused panel (`app-shell`: the active panel tab holds keyboard focus), and focus-cycling commands must work from an unfocused window. Verify with a test that closes the focused tab repeatedly (mouse and `Cmd-W`, alternating) and asserts a panel has focus after each.
 
 ## 3. Verification
 

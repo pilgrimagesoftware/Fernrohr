@@ -7,11 +7,12 @@ resource panel opens, turning a bare window into a usable app on first run.
 
 ## ADDED Requirements
 
-### Requirement: Picker shown when a window has no panels
+### Requirement: Picker shown when a window has no connected context
 
 The application SHALL show a cluster picker in place of the panel workspace whenever a
-window has no open or restored panels, and SHALL replace the picker with the panel
-workspace once a connection succeeds.
+window has no connected cluster context, and SHALL replace the picker with the panel
+workspace once a connection succeeds. Closing panels SHALL NOT disconnect a context or return
+the window to the picker.
 
 #### Scenario: First launch shows the picker
 
@@ -20,8 +21,9 @@ workspace once a connection succeeds.
 
 #### Scenario: Window with restored panels skips the picker
 
-- **WHEN** a window's saved workspace state includes at least one panel
-- **THEN** that window opens directly into its restored panel workspace, not the picker
+- **WHEN** a window's saved workspace state includes at least one cluster context
+- **THEN** that window opens directly into its restored panel workspace, not the picker, even if
+  it had no panels open
 
 ### Requirement: Context list from kubeconfig
 

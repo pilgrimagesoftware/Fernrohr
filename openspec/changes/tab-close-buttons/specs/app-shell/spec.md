@@ -18,10 +18,21 @@ a panel in a different tab group, whichever panel has focus.
 - **THEN** Services closes and Pods stays the active tab
 
 ### Requirement: The last panel can be closed
-Closing the last open panel in a window SHALL close it like any other, and the window SHALL then
-return to the cluster picker.
+Closing the last open panel in a window SHALL close it like any other. The window SHALL stay
+connected to its cluster contexts, showing its Resource panel beside an empty panel area that
+names the key to open a kind. Keyboard focus SHALL move to the Resource panel, expanding it if it
+was collapsed.
 
 #### Scenario: Closing the only panel
 - **WHEN** a window has exactly one open panel and the user clicks its close control or presses
   `Cmd-W`
-- **THEN** the panel closes and the window shows the cluster picker
+- **THEN** the panel closes, the window stays connected, and the Resource panel has focus
+
+### Requirement: A lone panel keeps its close control beside its title
+A tab group holding a single panel SHALL still show that panel's close control immediately beside
+its title, where the tab's own close control sits when the group has several, not at the far edge
+of the group.
+
+#### Scenario: Closing down to one tab
+- **WHEN** a tab group with two panels has one closed, leaving one
+- **THEN** the remaining panel's close control is still drawn next to its title

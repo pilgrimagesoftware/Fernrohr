@@ -308,4 +308,5 @@ recorded in Section 6.
   picker appears, pick a context, confirm the Resource panel shows full discovery
   including any CRDs, open a Pods panel via double-click, confirm its title bar, move and
   collapse the Resource panel, maximize the Pods panel and restore it, close the panel,
-  confirm it returns to the picker.
+  confirm the window stays connected with the Resource panel focused (amended 2026-10-02: the
+  user wants the picker only after disconnecting the last context, not after closing panels).
