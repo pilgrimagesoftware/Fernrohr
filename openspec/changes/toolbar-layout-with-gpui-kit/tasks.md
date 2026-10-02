@@ -32,7 +32,13 @@
 
 ## 5. First manual check
 
-- [ ] 5.1 The theme switcher isn't visible in the status bar on a real build (user, 2026-10-02). Find why (overflow behind the scrolling capsule row, zero width, drawn only in some state) and make it always visible at the status bar's far end. Verify with a test on its drawn bounds inside the window at a normal and a narrow window width.
+- [x] 5.1 The theme switcher isn't visible in the status bar on a real build (user, 2026-10-02). Find why (overflow behind the scrolling capsule row, zero width, drawn only in some state) and make it always visible at the status bar's far end. Verify with a test on its drawn bounds inside the window at a normal and a narrow window width.
+  App#100. None of the suspects: the app registered gpui-kit's default icon bundle, which lacks
+  `monitor.svg` (System's icon, the default), so the switcher drew as an empty button. Four more icons
+  were blank for the same reason. The app now registers the full catalog (`crate::assets::AppAssets`).
+  Verified by `assets::tests` (every icon loads from the app's source; both fail on the default bundle)
+  and `util::shell::app::theme_tests::the_switcher_stays_at_the_far_end_at_any_width` (drawn bounds
+  inside the window at its right end at 1200px and 420px).
 
 ## 4. Verification
 
