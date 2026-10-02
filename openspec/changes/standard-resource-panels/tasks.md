@@ -2,12 +2,12 @@
 
 ## 1. Generic list panel
 
-- [ ] 1.1 Move 401 detection and the reference-counted watch registry out of `pods/` into a shared module keyed by `(context, ApiResource)`; Pods use it unchanged. Verify existing Pods watch tests pass.
-- [ ] 1.2 Add `k8s/resource/object_list/` watch and store over `Api<DynamicObject>`, applying watcher events to rows. Verify with store unit tests for apply/delete/restart events, and that a 403 initial list surfaces as an error state.
-- [ ] 1.3 Add the `ObjectListPanel` table with base columns (Name, Namespace for namespaced kinds only, Age), plural title, namespace selector (hidden for cluster-scoped kinds), filter, sort, column resize/reorder and keyboard hints matching the Pods panel. Verify with panel tests for cluster-scoped vs namespaced columns and sorting.
-- [ ] 1.4 Route `NavTarget::Kind` in `ui/nav.rs` to `ObjectListPanel` for every non-Pod kind, remove `has_concrete_panel`, and keep `PlaceholderPanel` only for restoring an undiscovered kind. Verify with a nav test that Deployments, Nodes and a CRD each open a list panel.
-- [ ] 1.5 Activating a row (Enter, double-click) opens `NavTarget::Object`, focusing an already-open panel. Verify with a test that a second activation focuses rather than duplicates.
-- [ ] 1.6 Save and restore `ObjectListPanel` (kind, namespace, column layout) in `util/shell/panels.rs`. Verify with a restore round-trip test.
+- [x] 1.1 Move 401 detection and the reference-counted watch registry out of `pods/` into a shared module keyed by `(context, ApiResource)`; Pods use it unchanged. Verify existing Pods watch tests pass.
+- [x] 1.2 Add `k8s/resource/object_list/` watch and store over `Api<DynamicObject>`, applying watcher events to rows. Verify with store unit tests for apply/delete/restart events, and that a 403 initial list surfaces as an error state.
+- [x] 1.3 Add the `ObjectListPanel` table with base columns (Name, Namespace for namespaced kinds only, Age), plural title, namespace selector (hidden for cluster-scoped kinds), filter, sort, column resize/reorder and keyboard hints matching the Pods panel. Verify with panel tests for cluster-scoped vs namespaced columns and sorting.
+- [x] 1.4 Route `NavTarget::Kind` in `ui/nav.rs` to `ObjectListPanel` for every non-Pod kind, remove `has_concrete_panel`, and keep `PlaceholderPanel` only for restoring an undiscovered kind. Verify with a nav test that Deployments, Nodes and a CRD each open a list panel.
+- [x] 1.5 Activating a row (Enter, double-click) opens `NavTarget::Object`, focusing an already-open panel. Verify with a test that a second activation focuses rather than duplicates.
+- [x] 1.6 Save and restore `ObjectListPanel` (kind, namespace, column layout) in `util/shell/panels.rs`. Verify with a restore round-trip test.
 
 ## 2. Per-kind list columns (needs 1)
 
