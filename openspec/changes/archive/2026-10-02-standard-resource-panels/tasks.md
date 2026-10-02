@@ -41,5 +41,9 @@
 
 ## 4. Integration verification
 
-- [ ] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` pass in the App workspace.
-- [ ] 4.2 Manual smoke test against a real cluster: open Deployments, Services, ConfigMaps, Nodes, PVCs, RoleBindings and one CRD from the Resource panel; confirm live rows, per-kind columns and sorting; open a row of each and confirm its detail sections and links; restart the app and confirm the list panels restore.
+- [x] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` pass in the App workspace.
+  Verified 2026-10-02 on App develop e5a36d8 (all sections plus follow-ups): fmt and clippy clean, 775 passed, 2 ignored.
+- [x] 4.2 Manual smoke test against a real cluster: open Deployments, Services, ConfigMaps, Nodes, PVCs, RoleBindings and one CRD from the Resource panel; confirm live rows, per-kind columns and sorting; open a row of each and confirm its detail sections and links; restart the app and confirm the list panels restore.
+  Passed 2026-10-02 (user, real cluster), on the second run. The first run found the CRD tab
+  group, describe keys and arrow selection (section 5), plus unrelated layout and focus bugs fixed
+  in App#86 and App#88.
