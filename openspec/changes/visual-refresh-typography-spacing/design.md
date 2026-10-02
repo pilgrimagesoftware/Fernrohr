@@ -30,6 +30,8 @@ and the command registry exist, and the preference file already holds the theme 
 - **Spacing tokens live in one module** (`ui::space`): `panel_inset`, `card_padding`, `row_height`,
   `section_gap`, `control_gap`. Rendering code calls these instead of literal pixels; a grep for
   literal `px(` in `ui/` that isn't a token is the review check.
+  Spacing inside a single element (chip or badge padding, a key-to-label gap, a row's own
+  padding) stays inline; the tokens govern insets and gaps between elements.
 - **Rendering quality is investigated before it's specified in detail.** Candidates: Manrope's
   variable-font weight axis rendering thinner than expected, tight line height, sizes landing on
   half pixels, and GPUI's glyph rasterization mode. The investigation renders the same strings in

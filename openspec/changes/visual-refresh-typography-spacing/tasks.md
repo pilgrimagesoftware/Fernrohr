@@ -37,7 +37,7 @@
 
 - [x] 3.1 Add `ui::space` with `panel_inset`, `card_padding`, `row_height`, `section_gap` and
   `control_gap`, roomier than today. Verify: unit tests for the scale's values and their scaling.
-- [ ] 3.2 Convert panels, cards, tables and dialogs to the tokens in groups (detail panels; tables;
+- [x] 3.2 Convert panels, cards, tables and dialogs to the tokens in groups (detail panels; tables;
   dialogs and windows; context and status bars). Verify: per group, a render test that content is
   inset from the panel edge by at least `panel_inset`.
 
