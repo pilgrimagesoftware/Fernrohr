@@ -35,6 +35,14 @@ binding would invoke for that command.
 - **THEN** no top-level menu shows an item for it, though it SHALL remain available in the
   command palette and keymap
 
+#### Scenario: Report Issue command appears in Help menu
+
+- **WHEN** the user opens the Help menu
+- **THEN** it shows the "Report Issue" menu item with its command title and, if bound, its current
+  key binding
+- **THEN** activating "Report Issue" from the Help menu runs the same action as invoking the
+  command from the palette or keyboard
+
 ### Requirement: Context menu manages cluster context selection
 
 The Context menu SHALL contain the actions for opening the cluster picker and switching the
