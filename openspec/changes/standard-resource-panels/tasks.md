@@ -26,8 +26,17 @@
 
 ## 5. Keyboard and titles from the first smoke test
 
-- [ ] 5.1 Bind describe (`d`) and YAML (`y`) on every list panel, panel-scoped, as registered palette commands shown in the hint row, matching the Pods table's keys. Verify with a window-level test that `d` and `y` on a selected Services row open its detail (YAML view for `y`).
-- [ ] 5.2 Down/Up on a focused list with no selection selects the first/last visible row, for the object list and the Pods table. Verify with a window-level keystroke test for each.
+- [x] 5.1 Bind describe (`d`) and YAML (`y`) on every list panel, panel-scoped, as registered palette commands shown in the hint row, matching the Pods table's keys. Verify with a window-level test that `d` and `y` on a selected Services row open its detail (YAML view for `y`).
+  App#89: `object_list.describe` (`d`) and `object_list.yaml` (`y`), scoped to `ObjectListPanel &&
+  !Input`, in Navigate and the hint row. `OpenListedObject` carries the view, and an open object
+  detail switches to it. Verified by
+  `util::shell::follow::list_keys_tests::down_then_d_describes_the_first_row_and_y_shows_its_yaml`
+  and `up_then_y_opens_the_last_rows_yaml`.
+- [x] 5.2 Down/Up on a focused list with no selection selects the first/last visible row, for the object list and the Pods table. Verify with a window-level keystroke test for each.
+  App#89: the table only binds and handles Up/Down in its own element, so a list panel focused as
+  a whole reached no row. `ui::list_keys` binds them in each list's context and steps the table
+  from the panel's capture phase. Verified by the two tests above (object list) and
+  `k8s::resource::pods::panel::list_keys_tests` (Pods table).
 - [x] 5.3 A custom resource list's tab and title bar show the plural kind only, with the API group in the tab tooltip. Verify with a test on a CRD kind's title and tooltip.
 
 ## 4. Integration verification
