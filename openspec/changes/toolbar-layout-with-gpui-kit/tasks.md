@@ -1,34 +1,21 @@
 # Tasks
 
-## 1. Locate and Understand Current Top Bar Implementation
+## 1. Status bar capsules
 
-- [ ] 1.1 Find the main window top bar implementation in the App codebase. Verify the file(s) and component structure.
-- [ ] 1.2 Identify how connected contexts are rendered and how the add context action/button is implemented. Verify current behavior.
+- [ ] 1.1 Merge the context bar's chips into the status bar's per-context items as capsules (name, tunnel, health colour and icon, state text, elapsed time), keeping problem-first ordering. Verify with window-level tests for the two-context and paused-first scenarios and that each context's name is drawn once in the chrome.
+- [ ] 1.2 Move the add-context control to follow the capsules, anchoring its popover in the status bar, and keep its keyboard command. Verify the add scenarios still pass through the moved control.
+- [ ] 1.3 Move the disconnect action onto each capsule, keeping the confirmation. Verify the disconnect scenarios, including the last context returning to the picker.
+- [ ] 1.4 Remove the context bar. Verify no context bar element is drawn.
 
-## 2. Integrate gpui-kit Toolbar
+## 2. Theme switcher
 
-- [ ] 2.1 Import/prepare to use gpui-kit Toolbar component in the main window. Verify correct import paths per codebase conventions.
-- [ ] 2.2 Replace the current top bar container with gpui-kit Toolbar. Verify the toolbar renders without layout errors.
+- [ ] 2.1 Add a System/Light/Dark switcher at the status bar's far end and a palette command, applying to every window and persisting the theme preference in `ui.toml`. Verify with tests that switching redraws all windows and the preference round-trips.
 
-## 3. Reconstruct Toolbar Layout
+## 3. Toolbar
 
-- [ ] 3.1 Add icon to the Toolbar in the correct position. Verify icon displays as before.
-- [ ] 3.2 Add app name to the Toolbar. Verify app name displays correctly.
-- [ ] 3.3 Move the connected contexts list into the Toolbar after app name. Verify connected contexts display correctly and update when contexts change.
-- [ ] 3.4 Add the "add context" button to the Toolbar at the end. Verify the button is visible and positioned correctly.
+- [ ] 3.1 Replace the top bar with a gpui-kit Toolbar showing the app icon and name only, keeping the window draggable and the macOS traffic lights usable. Verify with a test that the toolbar draws icon and name and no context chips.
 
-## 4. Preserve Behavior and Accessibility
+## 4. Verification
 
-- [ ] 4.1 Ensure the add context button retains its existing action/handler. Verify clicking and activating via keyboard still works.
-- [ ] 4.2 Verify keyboard navigation and focus order remain correct (keyboard-first compliance). Verify tab order is logical.
-- [ ] 4.3 Test connected contexts updates when connections change state. Verify dynamic updates still work.
-
-## 5. Styling and Polish
-
-- [ ] 5.1 Apply appropriate spacing/alignment within Toolbar to match the intended layout. Verify visual consistency.
-- [ ] 5.2 Ensure no visual regressions compared to previous top bar. Verify styling integrates with gpui-kit theme.
-
-## 6. Verification
-
-- [ ] 6.1 Run cargo test to ensure no regressions. Verify all tests pass.
-- [ ] 6.2 Run linting/type checks as per project conventions. Verify the codebase remains clean.
+- [ ] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` pass.
+- [ ] 4.2 Manual check: capsules at the bottom with add and disconnect working; theme switcher changes theme live and survives restart; toolbar shows icon and name; window still drags by its top bar.

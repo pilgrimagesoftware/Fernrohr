@@ -2,26 +2,38 @@
 
 ## Why
 
-The main window's top bar currently sits outside the gpui-kit Toolbar component. Moving it into a gpui-kit Toolbar and restructuring the layout (icon, app name, connected contexts list, and an "add context" button) improves visual consistency, leverages the component library's styling/behavior, and makes the toolbar more maintainable and extensible.
+Each window now reports its cluster contexts twice: as chips in the context bar along the top and as
+items in the status bar along the bottom, with the same health shown in both. The top bar is also
+still the OS-native title area plus a separate context bar, not the gpui-kit Toolbar the rest of the
+chrome is moving to. And although a theme preference exists (System, Light, Dark), the app offers no
+way to change it.
 
 ## What Changes
 
-- **Refactor**: Use gpui-kit Toolbar for the main window top bar.
-- **Layout restructure**: Move the existing top bar content into the Toolbar with the following layout: icon, app name, connected contexts..., and an add context button.
-- **Maintain functionality**: Preserve existing behavior for connected contexts display and adding contexts while adapting to Toolbar's API.
+- **Toolbar**: the window's top bar becomes a gpui-kit Toolbar holding only the app icon and name,
+  for now.
+- **Capsules move to the status bar**: the context chips (context name, tunnel name, health) move
+  into the status bar, merged with its per-context status items so each context appears once,
+  carrying its state text and elapsed time. The add-context control and each capsule's disconnect
+  action move with them. **BREAKING** (UI): the separate context bar is removed.
+- **Theme switcher**: the opposite end of the status bar gets a theme switcher (System, Light,
+  Dark) that applies at once and persists the existing theme preference.
 
 ## Capabilities
 
 ### New Capabilities
 
-None.
+(none)
 
 ### Modified Capabilities
 
-- `app-shell`: Updates the main window chrome/layout to use gpui-kit Toolbar for the top bar with the specified layout elements (icon, app name, connected contexts, add context button).
+- `app-shell`: the status bar absorbs the context bar (capsules, add, disconnect) and gains a theme
+  switcher; the top bar becomes a gpui-kit Toolbar with icon and name; the context bar requirement
+  is removed.
 
 ## Impact
 
-- Affects the App submodule's main window/top bar UI (likely in the app shell/window chrome components).
-- Leverages gpui-kit components (Toolbar). No external dependency changes expected if already present.
-- Preserves keyboard-first behavior and existing actions for adding contexts.
+- App: window chrome (title bar / context bar / status bar rendering), the add-context popover's
+  anchor, the disconnect confirmation's trigger, the theme preference writer in `config::ui`.
+- Specs: `typography` still names "the context bar" among Adamina surfaces; that becomes the
+  toolbar and status bar when this archives.
