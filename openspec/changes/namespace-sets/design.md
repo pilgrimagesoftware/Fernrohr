@@ -95,6 +95,24 @@ after them:
    matters because a set is portable - without it, switching clusters would make a set look
    incomplete.
 
+## As built
+
+- **No `IncludeExclude` yet.** `namespace-include-exclude` hasn't landed, so a panel's scope is
+  still a sorted list of namespaces, with empty meaning all. That is already an include set, and a
+  set is include-only (Non-Goals), so switching to a set is `PanelScope::scoped_to(names)`. When
+  `IncludeExclude` lands, switching becomes `IncludeExclude { include, names }` in one place:
+  `MainWindow::on_action_apply_namespace_set`.
+- **Decision 7's helper already existed.** `warp-all-to-namespace` built its propagation as
+  `MainWindow::warp_context(context_name, namespaces)`. It needs the window's open panels, so it
+  lives on the window rather than in `k8s::cluster`. Apply to Context calls it directly, so the two
+  features share one definition of "for all", which is what decision 7 is after.
+- **The commands are global, with modifier keys:** Switch `cmd-shift-n`, Apply to Context
+  `cmd-alt-shift-n`, Create `cmd-alt-n`, Edit `cmd-alt-e`, and Remove palette-only. Each gives a
+  plain notice when no namespaced list has focus. None is in the menu bar, since switching and
+  creating act on the focused panel.
+- **The editor reuses `ui::namespace_filter`** with `without_all` (no pinned "All namespaces") and
+  `element_marked`, which labels a set's namespaces the cluster lacks as "not in this cluster".
+
 ## Risks / Trade-offs
 
 - [A set is edited away from under a switched panel] -> Intentional (decision 4): the panel keeps
