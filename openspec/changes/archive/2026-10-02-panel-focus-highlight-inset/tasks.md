@@ -43,4 +43,5 @@
   panel), and deciding whether opening a panel from the keyboard should focus it. Today neither
   exists, so only the mouse can move focus from one panel to another. The indicator itself already
   follows focus from any source.
-- [ ] 4.2 Linux and Windows system accent lookups (today both use the theme's blue).
+- [x] 4.2 Linux and Windows system accent lookups (today both use the theme's blue).
+  Moved to follow-up issue #100 (2026-10-02).
