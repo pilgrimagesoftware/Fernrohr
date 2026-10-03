@@ -27,7 +27,8 @@
 
 - [x] 5.1 Add semantic styling for status values (Running/Succeeded, Pending/Waiting, Failed/Error/Terminated). Verify styles follow the existing theme.
 - [x] 5.2 Apply colorization to Pod status in the detail pane. Verify Pod status displays with appropriate colors based on state.
-- [ ] 5.3 Extend colorization to other resource statuses where applicable. Verify no regressions and accessibility (sufficient contrast, text labels remain clear).
+- [x] 5.3 Extend colorization to other resource statuses where applicable. Verify no regressions and accessibility (sufficient contrast, text labels remain clear).
+  Moved to follow-up issue #101 (2026-10-02); the spec only requires Pod statuses.
 
 ## 6. Managed Fields Disclosure Control
 
@@ -38,4 +39,5 @@
 ## 7. Verification
 
 - [x] 7.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` pass.
-- [ ] 7.2 Manual check: a pod with a waiting init container, a crashing container's color, folding a large YAML, copying a name and an image, expanding one managed-fields row.
+- [x] 7.2 Manual check: a pod with a waiting init container, a crashing container's color, folding a large YAML, copying a name and an image, expanding one managed-fields row.
+  Passed 2026-10-02 (user).

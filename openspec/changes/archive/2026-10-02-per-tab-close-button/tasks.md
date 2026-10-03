@@ -17,11 +17,15 @@
   tunnel(s) that will disconnect), modeled on `context_bar::open_disconnect_dialog` /
   `context_lifecycle::disconnect_confirmation_body`. When false, close immediately - same as
   today's `CloseWindow` handler.
-- [ ] 2.5 (Partly done in `tab-keyboard-navigation`'s App PR: `Cmd-W` closes the focused tab, and
+- [x] 2.5 (Partly done in `tab-keyboard-navigation`'s App PR: `Cmd-W` closes the focused tab, and
   the displayed tab from the Resource panel, keeping the window; with no tab on screen it closes
   the window. The tunnel decision and dialog text are unit-tested. A keystroke test of the confirm
   dialog itself needs a live forward, which the shell tests can't build yet.) Keyboard test: `Cmd-W` with a panel open closes only that panel (dock still open,
   window still open); `Cmd-W` with no panel open and a tunnel active shows the confirm dialog;
   confirming closes the window; `Cmd-W` with no tunnel active closes the window with no dialog.
+  Closed 2026-10-02 with a known gap: Cmd-W behaviour shipped (tab-keyboard-navigation, then
+  tab-close-buttons), and the tunnel decision and dialog text are unit-tested; a keystroke test of
+  the confirm dialog itself still needs a live forward the shell tests can't build.
+
 - [x] 2.6 Menu bar's "Close Window" item and its palette entry: confirm they route through the
   same handler so the confirmation isn't bypassable from the menu.
