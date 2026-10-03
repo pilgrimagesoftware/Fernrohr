@@ -1,0 +1,16 @@
+# Tasks
+
+## 1. Live pod detail
+
+- [ ] 1.1 Pod detail subscribes to the context's shared Pods watch on open (unsubscribe on close), reads its pod from the table, and re-renders on changes; keep the one-shot get only for first paint before the table syncs. Verify with a mock-server window test: a Pending pod becomes Running and the panel updates without reopening; closing releases the subscription.
+- [ ] 1.2 Preserve view state across updates (tab, scroll, revealed Secret, expanded managed fields, folded YAML). Verify a restart-count change keeps the open tab and an expanded row.
+- [ ] 1.3 Deletion and recreate-with-same-name handled via uid. Verify with a test.
+
+## 2. Live object detail
+
+- [ ] 2.1 Object detail does the same through the kind's shared `ObjectsTable` (polling kinds included). Verify with a test that a Deployment's replica counts update live.
+
+## 3. Verification
+
+- [ ] 3.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` pass.
+- [ ] 3.2 Manual check: the user's repro - a pod waiting on a missing Secret goes Running in its open detail panel once the Secret exists.
