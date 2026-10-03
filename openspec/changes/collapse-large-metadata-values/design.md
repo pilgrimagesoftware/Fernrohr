@@ -15,7 +15,7 @@ drawn in full, so a large value sets the chip's size. GPUI elements already supp
   panel's existing YAML toggle shows every value in full, so no chip needs to be a tab stop.
 
 **Non-Goals:**
-- No click-to-expand or copy action on chips.
+- No click-to-expand on chips. A shortened chip does get the shared copy control (from `resource-detail-ui-improvements`) as its keyboard route to the full value: a Tab stop that copies it on Space or click. Short chips have none.
 - No change to capacity chips, conditions badges, or the YAML view.
 - No configurable threshold.
 
