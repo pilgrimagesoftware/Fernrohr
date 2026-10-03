@@ -40,6 +40,21 @@ filter, (b) render a checked state per item, (c) customise the empty-state text,
 Escape that clears the text before closing. If any of these isn't supported, fall back to the
 `Popover` + `Input` + list alternative. The spec doesn't change either way.
 
+### Spike outcome (task 1.1): `Command` in a `Popover`
+
+Neither the proposed `Combobox` nor the hand-rolled fallback was used. `Combobox` fails two
+of the four points. On (d), its cancel closes the popup on the first Escape without clearing
+the text. And its list is `pub(crate)`, so it can't be embedded inline, which `namespace-sets`
+needs in its set editor. gpui-kit's `Command`, the widget the cluster picker and command
+palette already use, covers all four when its own filtering is off (`filterable(false)`):
+(a) the host supplies the filtered items with "All namespaces" first; (b) `CommandItem::checked`
+draws the check; (c) the host draws "No matching namespaces" below the list, since the pinned
+entry means the list is never empty; (d) `Command`'s Cancel clears a non-empty query and
+stops, and only an empty-query Escape passes through to the `Popover`, which closes. The list
+is the reusable `ui::namespace_filter`, and `ui::namespace_picker` hosts it in a controlled
+`Popover`. A new Pick Namespaces command (`n`) in each picker-hosting panel is the
+keyboard's way to open it.
+
 ### The selection lives in the panel, not the widget
 
 `ComboboxState` keeps its own selection, but the panel's `PanelScope.namespaces` is the source of
