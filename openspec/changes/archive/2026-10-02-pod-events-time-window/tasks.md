@@ -31,4 +31,5 @@
 
 - [x] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` pass.
   869 passed, 2 ignored.
-- [ ] 4.2 Manual check on a real cluster: delete a pod's container process or roll a deployment, watch events arrive live, change the window, restart and confirm it stuck.
+- [x] 4.2 Manual check on a real cluster: delete a pod's container process or roll a deployment, watch events arrive live, change the window, restart and confirm it stuck.
+  Passed 2026-10-02 (user).

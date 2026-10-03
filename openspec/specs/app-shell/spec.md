@@ -91,25 +91,32 @@ launch, reconnecting every context a window used.
 
 ### Requirement: Window status bar
 
-Every workspace window SHALL show a status bar along its bottom edge with one item per cluster
-context the window uses. Each item SHALL show the context name and
-its connection state, and for any state other than connected, how long it has been in that state.
-Items in a non-connected state SHALL be listed before connected ones.
+Every workspace window SHALL show a status bar along its bottom edge with one capsule per cluster
+context the window uses, followed by the add-context control. Each capsule SHALL show the context
+name, the name of its bound tunnel if any, and its connection state, and for any state other than
+connected, how long it has been in that state. Capsules in a non-connected state SHALL be listed
+before connected ones.
 
 #### Scenario: One item per cluster in the window
 
-- **WHEN** a window uses `cluster-a` and `cluster-b`
-- **THEN** its status bar shows one item for each, and no item for contexts only other windows use
+- **WHEN** a window uses `cluster-a` (through `qa-bastion`) and `cluster-b` (direct)
+- **THEN** its status bar shows a `cluster-a` capsule naming `qa-bastion` and a `cluster-b` capsule
+  with no tunnel name, and no capsule for contexts only other windows use
 
 #### Scenario: Problem items first
 
 - **WHEN** `cluster-b` is connected and `cluster-a` is paused
-- **THEN** the `cluster-a` item is listed before the `cluster-b` item
+- **THEN** the `cluster-a` capsule is listed before the `cluster-b` capsule
 
 #### Scenario: Closing panels keeps the item
 
 - **WHEN** the user closes the last panel for a context the window still uses
-- **THEN** that context's item stays in the window's status bar
+- **THEN** that context's capsule stays in the window's status bar
+
+#### Scenario: Each context appears once
+
+- **WHEN** a window uses one context
+- **THEN** that context's name and health appear in exactly one place in the window chrome
 
 ### Requirement: Status severity is visually distinct
 
@@ -141,33 +148,18 @@ every state with its own icon and text so the state can be read without color:
 - **WHEN** the status bar is viewed without color, for example in a grayscale screenshot
 - **THEN** each item's state is identifiable from its icon and text alone
 
-### Requirement: Window context bar
-
-Every workspace window SHALL show a context bar along its top edge, below the title bar, with one
-chip per context the window uses. Each chip SHALL show the context name, the name of its bound
-tunnel if any, and a health indicator matching that context's status bar severity.
-
-#### Scenario: Chips for each context
-
-- **WHEN** a window uses `cluster-a` (through `qa-bastion`) and `cluster-c` (direct)
-- **THEN** its context bar shows a `cluster-a` chip naming `qa-bastion` and an `cluster-c` chip with no tunnel name
-
-#### Scenario: Health mirrors the status bar
-
-- **WHEN** `cluster-a`'s tunnel drops and the status bar shows it reconnecting
-- **THEN** the `cluster-a` chip's health indicator shows the same warning severity
-
 ### Requirement: Add a context to a window
 
-The context bar SHALL offer an add control that lists every kubeconfig context the window does not
-already use, with each context's tunnel binding. Choosing one SHALL add it to the window, reusing
-the existing connection if one is already open for that context, open a Pods panel for it, and make
-it the Resource panel's selected cluster.
+The status bar SHALL offer an add control after its capsules that lists every kubeconfig context
+the window does not already use, with each context's tunnel binding. Choosing one SHALL add it to
+the window, reusing the existing connection if one is already open for that context, open a Pods
+panel for it, and make it the Resource panel's selected cluster.
 
 #### Scenario: Add a second context
 
 - **WHEN** a window using `cluster-a` adds `cluster-b`
-- **THEN** a `cluster-b` chip appears, a Pods panel for `cluster-b` opens in the same dock, and the Resource panel lists `cluster-b`'s kinds
+- **THEN** a `cluster-b` capsule appears, a Pods panel for `cluster-b` opens in the same dock, and
+  the Resource panel lists `cluster-b`'s kinds
 
 #### Scenario: Already-used contexts are not offered
 
@@ -182,25 +174,26 @@ it the Resource panel's selected cluster.
 #### Scenario: Add fails
 
 - **WHEN** the chosen context cannot connect
-- **THEN** the add popover shows the connection failure, no chip is added for that context, and no panel is opened for it
+- **THEN** the add popover shows the connection failure, no capsule is added for that context, and
+  no panel is opened for it
 
 ### Requirement: Disconnect a context from a window
 
-Each chip SHALL offer a disconnect action. Before acting, the application SHALL ask for
-confirmation, stating how many panels in this window will close and, if other windows still use
+Each status bar capsule SHALL offer a disconnect action. Before acting, the application SHALL ask
+for confirmation, stating how many panels in this window will close and, if other windows still use
 the context, that it stays connected there. On confirmation it SHALL close every panel in this
-window that uses the context and remove the chip. If no context remains, the window SHALL return to
-the cluster picker.
+window that uses the context and remove the capsule. If no context remains, the window SHALL return
+to the cluster picker.
 
 #### Scenario: Confirm and close panels
 
 - **WHEN** the user disconnects `cluster-b`, which has three panels in this window, and confirms
-- **THEN** those three panels close, the chip is removed, and panels for other contexts are unchanged
+- **THEN** those three panels close, the capsule is removed, and panels for other contexts are unchanged
 
 #### Scenario: Cancel
 
 - **WHEN** the user cancels the confirmation
-- **THEN** no panel closes and the chip remains
+- **THEN** no panel closes and the capsule remains
 
 #### Scenario: Context used elsewhere
 
@@ -440,3 +433,25 @@ of the group.
 #### Scenario: Closing down to one tab
 - **WHEN** a tab group with two panels has one closed, leaving one
 - **THEN** the remaining panel's close control is still drawn next to its title
+
+### Requirement: Window toolbar
+Every window SHALL draw its top bar as a gpui-kit Toolbar showing the application icon and name,
+in place of a separate context bar.
+
+#### Scenario: Toolbar contents
+- **WHEN** a workspace window is open
+- **THEN** its top bar shows the app icon and the app name, and no cluster context chips
+
+### Requirement: Theme switcher in the status bar
+The status bar SHALL show a theme switcher at the end opposite its context capsules, offering
+System, Light and Dark. Choosing one SHALL apply it to every window at once and SHALL persist it as
+the theme preference. The switcher SHALL also be a registered command reachable from the command
+palette.
+
+#### Scenario: Switching to dark
+- **WHEN** the user picks Dark from the status bar's theme switcher
+- **THEN** every open window redraws in the dark theme, and the next launch starts in dark
+
+#### Scenario: Following the system
+- **WHEN** the theme is System and the OS switches from light to dark appearance
+- **THEN** the application follows without restarting

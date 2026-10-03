@@ -20,4 +20,5 @@
 ## 4. Verification
 
 - [x] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` pass.
-- [ ] 4.2 Manual check on a real cluster: open Events, filter to Warnings in one namespace, search a message, follow an event to its object.
+- [x] 4.2 Manual check on a real cluster: open Events, filter to Warnings in one namespace, search a message, follow an event to its object.
+  Passed 2026-10-02 (user).

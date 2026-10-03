@@ -7,7 +7,7 @@ typography is a deliberate choice rather than whatever a library default happens
 
 ### Requirement: UI and data text use distinct bundled fonts
 The application SHALL render its frame text (panel titles, tabs, section headers, buttons, menus,
-the context bar, the status bar and dialogs) in Adamina, and the data inside panels (table cells,
+the toolbar, the status bar and dialogs) in Adamina, and the data inside panels (table cells,
 field labels and values, chips and cards) in Manrope. Both SHALL be bundled with the application
 rather than depending on them being installed on the host system.
 

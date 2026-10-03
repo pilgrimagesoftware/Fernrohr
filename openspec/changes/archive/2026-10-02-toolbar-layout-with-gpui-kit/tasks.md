@@ -44,4 +44,5 @@
 
 - [x] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` pass.
   809 passed, 2 ignored.
-- [ ] 4.2 Manual check: capsules at the bottom with add and disconnect working; theme switcher changes theme live and survives restart; toolbar shows icon and name; window still drags by its top bar.
+- [x] 4.2 Manual check: capsules at the bottom with add and disconnect working; theme switcher changes theme live and survives restart; toolbar shows icon and name; window still drags by its top bar.
+  Passed 2026-10-02 (user).

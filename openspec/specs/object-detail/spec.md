@@ -39,8 +39,8 @@ kind-specific sections name, as `resource-links` references.
 The object panel SHALL show structured sections for Node, ConfigMap, Secret,
 PersistentVolumeClaim, ServiceAccount, ReplicaSet, Deployment, StatefulSet, DaemonSet, Job,
 CronJob, Service, Ingress, Endpoints, EndpointSlice, NetworkPolicy, Namespace, PersistentVolume,
-StorageClass, Role, ClusterRole, RoleBinding and ClusterRoleBinding objects, and metadata only
-for any other kind.
+StorageClass, Role, ClusterRole, RoleBinding, ClusterRoleBinding and Event objects, and metadata
+only for any other kind.
 
 #### Scenario: A Node shows its capacity and conditions
 - **WHEN** a Node's panel is open
@@ -107,6 +107,12 @@ for any other kind.
 - **WHEN** a RoleBinding's or ClusterRoleBinding's panel is open
 - **THEN** it shows its role and each subject, with the role and each ServiceAccount subject as
   references
+
+#### Scenario: An Event shows what happened and to what
+- **WHEN** an Event's panel is open
+- **THEN** it shows its type as a colored badge, reason, full message, count, first and last seen
+  times, reporting component and instance, action, and its involved object and any related object as
+  references, reading `events.k8s.io/v1` fields where the legacy ones are empty
 
 ### Requirement: Secret values are hidden until revealed
 The object panel SHALL NOT display a Secret value in its YAML view. In its structured view it SHALL
