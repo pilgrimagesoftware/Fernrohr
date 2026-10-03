@@ -27,6 +27,7 @@
 
 - [x] 3.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` all
   pass.
-- [ ] 3.2 Manual smoke test on a cluster with many namespaces: filter, pick two matches without
+- [x] 3.2 Manual smoke test on a cluster with many namespaces: filter, pick two matches without
   the picker closing, use the keyboard only, check the empty state, and confirm the title-bar
   button looks as before.
+  Passed 2026-10-03 (user).

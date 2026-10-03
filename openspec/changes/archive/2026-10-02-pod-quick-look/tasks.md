@@ -14,7 +14,8 @@
 ## 3. Verification
 
 - [x] 3.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` pass.
-- [ ] 3.2 Manual check: Space on a pod, scan with Down, Enter to the detail panel, right-click a row.
+- [x] 3.2 Manual check: Space on a pod, scan with Down, Enter to the detail panel, right-click a row.
+  Passed 2026-10-03 (user).
 
 ## Notes
 

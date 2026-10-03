@@ -13,7 +13,8 @@
 ## 3. Verification
 
 - [x] 3.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` pass.
-- [ ] 3.2 Manual check: the user's repro - a pod waiting on a missing Secret goes Running in its open detail panel once the Secret exists; then delete the pod and confirm the panel shows Terminating, then deleted with its last state and events kept.
+- [x] 3.2 Manual check: the user's repro - a pod waiting on a missing Secret goes Running in its open detail panel once the Secret exists; then delete the pod and confirm the panel shows Terminating, then deleted with its last state and events kept.
+  Passed 2026-10-03 (user).
 
 ## Notes
 
