@@ -18,6 +18,7 @@
 ## 2. Verification
 
 - [x] 2.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test`.
-- [ ] 2.2 Manual check: open a pod with a multi-line JSON annotation and a long single-line
+- [x] 2.2 Manual check: open a pod with a multi-line JSON annotation and a long single-line
   annotation; confirm both chips are one line with a short preview, hovering shows the full value,
   and the YAML view still shows them in full.
+  Passed 2026-10-03 (user).
