@@ -58,8 +58,11 @@
 - Implemented in pilgrimagesoftware/Fernrohr-App#123, one commit per section above.
 - Close Group's action is `ClosePanelGroup` (id `panel.close_group`), the name
   `panel-tab-context-menu` reuses.
-- Default keys: split `cmd-k <arrow>`, move `cmd-alt-<arrow>`, merge `cmd-alt-shift-<arrow>`, close
-  group `cmd-k w`. None collides with an existing binding.
+- Default keys, all under the `cmd-k` prefix: split `cmd-k <arrow>`, move `cmd-k shift-<arrow>`,
+  merge `cmd-k alt-<arrow>`, close group `cmd-k w`. None collides with an existing binding, and
+  `cmd-k` lists all of them together in the pending-chord popover. Move and merge first defaulted
+  to `cmd-alt-<arrow>` and `cmd-alt-shift-<arrow>`, but window managers such as Rectangle take those
+  globally, so they never reached the app (#138, pilgrimagesoftware/Fernrohr-App#132).
 - The commands bind in `Dock && !Input`. `Dock` is a new key context around the dock area: the "a
   panel group has focus" predicate, off while a dialog or the Resource panel has focus. `!Input`
   keeps every arrange key from firing while a text field has focus; a keystroke test covers this.
