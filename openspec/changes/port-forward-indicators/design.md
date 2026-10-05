@@ -46,7 +46,7 @@ Icons come from the existing icon set. Every icon button has a tooltip and an id
 ### 3. Commands
 
 `PortForwardPod` (`shift-f`) is registered in `PodDetailPanel && !Input` too, sharing
-`fernrohr-#143`'s detail-panel action wiring. A new `StopPortForward` is registered in the Pods
+#143's detail-panel action wiring. A new `StopPortForward` is registered in the Pods
 list, the Services list and the pod detail contexts, with a default key chosen to pass the
 prefix-aware conflict check. The candidate is `ctrl-shift-f`. With several forwards it opens the
 same picker style as the port prompt. A container port's start button calls the start path with
