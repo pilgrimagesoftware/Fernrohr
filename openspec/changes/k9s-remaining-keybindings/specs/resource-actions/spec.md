@@ -40,7 +40,26 @@ resource immediately with zero grace period and without a confirmation prompt.
 ### Requirement: Edit a resource's YAML
 
 The application SHALL provide an "edit" command that opens a selected resource's manifest as
-editable YAML and, on save, applies the edited manifest to the cluster.
+editable YAML and, on save, applies the edited manifest to the cluster. Edit SHALL be available for
+every kind except Secret, whose values the application never shows. The user SHALL be able to start
+it from a list panel's selected row (the Pods panel and every other list), from a pod's detail panel,
+and from an object's detail panel, in its fields or YAML view. Every route SHALL open the same edit
+view over that object's manifest.
+
+#### Scenario: Edit from a list row
+
+- **WHEN** a list panel (the Pods panel or any other list) has a row selected and the user runs edit
+- **THEN** the object's manifest opens in the edit view
+
+#### Scenario: Edit from a detail panel's YAML view
+
+- **WHEN** a pod's or another object's detail panel is showing its YAML and the user runs edit
+- **THEN** that object's manifest opens in the edit view
+
+#### Scenario: A Secret is not editable
+
+- **WHEN** the user runs edit on a Secret
+- **THEN** no edit view opens, and the application says a Secret's values are hidden in this view
 
 #### Scenario: Edit and save applies the change
 
