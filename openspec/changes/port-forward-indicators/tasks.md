@@ -30,16 +30,25 @@
       them to the hint rows. Verify with keystroke tests, and with the prefix-aware conflict check
       against every default.
 
-## 5. Gates
+## 5. Manage Tunnels
 
-- [ ] 5.1 `cargo fmt -- --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` all
+- [ ] 5.1 Put a horizontal divider between the Tunnels section and the Port forwards section of the
+      Manage Tunnels window, using the theme's border color and the existing spacing tokens and
+      matching the app's other section separators. Verify with a view test that the divider
+      renders between the two sections, and still renders when the Port forwards section is
+      empty.
+
+## 6. Gates
+
+- [ ] 6.1 `cargo fmt -- --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` all
       pass, and touched files stay under 500 lines.
 
-## 6. Verification
+## 7. Verification
 
-- [ ] 6.1 Manual check, needing user confirmation:
+- [ ] 7.1 Manual check, needing user confirmation:
       - Forward a pod with `shift-f` and see the row indicator.
       - Open its detail panel and see the strip. Copy the address and `curl` it.
       - In the Containers tab, click a second port's forward icon.
       - Stop one forward from the strip and the other with Stop Port Forward.
       - Confirm all the indicators clear.
+      - Open Manage Tunnels and check the divider between Tunnels and Port forwards.
