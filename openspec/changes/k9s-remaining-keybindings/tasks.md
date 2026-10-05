@@ -25,16 +25,16 @@
 
 ## 3. Shell / exec into a container
 
-- [ ] 3.1 Add an exec session type that opens a kube-rs `AttachParams` stream (stdin writer + stdout/
+- [x] 3.1 Add an exec session type that opens a kube-rs `AttachParams` stream (stdin writer + stdout/
       stderr reader) on a background tokio task, bridged to a GPUI Entity via bounded channels, and
       verify a unit test exercises the bridging logic against a mocked attach stream
-- [ ] 3.2 Add a `pods.shell` command, available only when the target Pod has a running container, and
+- [x] 3.2 Add a `pods.shell` command, available only when the target Pod has a running container, and
       a panel view that renders the session's output and forwards keystrokes to the stdin writer, and
       verify a test confirms the command is absent from the palette for a Pod with no running container
-- [ ] 3.3 For a multi-container Pod, prompt for which container to shell into before opening the
+- [x] 3.3 For a multi-container Pod, prompt for which container to shell into before opening the
       session, and verify a test covers the container-picker path versus the single-container
       shortcut
-- [ ] 3.4 Detect the exec stream ending (container exit or delete) and mark the session panel ended
+- [x] 3.4 Detect the exec stream ending (container exit or delete) and mark the session panel ended
       while retaining its transcript, and verify a test simulates stream closure and asserts the
       transcript is still readable afterward
 
