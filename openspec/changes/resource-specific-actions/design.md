@@ -9,29 +9,36 @@ single-row counterpart for actions that only ever make sense for one specific ki
 nonsensical to generalize - you don't "scale" a ServiceAccount or "taint" a Service. These belong
 on that one row's context menu and that kind's detail panel, not a bulk bar.
 
-Three things already exist that this change is the first to actually call:
-- `K8sPortForwardConfig` / `PodPortForwardTransport` (`App/app/src/forward/k8s/port_forward.rs`)
-  - built, but with no caller anywhere in the app.
-- `ManagedForward`'s reference-counted lifecycle/health-check/teardown (`managed-forward`
-  capability) - already used for SSH tunnels and the cluster's own apiserver access; Port
-  Forward is a second *kind* of forward target riding the same lifecycle, not new lifecycle code.
+Port Forward for Pods and Services already shipped in `k9s-remaining-keybindings`: `shift-f` on a
+Pods-table or Services row calls `K8sPortForwardConfig`/`PodPortForwardTransport`
+(`App/app/src/forward/k8s/port_forward.rs`), resolving a Service to one of its ready endpoint Pods
+first, and the resulting `ManagedForward` shows up in a "Port forwards" section of Manage Tunnels
+with the same stop control an SSH tunnel has. That shipped work is reused unchanged here - this
+change is only about the entry points it didn't add: a Pod detail panel action, a Service
+object-detail section action, and a context-menu item on both rows, for a mouse user with no
+reason to know the keybinding.
+
+One more thing already exists that this change is the first to actually call:
 - `kube-client`'s `create_subresource("token", ...)` helper - present in the dependency, unused
   by the app.
 
 Every list row and detail panel today is read-only except for the actions
 `bulk-select-list-actions` adds and the single-object Copy/reveal actions `object-detail`/
-`pod-detail` already have. Context menus already exist per panel (Pods table's: Quick Look, Open
-Details, Logs, YAML; `ObjectListPanel`'s row menu) - this change adds entries to them, gated by
-row kind, rather than building a new menu system.
+`pod-detail` already have, plus the row-level keyboard/palette commands
+`k9s-remaining-keybindings` shipped (delete, kill, edit, shell, port-forward, previous logs).
+`ObjectListPanel`'s row right-click menu exists today but only offers "Open"; the Pods table has
+no right-click menu at all yet. This change adds entries to `ObjectListPanel`'s existing menu
+mechanism and gives the Pods table its first one, gated by row kind, rather than building a new
+menu system per panel.
 
 ## Goals / Non-Goals
 
 **Goals:**
 - Each action lives in exactly the kind(s) it applies to; no action appears on a kind it doesn't
   mean anything for.
-- Port Forward reuses `ManagedForward` end to end - same registry, same health/reconnect
-  behavior, same place it's listed and stopped as an SSH tunnel - so the user has one mental
-  model for "a thing forwarding a port," not two.
+- Port Forward's new entry points call the exact acquire path `k9s-remaining-keybindings` already
+  shipped - same registry, same health/reconnect behavior, same place it's listed and stopped as
+  an SSH tunnel - so the user has one mental model for "a thing forwarding a port," not two.
 - Every mutating action confirms first and surfaces the cluster's own rejection message rather
   than inventing a generic one (most visible for PVC Expand, where the StorageClass decides
   feasibility, not the app).
@@ -53,15 +60,11 @@ row kind, rather than building a new menu system.
 
 ## Decisions
 
-- **Port Forward targets a Pod directly; a Service's Port Forward picks one of its ready
-  endpoint Pods and forwards to that.** `K8sPortForwardConfig`/`PodPortForwardTransport` are
-  already Pod-shaped (confirmed in `forward/k8s/port_forward.rs`), so Service's action is a thin
-  wrapper: resolve the Service's `Endpoints`/`EndpointSlice` to one ready Pod, then reuse the
-  exact same `ManagedForward` path Pod's own action uses. No second transport is written.
-- **Port Forward shows up in whatever UI already lists `ManagedForward`s** (the tunnels editor's
-  forward list, per the `managed-forward` capability), rather than building a second
-  "active forwards" surface. A Pod-forward row there needs only a label distinguishing it from
-  an SSH tunnel and the same stop control tunnels already have.
+- **Port Forward's detail-panel and context-menu entries call the same handler the shipped
+  `shift-f` keybinding does** (`PodsPanel::on_action_port_forward_pod`,
+  `ObjectListPanel::on_action_port_forward_service`) rather than re-resolving the target or
+  re-acquiring the forward themselves - the Pod-direct target, the Service-to-ready-endpoint-Pod
+  resolution, and the "Port forwards" section of Manage Tunnels are already correct and unchanged.
 - **Suspend/Resume, Pause/Resume Rollout, and taint add/remove are all simple field patches over
   `Api<DynamicObject>`**, following the same shape `bulk-select-list-actions`'s
   `k8s::resource::bulk_actions` module already establishes for cordon/uncordon
@@ -89,11 +92,6 @@ row kind, rather than building a new menu system.
 
 ## Risks / Trade-offs
 
-- Port Forward is this change's most structurally significant piece: it's the first UI caller of
-  existing forward infrastructure, and getting the Service-to-Pod resolution wrong (picking a
-  non-ready or terminating endpoint) would make the feature flaky in exactly the cases it's
-  meant to help with. Worth its own focused task and test rather than being treated as "just
-  another patch."
 - Trigger Now, Suspend/Resume, and Pause/Resume Rollout change workload behavior but are not
   destructive in the way Delete is; they still confirm, consistent with
   `bulk-select-list-actions`'s rule, even though the blast radius is smaller and reversible.

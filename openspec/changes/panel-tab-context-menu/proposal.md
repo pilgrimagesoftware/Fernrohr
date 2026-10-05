@@ -24,7 +24,11 @@ out) one right-click away, matching the convention every tabbed editor and brows
   action (`ClosePanel`, `ClosePanelGroup`, new `CloseOtherPanels`, `ClosePanelsToRight`,
   `MovePanelToNewWindow`, `PinPanel`/`UnpinPanel`), so each action also appears in the command
   palette and is independently keybindable - the menu is one more surface onto commands that
-  already exist or are added by this change, not a parallel action path.
+  already exist or are added by this change, not a parallel action path. `ClosePanelGroup` is
+  neither existing nor this change's to define: `panel-move-keybindings` introduces it as its own
+  group-close action (`CloseGroup` in that change's own design/tasks text - same command, two
+  names in flight; reconcile on whichever lands first), so "Close All Tabs" here depends on that
+  change landing first and calls its command rather than adding a second one.
 - Any close action that would disconnect a context's last tunnel reuses the existing
   tunnel-aware confirmation dialog (same path as `Cmd-W` and group-close today).
 - The menu is reachable and fully operable from the keyboard: a keybound action opens it for the

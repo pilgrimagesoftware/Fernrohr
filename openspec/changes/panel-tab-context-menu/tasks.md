@@ -22,9 +22,10 @@
   it as the sole panel of a newly opened window via the existing new-window-with-panel path,
   preserving its `ResourceView` state; verify with a test that the panel's cluster/kind/
   namespace/filter/selection are unchanged after the move.
-- [ ] 2.4 Extend `ClosePanelGroup`'s (or add, if "Close All Tabs" needs its own id) bulk-close path
-  to skip pinned tabs; verify with a test that "Close All Tabs" on a group with one pinned tab
-  leaves that tab open and closes the rest.
+- [ ] 2.4 Depends on `panel-move-keybindings`, which introduces `ClosePanelGroup`: do not define a
+  new group-close command here. Extend its bulk-close path to skip pinned tabs; verify with a test
+  that "Close All Tabs" (dispatching `ClosePanelGroup`) on a group with one pinned tab leaves that
+  tab open and closes the rest.
 - [ ] 2.5 Add a keybound `OpenTabContextMenu` action, scoped like the other `tab.*` commands, that
   opens the menu from Task 3 for `tabs::focused_group`'s active panel; verify with a
   `simulate_keystrokes` test that invoking it opens the menu for the correct panel.
