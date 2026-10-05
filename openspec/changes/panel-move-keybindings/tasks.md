@@ -55,20 +55,31 @@
 
 ## Notes
 
-- Implemented in pilgrimagesoftware/Fernrohr-App#123, stacked on App#122
-  (`k9s-remaining-keybindings`): Close Group's confirmation needs panels with something to lose,
-  and the first such panels - a running shell, an unsaved YAML edit - arrive there.
-- 6.1 is left for a person: the keybindings editor lists all thirteen commands (an automated test,
-  `every_arrange_command_has_an_editor_row`, checks the rows), but the task asks for a look in a
-  manual pass.
+- Implemented in pilgrimagesoftware/Fernrohr-App#123, one commit per section above.
+- Close Group's action is `ClosePanelGroup` (id `panel.close_group`), the name
+  `panel-tab-context-menu` reuses.
 - Default keys: split `cmd-k <arrow>`, move `cmd-alt-<arrow>`, merge `cmd-alt-shift-<arrow>`, close
-  group `cmd-k w` - none collides with an existing binding.
-- "Adjacent" is computed from the pane tree's own split proportions rather than captured paint
-  bounds: the dock exposes no per-group bounds, and the tree's proportions are what it lays out.
-  An exact tie (one pane beside two stacked ones) is no neighbour, per the design's risk note.
-- The design's "reuse the per-panel confirmation path" has nothing to reuse: closing one panel
-  never confirms today. Close Group asks (one dialog, listing what's lost) only for panels that
-  report something to lose - `close_warning` on the shell and object panels. Closing such a panel
-  by its own tab still doesn't ask; worth deciding separately whether it should.
-- The commands are scoped to a new `Dock` key context around the dock area, the "a panel group has
-  focus" predicate the design asks for: off while a dialog or the Resource panel has focus.
+  group `cmd-k w`. None collides with an existing binding.
+- The commands bind in `Dock && !Input`. `Dock` is a new key context around the dock area: the "a
+  panel group has focus" predicate, off while a dialog or the Resource panel has focus. `!Input`
+  keeps every arrange key from firing while a text field has focus; a keystroke test covers this.
+- "Adjacent" is computed from the pane tree's own split proportions, not from captured paint bounds,
+  because the dock exposes no per-group bounds. An exact tie (one pane beside two stacked ones)
+  counts as no neighbour, per the design's risk note.
+- Close Group reuses the window's close confirmation, now one shared dialog
+  (`open_close_confirmation`), that Close Window also uses. It asks once, listing what's lost, only
+  for panels that report something to lose (`close_warning`: a running shell, an unsaved YAML edit).
+  The tunnel part of that confirmation doesn't apply: tunnel holds belong to the window, so closing
+  panels never releases one. Closing such a panel by its own tab still doesn't ask; whether it
+  should is a separate decision.
+
+## Manual checks
+
+- [ ] 6.1: open Settings → Keybindings and confirm all thirteen commands are listed and rebindable
+      (`every_arrange_command_has_an_editor_row` checks the rows automatically)
+- [ ] With a real keyboard, split, move and merge in each direction; the new or moved panel has focus,
+      shown on its tab title
+- [ ] With a namespace filter or the YAML editor focused, the arrange keys type or do nothing, and the
+      layout is unchanged
+- [ ] Close a group holding a running shell or an unsaved edit: it asks once, Cancel keeps every
+      panel, Close Group closes the whole group
