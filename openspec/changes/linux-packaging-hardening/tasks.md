@@ -2,17 +2,17 @@
 
 ## 1. Desktop entry and dependencies
 
-- [ ] 1.1 Check in `app/assets/linux/fernrohr.desktop` (Name, Exec, Icon,
+- [x] 1.1 Check in `app/assets/linux/fernrohr.desktop` (Name, Exec, Icon,
       `Categories=Development;Utility;`, `StartupWMClass` matching GPUI's app id), and point
       cargo-packager at it. Verify that `desktop-file-validate` passes in the Linux leg.
-- [ ] 1.2 Set the `.deb` to depend on `openssh-client` and `libsecret-1-0`, and recommend
+- [x] 1.2 Set the `.deb` to depend on `openssh-client` and `libsecret-1-0`, and recommend
       `gnome-keyring | kwalletmanager | keepassxc`. Use a post-packaging control edit if
       cargo-packager can't express Recommends. Verify with a workflow step that asserts the result
       using `dpkg-deb -f <deb> Depends Recommends`.
 
 ## 2. RPM
 
-- [ ] 2.1 Add `[package.metadata.generate-rpm]`: the binary, the desktop file, the icon, the
+- [x] 2.1 Add `[package.metadata.generate-rpm]`: the binary, the desktop file, the icon, the
       licenses, `requires` (`openssh-clients`, `libsecret`) and `recommends` (`gnome-keyring`).
       Run `cargo generate-rpm` in each Linux leg. Verify with a workflow step that asserts the
       result using `rpm -qpR` and `rpm -qp --recommends`. Upload the `.rpm` as a build artifact and
@@ -20,13 +20,13 @@
 
 ## 3. aarch64 Linux
 
-- [ ] 3.1 Add the `ubuntu-24.04-arm` / `aarch64-unknown-linux-gnu` matrix leg, and generalize the
+- [x] 3.1 Add the `ubuntu-24.04-arm` / `aarch64-unknown-linux-gnu` matrix leg, and generalize the
       Linux-only conditions. Verify that a `develop` run produces `.deb`, `.rpm` and AppImage
       artifacts for both architectures.
 
 ## 4. Checksums and documentation
 
-- [ ] 4.1 Add the release-gated `checksums` fan-in job, which writes and uploads `SHA256SUMS` over
+- [x] 4.1 Add the release-gated `checksums` fan-in job, which writes and uploads `SHA256SUMS` over
       every artifact. Verify with a dry run on a test tag or prerelease: `sha256sum --check
       SHA256SUMS` passes over the downloaded set, and there is one line per artifact.
 - [x] 4.2 Add a Linux install section to the App README covering:
@@ -49,9 +49,12 @@
 ## Notes
 
 - Implemented in pilgrimagesoftware/Fernrohr-App#136, one commit per section 1-4. Tasks 1.1, 1.2,
-  2.1, 3.1 and 4.1 are verified by `package.yml`'s own checks. They stay unticked until a package
-  run on the branch passes. That run is dispatched without a tag, so nothing is published, and is
-  queued behind GitHub's runner outage.
+  2.1, 3.1 and 4.1 were verified by a package run on the branch, dispatched without a tag so nothing
+  was published (Fernrohr-App Actions run 37374655259):
+  - all three legs passed their deb, rpm, desktop-entry and icon checks
+  - it produced a `.deb`, `.rpm` and AppImage for x86_64 and aarch64, plus the dmg
+  - `checksums` wrote `SHA256SUMS` with one line for each of the 7 packages, and
+    `sha256sum --check` passed over the downloaded set
 - GPUI set no window app id, so there was no Wayland `app_id` or X11 `WM_CLASS` for
   `StartupWMClass` to match. Every window now opens with app id `fernrohr` (`consts::APP_ID`). A
   unit test keeps the desktop entry's `StartupWMClass` equal to it.
