@@ -62,13 +62,13 @@
 
 ## 6. Namespace quick-jump
 
-- [ ] 6.1 Add quick-jump commands (bound to a modifier + digit, scoped to the resource panel's
+- [x] 6.1 Add quick-jump commands (bound to a modifier + digit, scoped to the resource panel's
       `KeyContext` so they don't collide with `tab.select_1`-`9`) that select the namespace at that
       position in the panel's current namespace list, and verify a test confirms position `n` selects
       the `n`th namespace in a fixture list
-- [ ] 6.2 Make an out-of-range position a no-op, and verify a test confirms the namespace selection is
+- [x] 6.2 Make an out-of-range position a no-op, and verify a test confirms the namespace selection is
       unchanged when invoked beyond the list's length
-- [ ] 6.3 Run the existing keymap conflict checker against the new default bindings and verify it
+- [x] 6.3 Run the existing keymap conflict checker against the new default bindings and verify it
       reports no conflicts with current commands
 
 ## 7. Help overlay
