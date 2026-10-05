@@ -22,6 +22,12 @@
 - [x] 2.4 Surface apply conflicts (e.g. `managedFields` ownership conflicts, stale resourceVersion) as
       a failure that keeps the user's edited content, and verify a test simulates a conflict response
       and confirms the edit view retains its content
+- [x] 2.5 Start edit from a list panel's selected row (Pods and every `ObjectListPanel`) and from a
+      pod's detail panel, opening the object panel's edit view through one window action
+      (`EditListedObject`). Every kind but Secret is editable, and a Secret says why. Verify
+      real-window keystroke tests: `e` on a Deployment row, a Pods row and in a pod's detail panel
+      each open the editor, and `e` on a Secret row gives the reason
+      (pilgrimagesoftware/Fernrohr-App#134, #140).
 
 ## 3. Shell / exec into a container
 
