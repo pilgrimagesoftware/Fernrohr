@@ -73,12 +73,12 @@
 
 ## 7. Help overlay
 
-- [ ] 7.1 Add a `global.show_key_hints` command (default binding `?`) that opens an overlay built from
+- [x] 7.1 Add a `global.show_key_hints` command (default binding `?`) that opens an overlay built from
       the `CommandRegistry` filtered to the currently focused `KeyContext`, and verify a test confirms
       the listed commands match what the palette would show in that same context
-- [ ] 7.2 Show commands with no current binding as unbound rather than omitting them, and verify a
+- [x] 7.2 Show commands with no current binding as unbound rather than omitting them, and verify a
       test covers a command whose binding was removed via the keybindings editor
-- [ ] 7.3 Verify dismissing the overlay returns keyboard focus to its prior location via a focus-order
+- [x] 7.3 Verify dismissing the overlay returns keyboard focus to its prior location via a focus-order
       test
 
 ## 8. Command registry and keymap wiring
