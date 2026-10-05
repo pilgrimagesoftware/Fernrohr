@@ -47,6 +47,13 @@ rather than hardcoding strings, so a title rename in the registry doesn't need a
 the menu-building code. This follows the existing pattern (`tab.next`, `panel.toggle_zoom`) rather
 than inventing a parallel path.
 
+**`ClosePanelGroup` ("Close All Tabs") is reused, not defined here.** `panel-move-keybindings` is
+the change that registers the group-close command - this one's "Close All Tabs" menu item is a
+thin wrapper dispatching that existing command, extended (by whichever of the two changes lands
+second) to skip pinned tabs. If `panel-tab-context-menu` lands first, its own tasks build the menu
+item against `panel-move-keybindings`'s command id as a forward reference and the dependency is
+satisfied once that change merges; it does not add a second group-close action of its own.
+
 **Pinned state lives on the panel, not the dock layout.** A new `pinned: bool` persists wherever
 panel-local config already round-trips through `workspace.toml` (next to the panel's `ResourceView`
 state), not in `DockArea`'s own layout tree - pin/unpin is a property of a panel's identity, and

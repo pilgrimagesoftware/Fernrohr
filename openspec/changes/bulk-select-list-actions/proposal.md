@@ -3,21 +3,32 @@
 ## Why
 
 Every list panel (Pods table, the generic `ObjectListPanel` every other kind opens) only ever
-acts on one row at a time - open, describe, YAML. There is no way to delete several objects,
+acts on one row at a time - open, describe, YAML, and, since `k9s-remaining-keybindings`, delete
+(`ctrl-d`, with confirmation), force-kill (`ctrl-k`, no confirmation), edit, shell, and
+port-forward on the one selected row. There is still no way to delete several objects at once,
 restart several Deployments, drain several nodes, or tail several pods' logs at once; each
 requires opening and acting on one row after another. k9s and kubectl both treat multi-object
-bulk action as a basic workflow, and this app has none of it yet. This is also the app's first
-path that mutates cluster objects at all - today nothing deletes or patches anything live.
+bulk action as a basic workflow, and this app has none of it yet.
+
+This is not, however, the app's first mutating path - `k9s-remaining-keybindings` already shipped
+single-row delete, force-kill, YAML edit (server-side apply), and shell/exec. Bulk Delete here
+reuses that single-row delete's confirmation dialog and its `resource_actions::delete` backend
+call (looping it over the checked set) rather than inventing a second delete mechanism; the other
+bulk actions (restart/rollback rollout, scale, cordon/drain, label/annotate) are the genuinely new
+mutating surface this change adds.
 
 ## What Changes
 
 - Add checkbox-style multi-row selection to every list panel (Pods table and
-  `ObjectListPanel`), toggled by Space on the focused row and by clicking a row's checkbox,
-  with Shift+click/Shift+Space range selection following the same model as the namespace-set
-  editor's range select.
+  `ObjectListPanel`), toggled by `x` on the focused row and by clicking a row's checkbox,
+  with Shift+click/Shift+`x` range selection following the same model as the namespace-set
+  editor's range select. (Not Space: the Pods table already binds Space to Quick
+  Look on the Pods table, so checkbox toggle needs its own key - see design.md.)
 - Add a bulk action bar/menu, visible whenever one or more rows are checked, offering the
   actions that make sense for what's checked:
-  - **Delete** - any kind, any number of checked rows.
+  - **Delete** - any kind, any number of checked rows; reuses the single-row Delete command's
+    confirmation dialog and `resource_actions::delete` call from `k9s-remaining-keybindings`,
+    looped over the checked set, not a second delete mechanism.
   - **Restart rollout** - only offered when every checked row is one of the three workload kinds
     `kubectl rollout restart` itself supports: Deployment, DaemonSet, or StatefulSet. A checked
     set may mix those three kinds freely, since the restart mechanism is identical for all of

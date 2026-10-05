@@ -13,7 +13,7 @@ object at a time.
 
 Every list panel (the Pods table and every `ObjectListPanel`) SHALL let the user check and
 uncheck individual rows, independent of which row the single-row cursor is on, by clicking a
-row's checkbox and by pressing Space on the focused row. Checked state SHALL be visually distinct
+row's checkbox and by pressing `x` on the focused row. Checked state SHALL be visually distinct
 from the cursor/focus highlight.
 
 #### Scenario: Checking a row does not move the cursor
@@ -23,7 +23,7 @@ from the cursor/focus highlight.
 
 ### Requirement: Range selection by Shift
 
-Shift+click on a row's checkbox, and Shift+Space on the focused row, SHALL check every row
+Shift+click on a row's checkbox, and Shift+`x` on the focused row, SHALL check every row
 between the last row the user checked and the target row, inclusive, the same range-selection
 model the namespace-set editor's shift-click uses.
 
@@ -75,8 +75,12 @@ every checked row's kind.
 ### Requirement: Bulk Delete
 
 The bulk action bar's Delete action SHALL be available for any checked set regardless of kind,
-SHALL issue a delete request for each checked object, and SHALL always show a confirmation
-naming how many objects of which kind(s) will be deleted before issuing any request.
+SHALL issue a delete request for each checked object using the same delete call the single-row
+Delete command (`k9s-remaining-keybindings`) already uses, and SHALL always show a confirmation
+naming how many objects of which kind(s) will be deleted before issuing any request. Bulk Delete
+is a separate command from the single-row `ctrl-d`/`ctrl-k` commands and SHALL NOT share their
+key binding; the single-row commands continue to act on the focused row alone regardless of what
+else is checked.
 
 #### Scenario: Confirming a bulk delete
 
@@ -238,10 +242,12 @@ objects errored.
 ### Requirement: Checking and bulk actions are keyboard-reachable
 
 Checking a row, Shift-range selection, opening the bulk action bar, and each bulk action SHALL be
-reachable from the keyboard, SHALL each be a registered command with a default binding and a
-`keymap.toml` override, and SHALL appear in the command palette while the panel has focus.
+reachable from the keyboard, SHALL each be a registered command with a `keymap.toml`-overridable
+binding (a default key for checking/range-selection; an empty default, reachable via the bar and
+the palette, is acceptable for an individual bulk action with no obvious single key), and SHALL
+appear in the command palette while the panel has focus.
 
 #### Scenario: Running a bulk action without a mouse
 
-- **WHEN** the user checks several rows with Space and Shift+Space alone
+- **WHEN** the user checks several rows with `x` and Shift+`x` alone
 - **THEN** the bulk action bar's actions are reachable and operable without touching the mouse
