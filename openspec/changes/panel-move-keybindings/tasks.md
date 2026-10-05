@@ -55,7 +55,7 @@
 
 ## Notes
 
-- Implemented in pilgrimagesoftware/Fernrohr-App PR (see below), stacked on App#122
+- Implemented in pilgrimagesoftware/Fernrohr-App#123, stacked on App#122
   (`k9s-remaining-keybindings`): Close Group's confirmation needs panels with something to lose,
   and the first such panels - a running shell, an unsaved YAML edit - arrive there.
 - 6.1 is left for a person: the keybindings editor lists all thirteen commands (an automated test,
