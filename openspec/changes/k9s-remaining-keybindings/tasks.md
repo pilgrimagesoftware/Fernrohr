@@ -161,7 +161,10 @@
     to be offered outside text fields). As a result the object list's, events browser's and
     Resource panel's existing `&& !Input` commands now appear in the palette while their panel has
     focus - they were bound but never offered before.
-- Section 10 (#136, #143) is in pilgrimagesoftware/Fernrohr-App#138, stacked on #134 (Edit YAML
-  everywhere), whose `e` commands it gates on the `patch` verb. The refusal banner's Dismiss became
-  an icon button with a tooltip (`icon-buttons.md`); it isn't a registered command, since it only
-  clears a message.
+- Section 10 (#136, #143) is in pilgrimagesoftware/Fernrohr-App#138. Deviations worth a look:
+  - The Pods list still offers Delete and Kill without checking the Pod kind's `delete` verb. Every
+    other list, and the pod detail panel, gate on it.
+  - The object panel doesn't offer Delete while a YAML edit is open, so a delete can't silently
+    discard the edit.
+  - The refusal banner's Dismiss became an icon button with a tooltip (`icon-buttons.md`). It isn't
+    a registered command, since it only clears a message.
