@@ -114,7 +114,7 @@
 
 ## Notes
 
-- Implemented in App PR (see Fernrohr#121). Deviations worth a look:
+- Implemented in pilgrimagesoftware/Fernrohr-App#122. Deviations worth a look:
   - 4.1 asks the row's request to match "what the tunnel-management UI sends for a hand-configured
     forward", but that UI only configures SSH tunnels - it has no hand-made Kubernetes forward. The
     row commands and the Tunnels window's new Port forwards section share one request type and one
