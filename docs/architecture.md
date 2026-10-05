@@ -44,6 +44,13 @@ first-class target rather than a follow-up (see `bootstrap-fernrohr`'s task 9.1)
   for MVP, swap to `russh` later behind the trait. URL rewrite to `127.0.0.1:PORT` with
   `kube::Config.tls_server_name` set to the real apiserver host so cert validation still passes.
   Tracked in the `tunnel-subsystem` OpenSpec change (depends on `bootstrap-fernrohr`).
+  Command tunnels (`command-tunnels`) are a second kind: Fernrohr runs a user-supplied command
+  (e.g. a vendor CLI's IAP SSH session), split with POSIX quoting and never run through a shell,
+  with `{port}` substituted and the login-shell `PATH`, as one process group (TERM, then KILL).
+  It is Up once its local port answers. Proxy mode (the default) sets `kube::Config.proxy_url` on
+  the bound context's client only, never the process environment, so TLS runs end to end to the
+  real host; forward mode uses the URL rewrite above. One running command per command tunnel,
+  shared by every context bound to it.
 - **Prometheus**: default path queries through the kube apiserver service proxy
   (`/api/v1/namespaces/{ns}/services/{svc}:{port}/proxy/api/v1/query_range`), so it piggybacks the
   existing (possibly tunneled) kube client with no extra config. A provider abstraction
