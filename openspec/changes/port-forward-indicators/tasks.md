@@ -30,13 +30,18 @@
       them to the hint rows. Verify with keystroke tests, and with the prefix-aware conflict check
       against every default.
 
-## 5. Manage Tunnels
+## 5. Manage Tunnels and stop confirmation
 
 - [ ] 5.1 Put a horizontal divider between the Tunnels section and the Port forwards section of the
       Manage Tunnels window, using the theme's border color and the existing spacing tokens and
       matching the app's other section separators. Verify with a view test that the divider
       renders between the two sections, and still renders when the Port forwards section is
       empty.
+- [ ] 5.2 Make every stop path confirm first: the strip, the container port, Stop Port Forward and
+      Manage Tunnels' Stop. Use one shared dialog that names the pod or service, local address and
+      port with the names set apart from the text, and reuse #143's confirmation styling. Verify
+      with keystroke and mouse tests on each path that Escape or Cancel keeps the forward and Enter
+      or Confirm stops it.
 
 ## 6. Gates
 
@@ -49,6 +54,7 @@
       - Forward a pod with `shift-f` and see the row indicator.
       - Open its detail panel and see the strip. Copy the address and `curl` it.
       - In the Containers tab, click a second port's forward icon.
-      - Stop one forward from the strip and the other with Stop Port Forward.
+      - Stop one forward from the strip and the other with Stop Port Forward, cancelling the
+        confirmation once before confirming.
       - Confirm all the indicators clear.
       - Open Manage Tunnels and check the divider between Tunnels and Port forwards.

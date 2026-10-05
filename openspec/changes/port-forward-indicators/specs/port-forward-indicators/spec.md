@@ -35,7 +35,7 @@ SHALL disappear when the last forward stops.
 
 #### Scenario: Stop from the detail panel
 
-- **WHEN** the user clicks a forward's stop icon in the pod detail strip
+- **WHEN** the user clicks a forward's stop icon in the pod detail strip and confirms
 - **THEN** that forward stops, its local port closes, and it disappears from the strip, the pod's row and Manage Tunnels
 
 ### Requirement: Forward controls on container ports
@@ -60,12 +60,36 @@ apply.
 #### Scenario: Stop by keyboard
 
 - **WHEN** a pod with one active forward is selected in the Pods list and the user invokes Stop Port Forward
-- **THEN** that forward stops without a prompt
+- **THEN** the stop confirmation opens for that forward, without asking which one first
 
 #### Scenario: Several forwards
 
 - **WHEN** the user invokes Stop Port Forward in the detail panel of a pod with two forwards
 - **THEN** the application asks which forward to stop
+
+### Requirement: Stopping a forward is confirmed
+
+Stopping a port-forward SHALL ask for confirmation on every path that stops one:
+
+- the detail strip's stop icon
+- a container port's stop icon
+- the Stop Port Forward command
+- Manage Tunnels' Stop button
+
+The confirmation SHALL name the pod or service, the local address and the target port, with the
+names set apart from the surrounding text as other confirmations do. It SHALL be fully operable
+from the keyboard: Enter confirms, Escape cancels, and Tab moves between the buttons. Cancelling
+SHALL leave the forward running.
+
+#### Scenario: Cancel keeps the forward
+
+- **WHEN** the user clicks a forward's stop icon and then cancels the confirmation
+- **THEN** the forward keeps running and every indicator still shows it
+
+#### Scenario: Confirm from Manage Tunnels
+
+- **WHEN** the user clicks Stop on a port-forward in Manage Tunnels
+- **THEN** the confirmation names the forward, and the forward stops only after the user confirms
 
 ### Requirement: Results are not shown as list-panel notices
 
