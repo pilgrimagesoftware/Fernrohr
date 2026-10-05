@@ -6,13 +6,20 @@
 
 A resource-browser panel SHALL provide a "port-forward" command on a Pod or Service row that
 acquires a Kubernetes-backed managed forward to that resource and surfaces it in the tunnel
-management UI, without requiring the user to pre-configure a forward.
+management UI, without requiring the user to pre-configure a forward. A pod's detail panel SHALL
+offer the same command for its own Pod.
 
 #### Scenario: Start a port-forward from a pod row
 
 - **WHEN** the user invokes port-forward on a selected Pod and a target port
 - **THEN** a Kubernetes managed forward to that Pod's port is acquired and appears in the tunnel
   management list in its current state
+
+#### Scenario: Start a port-forward from a pod's detail panel
+
+- **WHEN** the user invokes port-forward in a pod's detail panel
+- **THEN** a Kubernetes managed forward to that Pod's port is acquired, as from the Pods row, and
+  the panel says where it listens
 
 #### Scenario: Multiple ports on the target
 

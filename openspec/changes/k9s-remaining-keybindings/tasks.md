@@ -117,6 +117,34 @@
 - [ ] 9.6 Keys on a real keyboard: `?` (shift-/ on a US layout) opens Key Hints outside a text field
       and types `?` inside one; `alt-1`..`alt-9` and `alt-0` jump namespaces with Option held on
       macOS (Option-digit types a symbol in text fields, so check it doesn't fire there).
+- [ ] 9.7 Delete everywhere: in a Secrets list, `ctrl-d` on a throwaway Secret asks with its name
+      quoted in the accent colour and both buttons showing their keys; Enter deletes it. In a pod's
+      detail panel, `s` opens a shell, `shift-f` forwards, `ctrl-d` asks and the panel then shows the
+      pod deleted. A metrics kind's list offers neither Delete nor Edit.
+
+## 10. Delete everywhere and confirmation styling (#136, #143)
+
+- [x] 10.1 Record the `delete` and `patch` verbs from discovery, and verify a test reads both from a
+      fixture, including a get/list-only kind that has neither
+- [x] 10.2 Make delete one reusable flow (`delete_flow`: confirm, send, report through a callback,
+      never inside the caller's update) that the Pods panel uses and bulk delete can build on, and
+      verify unit tests cover the question's wording and a disconnected context's deferred refusal
+- [x] 10.3 Offer `ctrl-d` on every list row whose kind lists `delete`, outside text fields, and verify
+      a real-window test deletes a Secret from the Secrets list (Escape cancels, Enter deletes, the
+      row goes), shows a refusal, and offers nothing for a kind without `delete` or in the filter
+- [x] 10.4 Offer `ctrl-d` in the object detail panel while its object is loaded, present and deletable,
+      and verify a real-window test deletes it and the panel then shows it deleted
+- [x] 10.5 Offer `ctrl-d`, `ctrl-k`, `s` (while a container runs) and `shift-f` in the pod detail panel
+      on its own pod, reusing the Pods list's actions and flows, with Shell, Port forward and Delete
+      hints after Logs, and verify real-window keystroke tests for each
+- [x] 10.6 Set object names apart in every confirmation (quoted, code font, accent colour), and verify
+      a render test shows a name drawn as its own code-font run in the accent colour
+- [x] 10.7 Show each confirmation button's bound key (Enter, Escape) from the live keymap and make
+      Enter confirm, and verify a render test draws both keys and keystroke tests confirm and cancel
+- [x] 10.8 Offer Edit only for a kind that lists `patch`, and verify a real-window test shows a
+      read-only kind's row offers no Edit, and a test finds no clash for any Edit key
+- [x] 10.9 Have the palette read every key context on the focus path, not only each element's
+      primary one, and verify a test offers a command gated to a secondary context
 
 ## Notes
 
@@ -133,3 +161,10 @@
     to be offered outside text fields). As a result the object list's, events browser's and
     Resource panel's existing `&& !Input` commands now appear in the palette while their panel has
     focus - they were bound but never offered before.
+- Section 10 (#136, #143) is in pilgrimagesoftware/Fernrohr-App#138. Deviations worth a look:
+  - The Pods list still offers Delete and Kill without checking the Pod kind's `delete` verb. Every
+    other list, and the pod detail panel, gate on it.
+  - The object panel doesn't offer Delete while a YAML edit is open, so a delete can't silently
+    discard the edit.
+  - The refusal banner's Dismiss became an icon button with a tooltip (`icon-buttons.md`). It isn't
+    a registered command, since it only clears a message.
