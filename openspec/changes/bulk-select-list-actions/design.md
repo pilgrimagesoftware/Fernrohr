@@ -10,11 +10,16 @@ Each panel's delegate owns its rows: `pods/` keyed by pod uid, `object_list/` by
 are registered commands scoped to each panel's `KeyContext`, dispatched the same way across both
 panels (`object_list/commands.rs`, `pods/commands.rs`).
 
-No code anywhere issues a write against a live cluster today - every existing kube-rs call is a
-`get`/`list`/`watch`. Every bulk action here is new, and most are destructive or disruptive, so
-this is also the point where the app needs its first confirm-before-mutate pattern. The tunnel
-editor's `confirming_delete: bool` field + inline confirm UI (`ui/tunnels/editor/actions.rs`) is
-the closest existing precedent, though that one deletes local config, not a cluster object.
+`k9s-remaining-keybindings` already shipped the app's first cluster-mutating calls: single-row
+delete (`ctrl-d`, confirmed), force-kill (`ctrl-k`, no confirmation), YAML edit (server-side
+apply), and shell/exec. Delete's confirm-before-mutate pattern and its
+`resource_actions::delete(client, kind, name, namespace, force)` helper are this change's closest
+and most direct precedent - Bulk Delete reuses both outright (looping the helper over the checked
+set) rather than inventing a second delete path. The tunnel editor's `confirming_delete: bool`
+field + inline confirm UI (`ui/tunnels/editor/actions.rs`) remains the precedent for the bulk
+confirmation component's inline-flag shape, though that one deletes local config, not a cluster
+object. Restart/rollback rollout, scale, cordon/drain, and label/annotate are the actions here
+that are genuinely new mutating calls.
 
 `kube-client` 4.2's `Api::evict` already wraps the eviction subresource
 (`api/subresource.rs`), so Drain needs no raw-request workaround - it lists the pods scheduled
@@ -58,9 +63,29 @@ elsewhere), filters out DaemonSet-owned and mirror pods, and calls `evict` on th
   existing re-anchor-by-identity logic is reused, not reinvented, for the checked set).
 - **A thin checkbox affordance bolted onto the existing row render, not a second selection mode
   in gpui-kit.** The library's `SelectionMode` stays `Row` for cursor/focus; checked-ness is
-  app-level state rendered as a checkbox cell and read on click/Space, same pattern as the
+  app-level state rendered as a checkbox cell and read on click/`x`, same pattern as the
   Collapsible disclosure rows in `pod_detail`. Keeps the change inside the app, with no upstream
   gpui-kit dependency bump needed.
+- **Checkbox toggle binds to `x` (Shift+`x` for range), not Space.** k9s itself uses Space to mark
+  a resource for its own bulk operations, but `k9s-remaining-keybindings` already bound Space to
+  `pods.quick_look` on the Pods table (shipped before this change), so Space isn't free here. `x`
+  is unused in both `PodsPanel`'s and `ObjectListPanel`'s key contexts today (checked against
+  every command registered in `pods/commands.rs` and `object_list/commands.rs`); Shift+`x` for
+  range-select then just extends the same key the way Shift already extends `w` into
+  `WarpAllToNamespace`'s `shift-w`. The mouse route (click a checkbox, Shift-click to extend) is
+  unaffected either way.
+- **The bulk action bar's own actions (Delete, Restart Rollout, Rollback Rollout, Scale,
+  Cordon, Uncordon, Drain, Label, Annotate, Copy Name(s), Copy YAML, bulk View Logs) default to no
+  key binding, reachable via the bulk action bar itself and the command palette.** This is an
+  established pattern for registered commands without an obvious single key (`default_binding:
+  ""`, as `ui/table_fit.rs`, `ui/panel/tabs.rs` and others already do) - not a gap, since the
+  command palette and the bar's own click target already give each a keyboard and mouse route
+  (`.claude/rules/keyboard-first.md`). It also sidesteps any ambiguity with
+  `k9s-remaining-keybindings`'s single-row `ctrl-d` (`pods.delete`) and `ctrl-k` (`pods.kill`):
+  those two keys keep acting on the focused row alone, in their existing context, whether or not
+  other rows are checked; bulk Delete never shares their key, so there's no question of which
+  target set `ctrl-d` affects. `keymap.toml` still lets a user bind any of them to a key of their
+  choice.
 - **One shared crate-internal module for the mutating calls** (`k8s::resource::bulk_actions` or
   similar), taking a `ClusterConnection` + a list of `ObjectRef`s/`DiscoveredKind`, doing the
   per-kind call (delete, restart/rollback patch, scale patch, cordon/uncordon patch, drain's list
@@ -108,11 +133,11 @@ elsewhere), filters out DaemonSet-owned and mirror pods, and calls `evict` on th
 
 ## Risks / Trade-offs
 
-- This is the first cluster-mutating code path in the app, and it ships seven distinct mutating
-  actions at once rather than one. Getting delete/patch/evict error handling (RBAC-denied,
-  already-gone, conflict, PDB-blocked) right here sets the pattern every future mutating action
-  will follow - worth the extra care the tasks give it, not something to rush to ship the UI
-  faster.
+- This ships six distinct *new* mutating actions at once (restart/rollback rollout, scale,
+  cordon/uncordon, drain, label/annotate - Delete reuses `k9s-remaining-keybindings`'s existing
+  call). Getting patch/evict error handling (RBAC-denied, already-gone, conflict, PDB-blocked)
+  right here sets the pattern every future bulk action will follow - worth the extra care the
+  tasks give it, not something to rush to ship the UI faster.
 - A checked set keyed by identity (uid / `ObjectRef`) rather than row index means a checked
   object that disappears from a live watch mid-batch simply drops out of the checked set's
   practical effect (the mutating call for it will 404/fail rather than corrupt a different row) -

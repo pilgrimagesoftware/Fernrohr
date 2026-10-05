@@ -5,23 +5,32 @@
 `bulk-select-list-actions` covers the actions that make sense across *any* checked set of one
 kind or a compatible group of kinds - delete, restart/rollback rollout, scale, cordon/drain,
 label/annotate. It deliberately stays generic. Several other useful actions only make sense for
-one specific kind and don't fit that generic shape: forwarding a local port to a Pod or Service,
-triggering a CronJob early, suspending a Job, pausing a Deployment's rollout, expanding a PVC,
-tainting a Node, minting a ServiceAccount token, opening an Ingress host in a browser. None of
-these exist today - list panels and detail panels are read-only (plus the Delete/Logs-family
-actions `bulk-select-list-actions` adds), and `K8sPortForwardConfig`
-(`App/app/src/forward/k8s/port_forward.rs`) already exists as infrastructure but has no caller
-anywhere in the app yet.
+one specific kind and don't fit that generic shape: triggering a CronJob early, suspending a Job,
+pausing a Deployment's rollout, expanding a PVC, tainting a Node, minting a ServiceAccount token,
+opening an Ingress host in a browser. None of these exist today - list panels and detail panels
+are read-only (plus the Delete/Logs-family actions `bulk-select-list-actions` adds, and the
+row-level actions `k9s-remaining-keybindings` already shipped).
+
+Port Forward for Pods and Services is *not* one of these gaps anymore: `k9s-remaining-keybindings`
+already wired `K8sPortForwardConfig`/`PodPortForwardTransport`
+(`App/app/src/forward/k8s/port_forward.rs`) into the app as a Pods-row and Services-row command
+(`shift-f`), including the Service-to-ready-endpoint-Pod resolution and a "Port forwards" section
+in Manage Tunnels that lists and stops them. The one piece that shipped work left out is an entry
+point for a mouse user who hasn't learned the keybinding: neither the Pod detail panel nor the
+Service's object-detail section offers Port Forward, and neither row's context menu does either -
+this change adds those entry points onto the existing acquire path, not a new one.
 
 ## What Changes
 
 Add the following kind-specific actions, each reachable from that kind's list-row context menu,
 its detail panel (where one exists), and the command palette while that row or panel has focus:
 
-- **Pod, Service - Port Forward...**: prompts for a local port (or offers the first container
-  port/service port as a default) and starts a `ManagedForward` using the existing
-  `K8sPortForwardConfig`/`PodPortForwardTransport` path, showing it in whatever UI already lists
-  active forwards (tunnels editor's forward list, extended to include these).
+- **Pod, Service - Port Forward**: adds the action to the Pod detail panel, the Service's
+  object-detail section, and both rows' context menus, each a thin call into the Port Forward
+  path `k9s-remaining-keybindings` already shipped (same port-choice prompt when a target exposes
+  more than one port, same `ManagedForward` acquisition, same "Port forwards" section of Manage
+  Tunnels). No new transport, registry wiring, or Service-resolution logic - that already exists
+  and is reused as is.
 - **CronJob - Trigger Now**: creates a Job from the CronJob's spec immediately, the same as
   `kubectl create job --from=cronjob/<name>`.
 - **Job, CronJob - Suspend / Resume**: toggles `spec.suspend`.
@@ -61,11 +70,9 @@ requirement changes.)
 - `App/app/src/k8s/resource/pods/`, `object_list/`: new per-kind context-menu entries and
   commands, gated on the row's kind.
 - `App/app/src/k8s/resource/pod_detail/`, `object_detail/`: new per-kind action entries in the
-  kinds that have one (Pod's Port Forward; the generic object detail panel's sections for
-  CronJob, Job, Deployment, PersistentVolumeClaim, Node, ServiceAccount, Ingress, Service).
-- `App/app/src/forward/`: first real caller of `K8sPortForwardConfig`/`PodPortForwardTransport`;
-  likely a small extension to whatever already surfaces `ManagedForward`s (the tunnels editor's
-  forward list) so a Pod/Service port forward shows up the same way an SSH tunnel does.
+  kinds that have one (Pod's Port Forward, calling the existing `k9s-remaining-keybindings` acquire
+  path rather than a new one; the generic object detail panel's sections for CronJob, Job,
+  Deployment, PersistentVolumeClaim, Node, ServiceAccount, Ingress, Service).
 - New shared module for the mutating calls (suspend/resume patch, pause/resume patch, PVC expand
   patch, taint patch, CronJob-to-Job creation, TokenRequest), parallel to and reusing patterns
   from `bulk-select-list-actions`'s `k8s::resource::bulk_actions` module where the underlying

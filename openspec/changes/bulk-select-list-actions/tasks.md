@@ -8,10 +8,11 @@
 - [ ] 1.2 Render a checkbox cell per row reflecting checked state, toggled by click. Verify
   visually with `cargo run` against a test cluster: clicking a checkbox checks/unchecks the row
   without moving the cursor.
-- [ ] 1.3 Add a `ToggleRowChecked` action bound to Space on the focused row (both panels),
-  registered as a command scoped to each panel's `KeyContext`. Add a test simulating the Space
-  keystroke and asserting the focused row's checked state flips.
-- [ ] 1.4 Add a `CheckRange` action bound to Shift+Space (and Shift+click on the checkbox),
+- [ ] 1.3 Add a `ToggleRowChecked` action bound to `x` on the focused row (both panels; not
+  Space, which `k9s-remaining-keybindings` already bound to `pods.quick_look` on the Pods table -
+  see design.md), registered as a command scoped to each panel's `KeyContext`. Add a test
+  simulating the `x` keystroke and asserting the focused row's checked state flips.
+- [ ] 1.4 Add a `CheckRange` action bound to Shift+`x` (and Shift+click on the checkbox),
   checking every row between the last-checked row and the target inclusive, following the
   namespace-set editor's shift-range model. Add a test covering a 3-7 range check.
 - [ ] 1.5 Ensure checked identities survive a watch-driven row reorder/update (reuse the existing
@@ -23,7 +24,9 @@
 
 - [ ] 2.1 Add a bulk action bar component shown whenever the checked set is non-empty, listing
   only actions valid for every checked row's kind:
-  - Delete, Label, Annotate, Copy Name(s), Copy YAML - always offered, any kind.
+  - Delete (reusing `resource_actions::delete` from `k9s-remaining-keybindings`, looped over the
+    checked set - not a new delete call), Label, Annotate, Copy Name(s), Copy YAML - always
+    offered, any kind.
   - Restart Rollout, Rollback Rollout - offered when every checked row is a Deployment,
     DaemonSet, or StatefulSet, in any mix of those three.
   - Scale - offered when every checked row is a Deployment, StatefulSet, or ReplicaSet, in any
@@ -34,8 +37,16 @@
   mix within a group still offers them; a mixed-kind selection outside every group still offers
   Delete/Label/Annotate/Copy).
 - [ ] 2.2 Make the bar's actions reachable from the keyboard and the command palette while a list
-  panel with a non-empty checked set has focus, each as a registered command with a default
-  binding and `keymap.toml` override. Verify each command appears in the palette under test.
+  panel with a non-empty checked set has focus, each as a registered command with a
+  `keymap.toml`-overridable binding. Give `ToggleRowChecked`/`CheckRange` their `x`/Shift-`x`
+  defaults from Task 1; give the bar's other actions (Delete, Restart Rollout, Rollback Rollout,
+  Scale, Cordon, Uncordon, Drain, Label, Annotate, Copy Name(s), Copy YAML, bulk View Logs) an
+  empty default binding (`default_binding: ""`, the existing pattern `ui/table_fit.rs` and
+  `ui/panel/tabs.rs` use for a command with no obvious single key) so none of them default onto
+  `ctrl-d`/`ctrl-k` or any other key already bound in `PodsPanel`'s or `ObjectListPanel`'s context -
+  each stays reachable via the bar's click target, the palette, and whatever key a user assigns in
+  `keymap.toml`. Verify each command appears in the palette under test, and that the keymap
+  conflict checker reports no collisions against the default keymap.
 
 ## 3. Shared confirmation, input prompt, and batch-outcome UI
 
@@ -54,10 +65,12 @@
 
 ## 4. Mutating calls: Delete, Restart Rollout, Rollback Rollout
 
-- [ ] 4.1 Add a shared module (e.g. `k8s::resource::bulk_actions`) with a delete-one-object call
-  over `Api<DynamicObject>::delete` given a `ClusterConnection` and `ObjectRef`/`DiscoveredKind`.
-  Verify with a test against the mock cluster (`k8s::test_cluster`) covering both a Pod and a
-  non-Pod kind.
+- [ ] 4.1 Add a shared module (e.g. `k8s::resource::bulk_actions`) for the bulk-only calls
+  (restart/rollback/scale/cordon/drain/label-annotate below); for Delete, call
+  `k8s::resource::resource_actions::delete` (the same helper `pods.delete`/`pods.kill` already
+  use) per checked object rather than adding a second delete call. Verify with a test against the
+  mock cluster (`k8s::test_cluster`) that bulk Delete issues the same request shape single-row
+  Delete does, for both a Pod and a non-Pod kind.
 - [ ] 4.2 Add the rollout-restart call: patches a Deployment's, DaemonSet's, or StatefulSet's
   `spec.template.metadata.annotations["kubectl.kubernetes.io/restartedAt"]` to the current
   timestamp, matching `kubectl rollout restart`'s own mechanism - one function parameterized by

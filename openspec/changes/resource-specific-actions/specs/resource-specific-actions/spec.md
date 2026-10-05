@@ -10,22 +10,25 @@ row, detail panel, and the command palette, alongside the generic cross-kind act
 
 ## ADDED Requirements
 
-### Requirement: Port Forward for Pods and Services
+### Requirement: Port Forward is reachable from a Pod or Service's detail panel and context menu
 
-A Pod or Service row and its detail panel SHALL offer a Port Forward action that starts a
-`ManagedForward` to that object, prompting for the local port to use and defaulting to the
-object's first exposed port. The forward SHALL appear wherever the app already lists active
-forwards, and SHALL be stoppable from there the same way an SSH tunnel is.
+A Pod or Service row's context menu and its detail panel SHALL offer a Port Forward action,
+calling the same `ManagedForward` acquisition `k9s-remaining-keybindings`'s row-level Port Forward
+command already performs (including its port-choice prompt when the target exposes more than one
+port, and Service's resolution to one of its ready endpoint Pods). The forward SHALL appear
+wherever the app already lists active forwards, and SHALL be stoppable from there the same way an
+SSH tunnel is - unchanged from how it already works today.
 
-#### Scenario: Starting a port forward from a Pod
+#### Scenario: Starting a port forward from a Pod's detail panel
 
-- **WHEN** the user chooses Port Forward on a running Pod and accepts the default local port
-- **THEN** a `ManagedForward` to that Pod starts and appears in the active-forwards list
+- **WHEN** the user chooses Port Forward in a running Pod's detail panel
+- **THEN** a `ManagedForward` to that Pod starts and appears in the active-forwards list, the same
+  as choosing it from the Pods table row does today
 
 #### Scenario: Port Forward is not offered for a Pod that isn't running
 
 - **WHEN** a Pod is Pending or Terminated
-- **THEN** its Port Forward action is disabled or absent
+- **THEN** its Port Forward action is disabled or absent in its context menu and detail panel
 
 ### Requirement: Trigger Now for CronJobs
 
