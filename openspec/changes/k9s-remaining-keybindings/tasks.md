@@ -2,13 +2,13 @@
 
 ## 1. Delete and force-kill
 
-- [ ] 1.1 Add a shared `resource_actions::delete(client, kind, name, namespace, force: bool)` helper
+- [x] 1.1 Add a shared `resource_actions::delete(client, kind, name, namespace, force: bool)` helper
       that issues a typed delete, with `force` setting zero grace period, and verify a unit test
       covers both the normal and forced request shapes sent to a mocked client
-- [ ] 1.2 Register `pods.delete` (confirmation dialog, reuses existing confirm-dialog component) and
+- [x] 1.2 Register `pods.delete` (confirmation dialog, reuses existing confirm-dialog component) and
       `pods.kill` (no confirmation) commands on the Pods panel, and verify a test confirms `kill`
       skips the dialog while `delete` requires confirming
-- [ ] 1.3 Wire delete/kill failure into the existing panel error-surface path and verify a test shows
+- [x] 1.3 Wire delete/kill failure into the existing panel error-surface path and verify a test shows
       a simulated API rejection renders a failure reason without removing the row
 
 ## 2. Edit resource YAML
