@@ -2,16 +2,16 @@
 
 ## 1. Lookup
 
-- [ ] 1.1 Make `PortForwards` observable, with a per-object index and `for_object` / `stop(id)`.
+- [x] 1.1 Make `PortForwards` observable, with a per-object index and `for_object` / `stop(id)`.
       Verify with unit tests that starting and stopping a forward updates the index and notifies
       observers, and that a stop from Manage Tunnels updates every observer.
 
 ## 2. Lists
 
-- [ ] 2.1 Add the Forwards column (icon, count and tooltip) to the Pods and Services lists. Verify
+- [x] 2.1 Add the Forwards column (icon, count and tooltip) to the Pods and Services lists. Verify
       with view tests that the indicator appears after `shift-f`, disappears after a stop, and
       that the tooltip lists the local address and target port.
-- [ ] 2.2 Remove the list-panel success notice, and route start failures to a notification.
+- [x] 2.2 Remove the list-panel success notice, and route start failures to a notification.
       Verify with a test that a pod with no ports produces a notification and no panel notice.
 
 ## 3. Pod detail panel
@@ -32,7 +32,7 @@
 
 ## 5. Manage Tunnels and stop confirmation
 
-- [ ] 5.1 Put a horizontal divider between the Tunnels section and the Port forwards section of the
+- [x] 5.1 Put a horizontal divider between the Tunnels section and the Port forwards section of the
       Manage Tunnels window, using the theme's border color and the existing spacing tokens and
       matching the app's other section separators. Verify with a view test that the divider
       renders between the two sections, and still renders when the Port forwards section is
@@ -58,3 +58,20 @@
         confirmation once before confirming.
       - Confirm all the indicators clear.
       - Open Manage Tunnels and check the divider between Tunnels and Port forwards.
+
+## Notes
+
+- In progress in pilgrimagesoftware/Fernrohr-App#137 (draft). Sections 1, 2 and 5.1 are done. 5.2
+  is done for Manage Tunnels' Stop. Sections 3 and 4, and 5.2's other stop paths, wait for #143,
+  then get rebased onto it and finished.
+- A Service forward reaches one Pod behind the Service, so its request alone can't say which
+  Service it came from. Each forward records the objects it was started from. A Pod's forwards are
+  those reaching it, and a Service's are those started from it.
+- `ForwardSummary` has no container: a request carries only the pod and port. Section 3's container
+  ports will match on the port.
+- Start failures use gpui-kit's notification. gpui-component keeps a window's notification list
+  private, so tests read a `cfg(test)` record that `notify_failure` keeps.
+- The stop confirmation (`ui::forward_stop`) builds its own buttons, showing `Kbd` keys the way
+  Knot's permission prompt does. It moves to #143's shared confirmation styling once that lands.
+- Following the new icon-buttons rule, Manage Tunnels' Stop is now an icon button with a tooltip.
+  `ui::icon_tooltip` gives that tooltip a debug selector, so tests can assert it.
