@@ -67,8 +67,8 @@ elsewhere), filters out DaemonSet-owned and mirror pods, and calls `evict` on th
   Collapsible disclosure rows in `pod_detail`. Keeps the change inside the app, with no upstream
   gpui-kit dependency bump needed.
 - **Checkbox toggle binds to `x` (Shift+`x` for range), not Space.** k9s itself uses Space to mark
-  a resource for its own bulk operations, but `k9s-remaining-keybindings` already bound Space to
-  `pods.quick_look` on the Pods table (shipped before this change), so Space isn't free here. `x`
+  a resource for its own bulk operations, but the Pods table already binds Space to
+  `pods.quick_look` (from `pod-quick-look`), so Space isn't free here. `x`
   is unused in both `PodsPanel`'s and `ObjectListPanel`'s key contexts today (checked against
   every command registered in `pods/commands.rs` and `object_list/commands.rs`); Shift+`x` for
   range-select then just extends the same key the way Shift already extends `w` into
