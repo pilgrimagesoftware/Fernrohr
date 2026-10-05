@@ -78,7 +78,8 @@ Stopping a port-forward SHALL ask for confirmation on every path that stops one:
 
 The confirmation SHALL name the pod or service, the local address and the target port, with the
 names set apart from the surrounding text as other confirmations do. It SHALL be fully operable
-from the keyboard: Enter confirms, Escape cancels, and Tab moves between the buttons. Cancelling
+from the keyboard: Enter confirms, Escape cancels, and Tab moves between the buttons. Each button
+SHALL show its key (`⏎` and `esc`). Cancelling
 SHALL leave the forward running.
 
 #### Scenario: Cancel keeps the forward
