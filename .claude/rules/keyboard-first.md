@@ -33,8 +33,10 @@ A feature that only one input can reach isn't done.
   live keymap with `Kbd::binding_for_action` (see the Pods panel and `ui/picker_keys.rs`).
 - **Dialogs are keyboard-operable.** Tab reaches every control, Enter or Space activates, Escape
   cancels, and focus goes somewhere sensible when the dialog opens and returns when it closes.
-  Each button shows its key beside its label: `⏎` for the confirm button and `esc` for Cancel, in
-  the same `Kbd` style as hint rows, never as plain text like "(Enter / Escape)".
+  Each button keeps its text label and also shows its bound key as a `Kbd` child read from the live
+  keymap, e.g. "Delete ⏎", "Cancel esc". Knot's permission prompt is the model: `Button::new(..)
+  .label(..).children(Kbd::global_binding_for_action(..))` in `crates/knot/src/panel_view/render.rs`.
+  A text label with no key shown isn't enough.
   gpui-component `Button`s are tab stops by default; don't turn that off without a replacement.
 - **Focus is deliberate.** A new view, window or dialog sets its initial focus. A panel's own
   bindings live in its `KeyContext`, so they fire only while it's on the focus path.
