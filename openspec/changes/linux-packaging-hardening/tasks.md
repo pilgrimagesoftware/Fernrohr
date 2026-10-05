@@ -67,8 +67,9 @@
 - Running the checksum script locally caught a bug before CI ran it: redirecting `sha256sum`'s
   output into the package directory made `SHA256SUMS` list itself. It's written outside the
   directory, then moved in.
-- The spec's "release not marked as published with a partial set" is only partly met. Each leg
-  still attaches its own packages to a release that the release workflow has already published,
-  as before. A failed leg does fail the run and stops `SHA256SUMS` from being attached, so a
-  partial release is visible. Holding the release as a draft until every leg finishes would mean
-  changing the shared `rust-release` workflow.
+- The spec now says what happens when a leg fails. The run fails and `SHA256SUMS` isn't attached,
+  but legs that succeeded may already have attached their packages. Draft-release gating is
+  deferred (design.md decision 4) because it needs a change to the shared `rust-release` workflow.
+- The icon is also installed at 256x256 and 512x512 under `/usr/share/icons/hicolor`. Those
+  scalings are checked in under `app/assets/linux/icons`, and the pixmaps copy stays as a
+  fallback.

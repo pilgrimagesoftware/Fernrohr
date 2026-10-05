@@ -75,15 +75,23 @@ the Linux-only conditions (`if: matrix.name == 'Linux'`) to `startsWith(matrix.n
 
 ### 4. Checksums as a fan-in job
 
-Add a `checksums` job with `needs:` set to the package matrix and gated to tagged releases. It:
+Add a `checksums` job with `needs:` set to the package matrix. It runs on every package run, so a
+`develop` or dispatched run is the dry run, with no test tag on the public repo, and attaches its
+result to the release only for a tag. It:
 
 1. downloads every leg's artifacts
 2. runs `sha256sum` over all `.dmg`, `.deb`, `.rpm` and AppImage files, file names only, no paths
 3. writes `SHA256SUMS`
-4. uploads `SHA256SUMS` to the release
+4. keeps `SHA256SUMS` as a run artifact, and for a tag uploads it to the release
 
 Because the job needs every leg, a failed leg stops `SHA256SUMS` from being published, and the run
-shows the release as incomplete.
+fails. Legs that succeeded have already attached their own packages, though: each leg uploads to
+a release the release workflow has already published.
+
+- **Deferred: draft-release gating.** Holding the release as a draft until every leg and
+  `SHA256SUMS` are attached, then publishing it, would stop a partial release from ever being
+  visible. It needs a change to the shared `rust-release` workflow, which creates and publishes
+  the release, so it is left for a separate change.
 
 - **Alternative: each leg appends its own checksums.** Rejected, because concurrent uploads to one
   file race, and per-leg files aren't what `sha256sum --check` users expect.

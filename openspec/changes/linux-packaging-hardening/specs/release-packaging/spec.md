@@ -22,10 +22,10 @@ Each artifact's file name SHALL include the version and the architecture.
 - **WHEN** a release tag is published
 - **THEN** the release lists a `.deb`, an `.rpm`, and an AppImage for x86_64 and for aarch64, each named with the version and architecture
 
-#### Scenario: A failed platform leg blocks publishing
+#### Scenario: A failed platform leg fails the run
 
 - **WHEN** packaging fails for any platform leg of a tagged release
-- **THEN** the workflow run fails, and the release is not marked as published with a partial set of artifacts
+- **THEN** the workflow run fails and `SHA256SUMS` is not attached to the release, though legs that succeeded may already have attached their artifacts
 
 ### Requirement: Linux packages declare their runtime dependencies
 
@@ -51,13 +51,19 @@ name the SSH client and a running Secret Service provider as host requirements.
 
 ### Requirement: Release checksums
 
-Every tagged release SHALL publish a `SHA256SUMS` file listing the SHA-256 digest of every package
-artifact on that release, in the format `sha256sum --check` accepts.
+Every package run SHALL produce a `SHA256SUMS` file listing the SHA-256 digest of every package
+artifact the run built, in the format `sha256sum --check` accepts, and keep it with the run's
+artifacts. A tagged release's run SHALL also attach it to that release.
 
 #### Scenario: Verifying a download
 
 - **WHEN** a user downloads an artifact and `SHA256SUMS` into one directory and runs `sha256sum --check --ignore-missing SHA256SUMS`
 - **THEN** the downloaded artifact is reported as `OK`
+
+#### Scenario: An untagged run checks the checksums without publishing
+
+- **WHEN** the package workflow runs without a release tag
+- **THEN** `SHA256SUMS` is kept with the run's artifacts and nothing is attached to any release
 
 #### Scenario: Every artifact is covered
 
