@@ -1,6 +1,6 @@
 ## Purpose
 
-Managing named SSH tunnel configurations - their host, credentials, and options - with non-secret
+Managing named tunnel configurations (SSH tunnels and command tunnels) - their settings, credentials, and options - with non-secret
 fields persisted to disk and secrets held only in the operating system keychain.
 
 ## Requirements
