@@ -49,8 +49,8 @@
 
 ## Manual checks
 
-- [ ] Open a pod's detail, wait for it to load, press `l`: the Logs panel opens (or focuses) on that
+- [x] Open a pod's detail, wait for it to load, press `l`: the Logs panel opens (or focuses) on that
       pod and streams its first container
-- [ ] For a pod with several containers, the Logs panel's container picker offers the others
-- [ ] The header's hint row shows `l Logs`, and the palette lists "Pod Detail: View Logs" while the
+- [x] For a pod with several containers, the Logs panel's container picker offers the others
+- [x] The header's hint row shows `l Logs`, and the palette lists "Pod Detail: View Logs" while the
       detail panel has focus
