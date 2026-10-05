@@ -12,7 +12,8 @@ adjacent group, closing an entire group at once, and merging a group into an adj
 #### Scenario: First launch shows an empty workspace
 
 - **WHEN** the application starts with no saved workspace state
-- **THEN** a single main window opens with an empty panel area and a visible way to add a panel
+- **THEN** a single main window opens showing the cluster picker (see `cluster-picker`)
+  rather than an empty panel area
 
 #### Scenario: Panels can be split and resized
 
@@ -24,6 +25,24 @@ adjacent group, closing an entire group at once, and merging a group into an adj
 
 - **WHEN** the user closes a panel
 - **THEN** the panel is removed and the remaining panels reflow to fill the space
+
+#### Scenario: Closing the last panel keeps the window connected
+
+- **WHEN** the user closes a window's last remaining panel
+- **THEN** the window stays connected to its cluster contexts and shows its Resource panel beside
+  an empty panel area, not the cluster picker
+- **AND** the window returns to the picker only when the user disconnects its last context
+
+#### Scenario: Saved layout is restored per cluster
+
+- **WHEN** a window connects to a cluster it has a saved layout for
+- **THEN** that layout is restored instead of showing the full Resource panel
+
+#### Scenario: No saved layout for this cluster shows the Resource panel
+
+- **WHEN** a window connects to a cluster it has no saved layout for
+- **THEN** the workspace shows the Resource panel listing that cluster's discovered
+  resources (see `resource-browser`) instead of restoring an unrelated layout
 
 #### Scenario: Splitting the focused group by keyboard
 
@@ -51,9 +70,10 @@ adjacent group, closing an entire group at once, and merging a group into an adj
 #### Scenario: Closing the focused group by keyboard
 
 - **WHEN** the user invokes a "close group" action while a panel group has focus
-- **THEN** every panel in that group's tab strip is closed, applying the same confirmation prompt
-  used for a single panel to any panel in the group whose state warrants confirming
-- **AND** if the user cancels a confirmation, no panel in the group is closed
+- **THEN** every panel in that group's tab strip is closed
+- **AND** if any panel in the group would lose something by closing (a running shell, an unsaved
+  edit), one confirmation, the window's close confirmation, asks first, listing what is lost
+- **AND** if the user cancels that confirmation, no panel in the group is closed
 
 #### Scenario: Merging the focused group into an adjacent group by keyboard
 

@@ -29,12 +29,12 @@
 
 ## 4. Close-group action
 
-- [x] 4.1 Add a `CloseGroup` action that closes every panel in the focused group, reusing the
+- [x] 4.1 Add a `ClosePanelGroup` action that closes every panel in the focused group, reusing the
       existing per-panel confirmation path and batching any confirmations into a single dialog
       listing the affected panels, and verify with integration tests covering a group with no
       confirmable panels (closes immediately), a group with confirmable panels where the user
       confirms (all close), and where the user cancels (none close)
-- [x] 4.2 Register `CloseGroup` in the command registry with a default keybinding, title, and
+- [x] 4.2 Register `ClosePanelGroup` in the command registry with a default keybinding, title, and
       context predicate, and verify it appears in the command palette and `keymap.toml` defaults
 
 ## 5. Merge-group actions
@@ -50,7 +50,7 @@
 ## 6. Keybindings editor and documentation
 
 - [ ] 6.1 Confirm the keybindings editor lists all twelve new commands (split, move, merge) and
-      `CloseGroup` as rebindable entries, and verify by opening the editor in a manual test pass
+      `ClosePanelGroup` as rebindable entries, and verify by opening the editor in a manual test pass
 - [x] 6.2 Update `tasks.md` progress and any relevant doc comments once all tests above pass
 
 ## Notes
