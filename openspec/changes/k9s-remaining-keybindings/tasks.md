@@ -52,12 +52,12 @@
 
 ## 5. Previous container logs
 
-- [ ] 5.1 Add a "previous logs" toggle command on the log panel that switches the stream source to
+- [x] 5.1 Add a "previous logs" toggle command on the log panel that switches the stream source to
       the container's last-terminated instance (`previous: true` on the log request) and verify a
       test confirms the request flag flips with the toggle
-- [ ] 5.2 Handle the no-previous-instance case by showing an explanatory state instead of an empty
+- [x] 5.2 Handle the no-previous-instance case by showing an explanatory state instead of an empty
       view, and verify a test simulates a container with zero restarts and asserts that state renders
-- [ ] 5.3 Verify toggling back to current logs resumes streaming and includes lines emitted while
+- [x] 5.3 Verify toggling back to current logs resumes streaming and includes lines emitted while
       previous logs was shown, via a test that interleaves the two streams in a mocked client
 
 ## 6. Namespace quick-jump
