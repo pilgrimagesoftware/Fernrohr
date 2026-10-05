@@ -13,13 +13,13 @@
 
 ## 2. Edit resource YAML
 
-- [ ] 2.1 Add an editable mode to the existing `object_detail` YAML view (toggle via `object_detail.edit`
+- [x] 2.1 Add an editable mode to the existing `object_detail` YAML view (toggle via `object_detail.edit`
       command) and verify a test confirms the YAML text becomes editable and reverts on cancel
-- [ ] 2.2 Implement save as a server-side apply (`Patch::Apply`) of the edited manifest and verify a
+- [x] 2.2 Implement save as a server-side apply (`Patch::Apply`) of the edited manifest and verify a
       unit test confirms a well-formed edit is sent as an apply patch to a mocked client
-- [ ] 2.3 Validate YAML parses as a manifest for the resource's kind before allowing save, and verify
+- [x] 2.3 Validate YAML parses as a manifest for the resource's kind before allowing save, and verify
       a test confirms invalid YAML blocks save with a reason and does not call the client
-- [ ] 2.4 Surface apply conflicts (e.g. `managedFields` ownership conflicts, stale resourceVersion) as
+- [x] 2.4 Surface apply conflicts (e.g. `managedFields` ownership conflicts, stale resourceVersion) as
       a failure that keeps the user's edited content, and verify a test simulates a conflict response
       and confirms the edit view retains its content
 
