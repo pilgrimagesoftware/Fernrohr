@@ -40,13 +40,13 @@
 
 ## 4. Port-forward from a resource row
 
-- [ ] 4.1 Add a `pods.port_forward` (and equivalent Services row) command that builds a Kubernetes
+- [x] 4.1 Add a `pods.port_forward` (and equivalent Services row) command that builds a Kubernetes
       managed-forward acquire request for the selected resource and target port, reusing
       `managed_forward::acquire`, and verify a test confirms the request shape matches what the
       tunnel-management UI sends for a hand-configured forward
-- [ ] 4.2 When the target exposes more than one port, prompt for which port before acquiring, and
+- [x] 4.2 When the target exposes more than one port, prompt for which port before acquiring, and
       verify a test covers both the single-port shortcut and the multi-port prompt
-- [ ] 4.3 Confirm the acquired forward appears in the existing tunnel-management list and that
+- [x] 4.3 Confirm the acquired forward appears in the existing tunnel-management list and that
       stopping it there releases it through the normal reference-counted path, and verify an
       integration-style test (mocked k8s port-forward) covers acquire-then-release end to end
 
