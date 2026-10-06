@@ -37,6 +37,12 @@ A feature that only one input can reach isn't done.
   keymap, e.g. "Delete ⏎", "Cancel esc". Knot's permission prompt is the model: `Button::new(..)
   .label(..).children(Kbd::global_binding_for_action(..))` in `crates/knot/src/panel_view/render.rs`.
   A text label with no key shown isn't enough.
+- **Destructive confirmations never fire on Enter.** A dialog confirming something destructive
+  (delete, kill, stop a forward, close panels or windows that lose state, disconnect) opens with
+  focus on Cancel, so Enter cancels. The destructive button runs only when it is clicked, reached
+  with Tab and activated, or triggered by its deliberate shortcut, `cmd-backspace`
+  (`ctrl-backspace` off macOS), which the button shows as a `Kbd`. Escape always cancels. The
+  button uses danger styling. Non-destructive confirmations may still confirm on Enter.
   gpui-component `Button`s are tab stops by default; don't turn that off without a replacement.
 - **Focus is deliberate.** A new view, window or dialog sets its initial focus. A panel's own
   bindings live in its `KeyContext`, so they fire only while it's on the focus path.
