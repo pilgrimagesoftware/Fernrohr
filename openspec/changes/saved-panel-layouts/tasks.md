@@ -37,21 +37,21 @@
 
 ## 2. Save Panel Layout command
 
-- [ ] 2.1 Register the `layouts.save` command (id, title "Save Panel Layout…", default binding
+- [x] 2.1 Register the `layouts.save` command (id, title "Save Panel Layout…", default binding
   `cmd-shift-s`, context `Workspace`, menu `MenuSlot::Window`) wired to a naming dialog (text input,
   Tab-reachable, Enter confirms, Escape cancels). Verify: a `VisualTestContext::simulate_keystrokes`
   test opens the dialog via the default binding and confirms it appears; a render test confirms it
   does not appear while a window is in cluster-picker mode (no `Workspace` context active).
-- [ ] 2.2 Wire the dialog's confirm to capture the current window's dock (`dock_area.read(cx).dump
+- [x] 2.2 Wire the dialog's confirm to capture the current window's dock (`dock_area.read(cx).dump
   (cx)`), Resource panel width, contexts, and window bounds (`restorable_bounds`/`layout_from_window`'s
   existing helpers) into a `SavedLayout`, calling `config::saved_layouts::save`. Verify: a test saves
   a window with two panels and asserts the resulting `SavedLayout`'s dock JSON contains both panels'
   content keys and the window's current bounds.
-- [ ] 2.3 Add the overwrite-confirmation step from the spec's "Saving over an existing name" scenario
+- [x] 2.3 Add the overwrite-confirmation step from the spec's "Saving over an existing name" scenario
   (case-insensitive name match against the saved layouts in `layouts/`). Verify: a keystroke test
   enters a name matching an existing saved layout's name only by case, asserts a confirmation prompt
   appears, and that declining it leaves the existing saved layout's `updated_at` unchanged.
-- [ ] 2.4 Add the structural secret-safety regression test from design.md D8: reveal a `SecretValue`
+- [x] 2.4 Add the structural secret-safety regression test from design.md D8: reveal a `SecretValue`
   in a panel, save a layout, and assert `format!("{:?}", saved_layout)` (and the serialized JSON)
   contains no fixture secret value.
 

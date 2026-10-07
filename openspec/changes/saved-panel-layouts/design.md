@@ -259,13 +259,19 @@ is still the authoritative, context-aware check at implementation time.
 
 | id | title | default binding | context |
 |---|---|---|---|
-| `layouts.save` | Save Panel Layout… | `cmd-shift-s` | `Workspace` (not available from the empty cluster picker) |
-| `layouts.manage` | Saved Layouts… | `cmd-shift-o` | none (available even from the cluster picker, so a fresh window can load a layout straight away) |
+| `layouts.save` | Save Panel Layout… | `secondary-shift-s` | `Workspace` (not available from the empty cluster picker) |
+| `layouts.manage` | Saved Layouts… | `secondary-shift-o` | none (available even from the cluster picker, so a fresh window can load a layout straight away) |
 | `saved_layouts.load_replace` | Load (Replace) | `enter` | `SavedLayoutsPicker` |
 | `saved_layouts.load_add` | Load (Add) | `secondary-enter` | `SavedLayoutsPicker` |
 | `saved_layouts.rename_selected` | Rename | `r` | `SavedLayoutsPicker` |
 | `saved_layouts.delete_selected` | Delete | `backspace` | `SavedLayoutsPicker` |
 | `settings.show_layouts` | Settings: Show Layouts | `` (no default; a `cmd-<digit>` would collide with global show-panel keys, same as the other `ShowX` section commands) | `SettingsWindow` |
+
+Bindings are written the codebase's cross-platform way, `secondary-…` (`cmd` on macOS, `ctrl`
+elsewhere), as `secondary-enter` and `secondary-backspace` already are. `Workspace` is a new key
+context set on a window's workspace body (`util/shell/render.rs`); the keymap tests already used
+the name. Overwriting a saved layout on save asks at `Severity::Irreversible`, as deleting one
+does (D6): it destroys the layout's previous content with no undo.
 
 ### D5: Restoring never silently drops state
 Each saved panel's context is classified against the window's own held contexts
