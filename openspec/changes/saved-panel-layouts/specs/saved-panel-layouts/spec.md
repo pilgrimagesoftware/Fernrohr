@@ -12,16 +12,18 @@ restores automatically on relaunch.
 The application SHALL let the user save the current window's arrangement under a name: the dock
 tree (splits, panel sizes, tab order, active tab, and zoom state), the Resource panel's width and
 visibility, each panel's content key (kind, object, namespace, and cluster context), and the
-window's size and position. Saving under a name that already exists SHALL ask for confirmation
-before overwriting it.
+window's size and position. Saving under a name that already identifies a saved layout (compared
+without regard to case) SHALL ask for confirmation before overwriting it.
 
 #### Scenario: Saving a new layout
-- **WHEN** the user runs Save Panel Layout and enters a name that does not already exist
+- **WHEN** the user runs Save Panel Layout and enters a name that does not already identify a
+  saved layout
 - **THEN** a new saved layout is created capturing the window's current dock tree, panel content
   keys, Resource panel width and visibility, and window size and position
 
 #### Scenario: Saving over an existing name
-- **WHEN** the user enters a name that already identifies a saved layout
+- **WHEN** the user enters a name that already identifies a saved layout, including one that
+  differs from it only in case
 - **THEN** the application asks for confirmation before replacing the existing saved layout's
   contents
 
@@ -32,7 +34,7 @@ before overwriting it.
 
 ### Requirement: Listing and managing saved layouts
 The application SHALL provide a picker listing every saved layout by name, from which the user can
-restore, rename, or delete a saved layout.
+load, rename, or delete a saved layout.
 
 #### Scenario: Opening the picker with no saved layouts
 - **WHEN** the user opens the saved layouts picker and no layout has been saved yet
@@ -40,81 +42,125 @@ restore, rename, or delete a saved layout.
   explanation
 
 #### Scenario: Renaming a saved layout
-- **WHEN** the user renames a saved layout to a name that does not collide with another saved
-  layout
+- **WHEN** the user renames a saved layout to a name that does not identify another saved layout
 - **THEN** the saved layout is listed under the new name and its contents are unchanged
 
 #### Scenario: Renaming to a name already in use
 - **WHEN** the user renames a saved layout to a name that already identifies a different saved
-  layout
+  layout, including one that differs from it only in case
 - **THEN** the rename is rejected and both saved layouts keep their original names
 
-#### Scenario: Deleting a saved layout
-- **WHEN** the user deletes a saved layout from the picker
-- **THEN** it no longer appears in the picker and restoring it is no longer possible
+### Requirement: A Settings section lists and removes saved layouts
+The application's Settings window SHALL have a "Layouts" section, reachable and keyboard-operable
+the same way its other sections are, that lists every saved layout by name and lets the user remove
+one. Removing a saved layout SHALL ask for confirmation as an irreversible action: the confirmation
+SHALL open with focus on its Cancel control, so that pressing Enter cancels rather than confirms,
+and removing SHALL happen only on a deliberate action - clicking the destructive control, reaching
+and activating it by Tab, or its dedicated shortcut.
 
-### Requirement: Restoring a saved layout
-The application SHALL let the user restore a saved layout either into the current window,
-replacing its arrangement, or into a new window, as two distinct actions. Restoring SHALL
-reproduce the saved dock tree, panel content keys, Resource panel width and visibility, and window
-size and position.
+#### Scenario: Layouts section lists saved layouts
+- **WHEN** the user shows the Layouts section in Settings and two layouts are saved
+- **THEN** both are listed by name
 
-#### Scenario: Restoring into the current window
-- **WHEN** the user restores a saved layout into the current window
-- **THEN** that window's arrangement is replaced by the saved layout's dock tree, panels, Resource
-  panel state, and window size and position
+#### Scenario: Removing a saved layout asks for confirmation
+- **WHEN** the user removes a saved layout from the Layouts section
+- **THEN** a confirmation opens with its Cancel control focused, and the layout is not removed
+  until the user confirms deliberately
 
-#### Scenario: Restoring into a new window
-- **WHEN** the user restores a saved layout into a new window
-- **THEN** a new window opens reproducing the saved layout's dock tree, panels, and Resource panel
-  state, sized and positioned from the saved layout
+#### Scenario: Enter cancels a removal confirmation
+- **WHEN** the removal confirmation is open and the user presses Enter without otherwise acting
+- **THEN** the confirmation closes and the saved layout is not removed
+
+#### Scenario: Confirming removes the saved layout
+- **WHEN** the user confirms the removal
+- **THEN** the saved layout no longer appears in the Layouts section or in the saved layouts picker
+
+#### Scenario: The Layouts section is keyboard-operable
+- **WHEN** the user operates the Settings window using only the keyboard
+- **THEN** the user can show the Layouts section, move through its list, and remove a saved layout,
+  including confirming or cancelling the removal, without using the mouse
+
+### Requirement: Loading a saved layout
+The application SHALL let the user load a saved layout into the current window in one of two ways,
+as two distinct actions: Add, which opens the saved layout's panels alongside the panels already
+open in the window, and Replace, which replaces the window's current arrangement with the saved
+one entirely, including its Resource panel state and window size and position. Neither way of
+loading a saved layout opens a new window.
+
+#### Scenario: Loading with Replace
+- **WHEN** the user loads a saved layout with Replace
+- **THEN** the window's arrangement - its dock tree, panels, Resource panel state, and window size
+  and position - is replaced by the saved layout's
+
+#### Scenario: Loading with Add
+- **WHEN** the user loads a saved layout with Add while the window already shows other panels
+- **THEN** the saved layout's panels open alongside the window's existing panels, and the window's
+  Resource panel state and window size and position are unchanged
+
+#### Scenario: Loading with Add does not duplicate an already-open panel
+- **WHEN** the user loads with Add a saved layout containing a panel with the same content key
+  (kind, object, namespace, and cluster context) as a panel already open in the window
+- **THEN** that panel is not duplicated; the window still shows it once
 
 ### Requirement: Restoring never silently drops state
-Restoring a saved layout SHALL NOT silently omit a panel. A panel whose cluster context is not
-currently connected SHALL connect that context on demand. A panel whose cluster context no longer
-exists, or whose namespace or object no longer exists, SHALL be restored as a placeholder panel
-stating the problem, with an action to reconnect or retry, rather than being dropped or causing an
-error.
+Loading a saved layout, by either Add or Replace, SHALL NOT silently omit a panel. A saved panel
+whose cluster context is not currently held by the window - whether or not that context exists in
+the kubeconfig, or is connected elsewhere - SHALL be restored as a placeholder stating that the
+window is not connected to that context, in the same position in the arrangement, rather than being
+dropped, causing an error, or connecting that context without the user asking to. A panel whose
+namespace or object no longer exists, or whose panel kind this build does not recognize, SHALL be
+restored as a placeholder stating the problem rather than being dropped or causing an error.
 
-#### Scenario: Saved context not currently connected
-- **WHEN** a saved layout references a cluster context that exists in the kubeconfig but is not
-  currently connected
-- **THEN** restoring the layout connects that context on demand and the panel shows its content
-  once connected
-
-#### Scenario: Saved context no longer exists
-- **WHEN** a saved layout references a cluster context that is no longer present in the kubeconfig
-- **THEN** that panel is restored as a placeholder stating the context no longer exists, offering
-  to pick a different context, and every other panel in the layout restores normally
+#### Scenario: Saved context not held by the window
+- **WHEN** a saved layout is loaded and one of its panels is scoped to a cluster context the window
+  does not currently hold
+- **THEN** that panel is restored as a placeholder stating the window is not connected to that
+  context, and every other panel in the layout restores normally
 
 #### Scenario: Saved namespace or object no longer exists
 - **WHEN** a saved layout references a namespace or object that no longer exists in an otherwise
   reachable cluster context
 - **THEN** that panel is restored as a placeholder stating the namespace or object no longer
-  exists, with an action to retry, and every other panel in the layout restores normally
+  exists, and every other panel in the layout restores normally
 
-### Requirement: Saved layouts persist across restarts
-The application SHALL persist saved layouts to disk, in a versioned format, so they survive an
-application restart. A saved-layouts file that fails to parse SHALL be left on disk untouched and
-SHALL be treated as having no saved layouts, rather than causing a startup failure.
+#### Scenario: An unrecognized panel kind does not fail the whole load
+- **WHEN** a saved layout's dock data names a panel kind this build does not recognize
+- **THEN** that panel is restored as a placeholder stating it was not restored, and every other
+  panel in the layout restores normally
+
+### Requirement: Saved layouts are stored one file per layout
+The application SHALL persist each saved layout as its own file, in a versioned format, under a
+`layouts/` folder in the application's state directory, created the first time a layout is saved.
+A layout's filename SHALL be derived from its display name; the display name itself SHALL be
+stored inside the file, independent of the derived filename. A single saved-layout file that
+cannot be parsed SHALL be skipped and reported as unreadable, by its filename, without affecting
+any other saved layout, and SHALL be left on disk unmodified. A save or rename of a saved layout
+SHALL be written so that an interruption leaves either the previous saved content or the new saved
+content on disk, never a partially written file.
 
 #### Scenario: Saved layouts survive a restart
 - **WHEN** the application is restarted after a layout was saved
-- **THEN** that saved layout still appears in the saved layouts picker
+- **THEN** that saved layout still appears in the saved layouts picker and in the Settings Layouts
+  section
 
-#### Scenario: Unreadable saved-layouts file
-- **WHEN** the saved-layouts file on disk cannot be parsed
-- **THEN** the application starts with no saved layouts available rather than failing to start,
-  and does not overwrite the unreadable file
+#### Scenario: One unreadable file does not affect the others
+- **WHEN** the `layouts/` folder contains one file that fails to parse and two that parse
+  successfully
+- **THEN** the two valid saved layouts are listed normally, the unreadable file is reported by its
+  filename as unreadable, and the unreadable file is left unchanged on disk
 
-### Requirement: Saving, managing, and restoring are keyboard-operable commands
+#### Scenario: The layouts folder is created on first save
+- **WHEN** the user saves the first layout and no `layouts/` folder exists yet
+- **THEN** the folder is created and the layout is saved inside it
+
+### Requirement: Saving, loading, and managing saved layouts are keyboard-operable commands
 Save Panel Layout and the saved-layouts picker SHALL each be a registered command with a stable
 identifier, a title, a default key binding, and a Window-menu entry, reachable from the command
-palette. Within the picker, restoring (in place and into a new window), renaming, and deleting
-SHALL each be reachable by keyboard, and moving the keyboard highlight SHALL be unaffected by mouse
+palette. Within the picker, loading with Add, loading with Replace, renaming, and deleting SHALL
+each be reachable by keyboard, and moving the keyboard highlight SHALL be unaffected by mouse
 hover.
 
-#### Scenario: Save and manage are registered commands
+#### Scenario: Save and the picker are registered commands
 - **WHEN** the user opens the command palette
 - **THEN** Save Panel Layout and the saved-layouts picker command both appear, each showing its
   current key binding
@@ -126,5 +172,5 @@ hover.
 
 #### Scenario: The picker is fully operable by keyboard
 - **WHEN** the user opens the saved layouts picker using only the keyboard
-- **THEN** the user can move the selection, restore it in place or into a new window, rename it,
-  and delete it without using the mouse
+- **THEN** the user can move the selection, load it with Add or with Replace, rename it, and
+  delete it (including confirming or cancelling the deletion) without using the mouse
