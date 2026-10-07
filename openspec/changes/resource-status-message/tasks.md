@@ -28,6 +28,11 @@
       unchanged.
 - [ ] 2.4 Verify sort, resize and reorder work on the new column the same as any other, by
       extending the existing per-kind-columns table test suite with one CRD-fixture case.
+- [ ] 2.5 Add a Ready column, before Message, for kinds outside the table once an observed object
+      has a `Ready` condition: `Cell::Readiness`-style indicator plus `True`/`False`/`Unknown`,
+      toned Good/Bad/Warning, empty for objects without `Ready`, and sorting False < Unknown < True.
+      Verify with tests: a Kustomization fixture shows Ready with the right tones; a CRD with
+      conditions but no `Ready` shows Message but no Ready column; ascending sort puts False first.
 
 ## 3. Object detail: message field for kinds with existing sections
 
@@ -51,6 +56,9 @@
       `HelmRelease`, asserting the Status section appears with both fields.
 - [ ] 4.2 Verify a CRD object with no `status.conditions` still gets metadata only, unchanged from
       current behavior, with a regression test alongside 4.1's.
+- [ ] 4.3 Add a `"Ready"` field (readiness indicator plus status, toned as the list cell) beside the
+      Message wherever the object has a `Ready` condition and its section doesn't already show
+      readiness. Verify with a HelmRelease fixture whose Ready is False.
 
 ## 5. Copy and keyboard access
 

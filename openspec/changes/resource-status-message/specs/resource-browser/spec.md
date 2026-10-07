@@ -54,6 +54,35 @@ their existing requirement defines.
 
 ## ADDED Requirements
 
+### Requirement: A Ready column for kinds outside the table
+
+A list panel for a kind that has no entry in the built-in columns table SHALL show a Ready column,
+placed before the Message column, once the panel has observed at least one of that kind's objects
+carrying a `Ready` condition. The cell SHALL show the condition's status (`True`, `False` or
+`Unknown`), with a readiness indicator and tone matching the existing workload Ready cells: Good
+for `True`, Bad for `False`, Warning for `Unknown`. An object of that kind without a `Ready`
+condition SHALL show an empty cell. A kind none of whose loaded objects has a `Ready` condition
+SHALL show no Ready column. The column SHALL be resizable, reorderable, and sortable, sorting
+`False` before `Unknown` before `True` when ascending.
+
+#### Scenario: A Kustomization list shows Ready
+
+- **WHEN** a Kustomization list panel is open and one Kustomization's `Ready` condition is
+  `"False"` while another's is `"True"`
+- **THEN** the first row's Ready cell reads False in its Bad tone, and the second reads True in
+  its Good tone
+
+#### Scenario: A CRD with conditions but no Ready condition shows no Ready column
+
+- **WHEN** a list panel is open for a CRD kind whose objects carry conditions, none of type
+  `Ready`
+- **THEN** the list shows a Message column but no Ready column
+
+#### Scenario: Sorting by Ready surfaces failures first
+
+- **WHEN** the user sorts a Kustomization list by Ready ascending
+- **THEN** rows whose Ready is False come first, then Unknown, then True
+
 ### Requirement: A condition-derived Message column for kinds outside the table
 
 A list panel for a kind that has no entry in the built-in columns table SHALL show a Message

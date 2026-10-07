@@ -20,7 +20,9 @@ read `status.conditions` by hand.
   CRD) gains a Message column once the panel observes that the kind's objects carry
   `status.conditions`. Kinds that already have a hardcoded column table (Deployment, Job, Node, ...)
   are unchanged - they keep their existing status-bearing columns rather than gaining a second,
-  overlapping one.
+  overlapping one. Such a kind whose objects carry a `Ready` condition also gains a Ready column
+  (True/False/Unknown with a readiness indicator, toned), before Message; the detail panel shows
+  the same Ready value beside the message.
 - `object-detail`: the panel shows the derived message prominently, near the top, for any object
   that has one - both kinds that already render `status.conditions` as badges (Deployment,
   DaemonSet, StatefulSet) and kinds that today get metadata only. A kind with no hardcoded sections

@@ -120,7 +120,10 @@ non-empty, toned Good for `True`, Bad for `False`, and Warning for any other sta
 most recently transitioned condition's non-empty message, untoned. An object with no conditions, or
 no condition with a non-empty message, SHALL show no message field. This applies both to kinds that
 already show `status.conditions` as badges and to kinds that gain the generic Status section above -
-the message is additional to, not a replacement for, the full conditions list.
+the message is additional to, not a replacement for, the full conditions list. When the object has
+a `Ready` condition, the panel SHALL also show a Ready field with that condition's status (`True`,
+`False` or `Unknown`), toned and marked like the list's Ready cell, unless the kind's section already
+shows readiness.
 
 #### Scenario: A Deployment shows its message alongside its condition badges
 - **WHEN** a Deployment's panel is open and its `Progressing` condition is the most recently
@@ -133,6 +136,11 @@ the message is additional to, not a replacement for, the full conditions list.
   message describing the failure
 - **THEN** the panel shows that message near the top in its Bad tone, alongside the full
   conditions list
+
+#### Scenario: A HelmRelease's Ready status is shown beside its message
+- **WHEN** a HelmRelease's panel is open and its `Ready` condition has `status: "False"`
+- **THEN** the panel shows a Ready field reading False, with the same readiness indicator and Bad
+  tone as the list's Ready cell, next to the message
 
 #### Scenario: An object with no conditions shows no message field
 - **WHEN** an object's panel is open and it has no `status.conditions`
