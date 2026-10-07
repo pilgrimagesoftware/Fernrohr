@@ -11,7 +11,8 @@ restores automatically on relaunch.
 ### Requirement: Saving a layout
 The application SHALL let the user save the current window's arrangement under a name: the dock
 tree (splits, panel sizes, tab order, active tab, and zoom state), the Resource panel's width and
-visibility, each panel's content key (kind, object, namespace, and cluster context), and the
+visibility, each panel's content key (kind, object, namespace selection, and cluster context),
+each list panel's view state (its filter text and its sort column and direction), and the
 window's size and position. Saving under a name that already identifies a saved layout (compared
 without regard to case) SHALL ask for confirmation before overwriting it.
 
@@ -20,6 +21,12 @@ without regard to case) SHALL ask for confirmation before overwriting it.
   saved layout
 - **THEN** a new saved layout is created capturing the window's current dock tree, panel content
   keys, Resource panel width and visibility, and window size and position
+
+#### Scenario: Namespaces and filters are saved and restored
+- **WHEN** a list panel is scoped to one or more namespaces, has filter text entered, and is
+  sorted by a column, and the user saves a layout and later loads it
+- **THEN** the restored panel is scoped to the same namespaces, shows the same filter text with
+  its rows filtered by it, and is sorted by the same column in the same direction
 
 #### Scenario: Saving over an existing name
 - **WHEN** the user enters a name that already identifies a saved layout, including one that
