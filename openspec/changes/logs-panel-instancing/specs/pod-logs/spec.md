@@ -2,30 +2,46 @@
 
 ## ADDED Requirements
 
-### Requirement: Opening a pod's logs can open a new panel instead of reusing one
-The application SHALL let the user open more than one pod's logs simultaneously, each in its own
-panel, rather than being limited to a single Logs panel that always shows whichever pod was most
-recently selected.
+### Requirement: Each pod's logs open in a panel of their own
+The application SHALL by default open a pod's logs in a Logs panel for that pod alone, so the
+user can keep several pods' logs open side by side, rather than retargeting a single Logs panel to
+whichever pod was opened last. Opening the same pod's logs again SHALL focus its panel rather than
+add a second, and opening another container of that pod SHALL switch its panel to that container.
+A pod's panel SHALL stay on its pod when other pods are selected later, and SHALL restore as that
+pod's panel from a saved layout.
 
-#### Scenario: Reuse is the default
-- **WHEN** a user opens a second pod's logs with the default preference unchanged
-- **THEN** the existing Logs panel retargets to the new pod's logs, matching current behavior
+#### Scenario: Per-pod panels are the default
+- **WHEN** a user opens one pod's logs and then another pod's, with the default preference
+- **THEN** each pod's logs are in a panel of their own, and the first panel is unaffected
 
-#### Scenario: Forcing a new panel
-- **WHEN** a user opens a pod's logs with the new-panel override
-- **THEN** a new panel opens for that pod's logs, and any already-open logs panel for a
-  different pod is unaffected
+#### Scenario: Reopening a pod's logs focuses its panel
+- **WHEN** a user opens the logs of a pod whose logs panel is already open
+- **THEN** that panel is focused, not duplicated
 
-#### Scenario: Reopening the same pod's forced-new logs focuses the existing one
-- **WHEN** a user forces a new logs panel for a pod that already has one open
-- **THEN** the existing panel for that pod is focused, not duplicated
+#### Scenario: Another container of an open pod
+- **WHEN** a user opens a different container's logs of a pod whose logs panel is open
+- **THEN** that pod's panel switches to the container, and no second panel opens
 
-### Requirement: The default behavior is configurable
-The application SHALL let the user configure whether opening a pod's logs defaults to reusing a
-single panel or always opening a new per-pod instance, and SHALL let a single invocation override
-that default in the opposite direction.
+#### Scenario: A pod's panel ignores later selections
+- **WHEN** a user selects another pod without opening its logs
+- **THEN** each pod's logs panel keeps showing its own pod
 
-#### Scenario: Default set to per-pod instancing
-- **WHEN** the user's preference is set to always open a new instance, and they open a pod's logs
-  without the override
-- **THEN** a new per-pod panel opens rather than retargeting an existing one
+### Requirement: Reuse is a preference, and every open can flip it once
+The application SHALL let the user choose, in Settings and from the command palette, whether
+opening a pod's logs opens its own panel (the default) or reuses one shared Logs panel that follows
+the selection. Every way of opening logs - `l` in the Pods list and a pod's detail panel, the Pods
+row's menu, and the palette - SHALL have a flipped twin (`shift-l`, a menu item, a palette
+command) that opens them the other way from the preference, for that one open.
+
+#### Scenario: The flip opens the shared panel by default
+- **WHEN** a user presses `shift-l` on a pod with the default preference
+- **THEN** the pod's logs open in the one shared Logs panel, retargeting it from any pod it showed
+
+#### Scenario: Reuse preference
+- **WHEN** the preference is set to reuse one panel and the user opens two pods' logs with `l`
+- **THEN** the one shared Logs panel shows the second pod's logs, and `shift-l` opens a pod's
+  logs in a panel of their own
+
+#### Scenario: The preference is kept
+- **WHEN** the user changes the preference
+- **THEN** it applies at once and is saved, so it holds after a restart

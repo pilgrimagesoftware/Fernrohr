@@ -1,5 +1,15 @@
 # Design
 
+## Update: per-pod is the default (#167)
+
+The user chose **per-pod panels as the default**, so the preference reads the other way round
+from the sections below: `UiConfig.logs_panels = "per_pod"` (default) or `"reuse"`, and the second
+action is `ShowLogsFlipped` - "the other way from the preference, once" - rather than "always a new
+panel". Its `match` becomes `preference XOR flipped`. Entry points still publish `SelectedPod` and
+dispatch `ShowLogs` / `ShowLogsFlipped`, so the choice is made once, in `MainWindow`. The open
+question below is settled as global (`ui.toml`), like the theme. A different container of an open
+pod is the same pod panel, switched to that container.
+
 ## Two actions, not a modifier read inside one handler
 
 The pod-detail work already settled this question once: `d`/`y` are two distinct actions
