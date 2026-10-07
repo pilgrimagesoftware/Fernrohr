@@ -38,6 +38,14 @@ The automatic restore already in place (`app/src/util/shell/persist.rs`,
   `state.panel_name` ("Pods", "Logs", "Exec", "PodDetail", "ObjectDetail", "ObjectList"/"Resource",
   "Events") and reads fields like `data["context_name"]` out of the panel's raw `DockAreaState`
   JSON; an unrecognized `panel_name` or a missing required field yields `None`.
+- A panel's namespace selection is already in its key (`PanelKey.namespaces`), so saving it needs
+  nothing new. A list panel's *view state* - its filter text and its sort column and direction -
+  is not persisted anywhere today (the automatic restore drops it too). This change adds it to
+  each list panel's (Pods, ObjectList, Events) `DockAreaState` panel `data` as optional
+  `filter` and `sort: { column, descending }` fields. They're written on save and applied after
+  the panel is built on load. Fields stay optional, so older saved files and the automatic
+  restore's `dock-layouts.json` still decode, and an unknown sort column is ignored rather than
+  failing the panel. The automatic restore picks up the same fields as a side effect.
 - A panel whose saved state can't be restored already has a placeholder, not a dropped tab or a
   crash: `ui::unrestored::restore_with` wraps each panel kind's own restore function and, on
   `Err(reason)`, logs it and shows an `UnrestoredPanel` - a panel that names its own kind and the

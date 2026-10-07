@@ -28,6 +28,12 @@
   files unchanged; renaming to a free name updates the file's `name` field and, when the derived
   filename changed, leaves exactly one file (the new one) in the directory; removing an absent name is
   a no-op.
+- [ ] 1.6 Persist list-panel view state (per design.md Context): the Pods, ObjectList and Events
+  panels write optional `filter` text and `sort { column, descending }` into their `DockAreaState`
+  panel `data`, and apply them after restore. An unknown sort column is ignored. Verify with tests:
+  a panel scoped to two namespaces, with filter text and a descending sort, round-trips through
+  save and load with the same namespaces, filter (rows filtered), and sort; a panel `data` without
+  the new fields still restores.
 
 ## 2. Save Panel Layout command
 
