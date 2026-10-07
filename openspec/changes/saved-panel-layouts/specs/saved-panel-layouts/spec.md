@@ -23,8 +23,8 @@ without regard to case) SHALL ask for confirmation before overwriting it.
   keys, Resource panel width and visibility, and window size and position
 
 #### Scenario: Namespaces and filters are saved and restored
-- **WHEN** a list panel is scoped to one or more namespaces, has filter text entered, and is
-  sorted by a column, and the user saves a layout and later loads it
+- **WHEN** a list panel is scoped to one or more namespaces, has filter text entered (where the
+  panel has a filter), and is sorted by a column, and the user saves a layout and later loads it
 - **THEN** the restored panel is scoped to the same namespaces, shows the same filter text with
   its rows filtered by it, and is sorted by the same column in the same direction
 

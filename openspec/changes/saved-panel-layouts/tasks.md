@@ -2,33 +2,33 @@
 
 ## 1. Saved-layout file store
 
-- [ ] 1.1 Add `SavedLayout { version, name, created_at, updated_at, contexts, dock: DockAreaState,
+- [x] 1.1 Add `SavedLayout { version, name, created_at, updated_at, contexts, dock: DockAreaState,
   resource_panel_width: Option<f32>, window_width, window_height }` in a new
   `app/src/config/saved_layouts.rs`, mirroring `dock_layouts.rs`'s placement (per design.md D2/D3).
   Verify with a unit test: a `SavedLayout` round-trips through `serde_json`.
-- [ ] 1.2 Add the filename-derivation helper (slugify a display name; fixed placeholder stem for a
+- [x] 1.2 Add the filename-derivation helper (slugify a display name; fixed placeholder stem for a
   name that slugifies to nothing) per design.md D2. Verify with unit tests: `"My Layout"` and
   `"my layout"` derive the same stem; a name of only punctuation derives the placeholder stem.
-- [ ] 1.3 Add `save(dir: &Path, layout: &SavedLayout) -> io::Result<PathBuf>`: derives the filename,
+- [x] 1.3 Add `save(dir: &Path, layout: &SavedLayout) -> io::Result<PathBuf>`: derives the filename,
   disambiguates a collision with a *different* saved name by appending `-2`, `-3`, ... (per design.md
   D2), creates `dir` with `fs::create_dir_all` if missing, and writes atomically (temp file in `dir`,
   then `fs::rename` onto the final path). Verify with unit tests: saving creates the directory on
   first use; two different names that slugify alike get distinct files; an interrupted write (temp
   file left behind, final file never written) is simulated and asserted not to have touched any
   existing file of the same derived name.
-- [ ] 1.4 Add `load_all(dir: &Path) -> (Vec<SavedLayout>, Vec<UnreadableLayout>)`, where
+- [x] 1.4 Add `load_all(dir: &Path) -> (Vec<SavedLayout>, Vec<UnreadableLayout>)`, where
   `UnreadableLayout` carries the filename of a file that failed to read or parse. Verify with a unit
   test: a directory with two valid files and one corrupt file returns both valid layouts and one
   `UnreadableLayout` naming the corrupt file, and the corrupt file's bytes are unchanged on disk
   afterward.
-- [ ] 1.5 Add `rename(dir, old_name, new_name) -> Result<(), NameTaken>` (case-insensitive name
+- [x] 1.5 Add `rename(dir, old_name, new_name) -> Result<(), NameTaken>` (case-insensitive name
   collision check per design.md D2) and `remove(dir, name) -> io::Result<()>`. A rename whose derived
   filename changes writes the new file before removing the old one. Verify with unit tests: renaming
   to a name already in use (including a same-only-by-case match) returns `NameTaken` and leaves both
   files unchanged; renaming to a free name updates the file's `name` field and, when the derived
   filename changed, leaves exactly one file (the new one) in the directory; removing an absent name is
   a no-op.
-- [ ] 1.6 Persist list-panel view state (per design.md Context): the Pods, ObjectList and Events
+- [x] 1.6 Persist list-panel view state (per design.md Context): the Pods, ObjectList and Events
   panels write optional `filter` text and `sort { column, descending }` into their `DockAreaState`
   panel `data`, and apply them after restore. An unknown sort column is ignored. Verify with tests:
   a panel scoped to two namespaces, with filter text and a descending sort, round-trips through

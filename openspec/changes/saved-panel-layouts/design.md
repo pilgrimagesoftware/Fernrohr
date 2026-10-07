@@ -41,11 +41,21 @@ The automatic restore already in place (`app/src/util/shell/persist.rs`,
 - A panel's namespace selection is already in its key (`PanelKey.namespaces`), so saving it needs
   nothing new. A list panel's *view state* - its filter text and its sort column and direction -
   is not persisted anywhere today (the automatic restore drops it too). This change adds it to
-  each list panel's (Pods, ObjectList, Events) `DockAreaState` panel `data` as optional
-  `filter` and `sort: { column, descending }` fields. They're written on save and applied after
-  the panel is built on load. Fields stay optional, so older saved files and the automatic
-  restore's `dock-layouts.json` still decode, and an unknown sort column is ignored rather than
-  failing the panel. The automatic restore picks up the same fields as a side effect.
+  each list panel's `DockAreaState` panel `data` as optional fields, where the panel has that
+  view state at all:
+  - **ObjectList**: `filter` text and `sort: { column, descending }`.
+  - **Pods**: `sort: { column, descending }` only - the Pods panel has no filter input
+    (`pods/rows.rs`'s `matches_filter`/`view_rows` are unwired), so there is no filter to save.
+  - **Events**: `filter` (its search text). Its sort was already persisted before this change, in
+    its own tri-state shape `sort: { column, order: "ascending" | "descending" | "default" }`
+    (`events_browser/restore.rs`); that shape is kept, not reshaped, so files already written
+    still decode.
+
+  The fields are written on save and applied after the panel is built on load (an ObjectList
+  builds its filter input before it reads its rows, so a restored filter applies on the first
+  frame). They stay optional, so older saved files and the automatic restore's
+  `dock-layouts.json` still decode, and an unknown sort column is ignored rather than failing the
+  panel. The automatic restore picks up the same fields as a side effect.
 - A panel whose saved state can't be restored already has a placeholder, not a dropped tab or a
   crash: `ui::unrestored::restore_with` wraps each panel kind's own restore function and, on
   `Err(reason)`, logs it and shows an `UnrestoredPanel` - a panel that names its own kind and the
