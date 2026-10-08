@@ -266,7 +266,7 @@ is still the authoritative, context-aware check at implementation time.
 
 | id | title | default binding | context |
 |---|---|---|---|
-| `layouts.save` | Save Panel Layout… | `secondary-shift-s` | `Workspace` (not available from the empty cluster picker) |
+| `layouts.save` | Save Panel Layout… | `secondary-shift-s` | none - but handled only on the workspace body, so unavailable from the empty cluster picker (see below) |
 | `layouts.manage` | Saved Layouts… | `secondary-shift-o` | none (available even from the cluster picker, so a fresh window can load a layout straight away) |
 | `saved_layouts.load_replace` | Load (Replace) | `enter` | `SavedLayoutsPicker` |
 | `saved_layouts.load_add` | Load (Add) | `secondary-enter` | `SavedLayoutsPicker` |
@@ -277,6 +277,13 @@ is still the authoritative, context-aware check at implementation time.
 The picker-scoped commands are registered in context `SavedLayoutsPicker && !Input`, so `r` and
 `backspace` type into the rename field rather than acting on the list; the picker's root sets
 the bare `SavedLayoutsPicker` key context, which is also what its hint row looks keys up in.
+
+`layouts.save` is not context-gated, because the menu is built once at startup and no context-
+gated command sits in it (`ui::menu`'s own invariant). It is unavailable from the cluster picker
+another way: its handler is attached to the workspace body rather than the window root, and a
+menu item is enabled exactly while a handler for its action is on the focus path
+(`is_action_available`). So from the picker the Window-menu item shows disabled and the key does
+nothing.
 
 Bindings are written the codebase's cross-platform way, `secondary-…` (`cmd` on macOS, `ctrl`
 elsewhere), as `secondary-enter` and `secondary-backspace` already are. `Workspace` is a new key

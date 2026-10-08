@@ -34,6 +34,10 @@
   a panel scoped to two namespaces, with filter text and a descending sort, round-trips through
   save and load with the same namespaces, filter (rows filtered), and sort; a panel `data` without
   the new fields still restores.
+  Done as: sort is saved for all three panels; filter text only where a panel has a filter today -
+  ObjectList (its name filter) and Events (its search). Pods has no search box yet, so it saves sort
+  only. App#189, next after this change, adds search to Pods and ObjectList and uses the same
+  `filter` field.
 
 ## 2. Save Panel Layout command
 
@@ -157,19 +161,19 @@
 
 ## 7. Command palette, keymap, and menu integration
 
-- [ ] 7.1 Run `keymap::conflicts` against the full registry with the seven new commands from
+- [x] 7.1 Run `keymap::conflicts` against the full registry with the seven new commands from
   design.md D4 registered, confirming none of `cmd-shift-s`, `cmd-shift-o`, `enter`,
   `secondary-enter`, `r`, `backspace` (the last four scoped to `SavedLayoutsPicker`), or
   `settings.show_layouts`'s empty binding collide with an existing one. Verify: the existing `keymap`
   conflict test suite passes with the new commands included; add a fixture case if the suite does not
   already parameterize over the full live registry.
-- [ ] 7.2 Confirm all seven commands appear in the command palette with correct context gating (the
+- [x] 7.2 Confirm all seven commands appear in the command palette with correct context gating (the
   four picker-scoped ones only listed while the picker has focus, `settings.show_layouts` only while
   the Settings window has focus) and that `layouts.save` and `layouts.manage` each have a Window-menu
   entry. Verify: a palette test asserts item counts/content change as the active `KeyContext` stack
   gains and loses `SavedLayoutsPicker` and `SettingsWindow`; a menu-building test asserts both
   top-level commands appear under `MenuSlot::Window`.
-- [ ] 7.3 Add hint-row key display (`Kbd::binding_for_action`) for the picker's row actions (load with
+- [x] 7.3 Add hint-row key display (`Kbd::binding_for_action`) for the picker's row actions (load with
   Add, load with Replace, rename, delete) and the Settings section's Remove control, matching the
   existing Pods-panel and `ui/picker_keys.rs` convention. Verify: a render test asserts the picker and
   the Layouts section show the live (possibly user-overridden) keys, not the hardcoded defaults, by
