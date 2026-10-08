@@ -181,15 +181,15 @@
 
 ## 8. End-to-end round trip
 
-- [ ] 8.1 Add an integration-style test: save a layout from a window with two panels across two
+- [x] 8.1 Add an integration-style test: save a layout from a window with two panels across two
   contexts, reload `SavedLayout`s from disk (simulating a restart), open the picker, load it with
   Replace into the same window, and assert the window's panels, Resource panel width, and bounds
   match what was saved. Verify: this test passes without a live cluster (mocked kube client /
   fixtures, per project convention).
-- [ ] 8.2 Add an integration-style test for Add: open a window with one panel, load a different saved
+- [x] 8.2 Add an integration-style test for Add: open a window with one panel, load a different saved
   layout with Add, and assert the window now shows both the original panel and the saved layout's
   panels, with no duplicate for any matching content key. Verify: same fixture-based approach as 8.1.
-- [ ] 8.3 Update `docs/architecture.md`'s persistence section to list the `layouts/` folder alongside
+- [x] 8.3 Update `docs/architecture.md`'s persistence section to list the `layouts/` folder alongside
   `workspace.toml` and `dock-layouts.json`, keeping it in sync with `openspec/config.yaml`'s
   `context:` block per this repo's stated convention. Verify: a manual diff of the two confirms they
   describe the same persisted state.
