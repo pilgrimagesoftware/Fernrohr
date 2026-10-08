@@ -267,6 +267,10 @@ is still the authoritative, context-aware check at implementation time.
 | `saved_layouts.delete_selected` | Delete | `backspace` | `SavedLayoutsPicker` |
 | `settings.show_layouts` | Settings: Show Layouts | `` (no default; a `cmd-<digit>` would collide with global show-panel keys, same as the other `ShowX` section commands) | `SettingsWindow` |
 
+The picker-scoped commands are registered in context `SavedLayoutsPicker && !Input`, so `r` and
+`backspace` type into the rename field rather than acting on the list; the picker's root sets
+the bare `SavedLayoutsPicker` key context, which is also what its hint row looks keys up in.
+
 Bindings are written the codebase's cross-platform way, `secondary-…` (`cmd` on macOS, `ctrl`
 elsewhere), as `secondary-enter` and `secondary-backspace` already are. `Workspace` is a new key
 context set on a window's workspace body (`util/shell/render.rs`); the keymap tests already used

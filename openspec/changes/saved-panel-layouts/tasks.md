@@ -57,28 +57,28 @@
 
 ## 3. Saved Layouts picker (list, rename, delete)
 
-- [ ] 3.1 Add a `SavedLayoutsPicker` view under `app/src/ui/picker/`, following `ClusterPicker`'s
+- [x] 3.1 Add a `SavedLayoutsPicker` view under `app/src/ui/picker/`, following `ClusterPicker`'s
   structure (state/interaction/layout/rows/render split, `window.last_input_was_keyboard()` to
   distinguish hover from keyboard selection), listing every `SavedLayout` by name via
   `config::saved_layouts::load_all`. Verify: a render test with a fixture directory of two saved
   layouts shows both names; an empty directory shows an explicit "no saved layouts" message rather
   than a blank list; a directory with one unreadable file shows the readable layouts plus a notice
   naming the unreadable file.
-- [ ] 3.2 Register `layouts.manage` (title "Saved Layouts…", default binding `cmd-shift-o`, context
+- [x] 3.2 Register `layouts.manage` (title "Saved Layouts…", default binding `cmd-shift-o`, context
   `None`, menu `MenuSlot::Window`) opening the picker, available from both `Workspace` and
   cluster-picker window modes. Verify: a keystroke test opens the picker via the default binding
   from a window in cluster-picker mode.
-- [ ] 3.3 Confirm hover never moves the keyboard-selected row: wire row hover through
+- [x] 3.3 Confirm hover never moves the keyboard-selected row: wire row hover through
   `last_input_was_keyboard()` the same way `ClusterPicker` does, not through the underlying
   `Command` widget's own hover-selects behavior. Verify: a test simulates arrow-key navigation to
   select row 2, then simulates a mouse-hover event over row 1, and asserts row 2 is still selected.
-- [ ] 3.4 Register `saved_layouts.rename_selected` (default binding `r`, context
+- [x] 3.4 Register `saved_layouts.rename_selected` (default binding `r`, context
   `SavedLayoutsPicker`) opening an inline rename field; reject a colliding rename via
   `config::saved_layouts::rename`'s `NameTaken`. Verify: a keystroke test renames the selected row by
   pressing `r`, typing a new name, and Enter, then asserts the picker lists the new name; a second
   test attempts a colliding rename (including one differing only by case) and asserts both original
   names remain.
-- [ ] 3.5 Register `saved_layouts.delete_selected` (default binding `backspace`, context
+- [x] 3.5 Register `saved_layouts.delete_selected` (default binding `backspace`, context
   `SavedLayoutsPicker`), calling `confirm_dialog::open` with `Severity::Irreversible` (design.md D6),
   then `config::saved_layouts::remove` on confirm. Verify: a keystroke test presses backspace,
   asserts the confirmation opens with Cancel focused, presses Enter, and asserts the layout is NOT
