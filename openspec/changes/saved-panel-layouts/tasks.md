@@ -134,23 +134,23 @@
 
 ## 6. Settings "Layouts" section
 
-- [ ] 6.1 Add `Section::Layouts` to `ui/settings.rs` (sidebar button, `button_id`, `label_selector`,
+- [x] 6.1 Add `Section::Layouts` to `ui/settings.rs` (sidebar button, `button_id`, `label_selector`,
   a new `layouts_focus: FocusHandle` that `show` focuses) and a new `app/src/ui/settings/layouts.rs`
   module listing every saved layout via `config::saved_layouts::load_all`, following `panels.rs`'s
   placement (design.md D7). Verify: a render test shows the Settings window, switches to Layouts, and
   asserts two fixture saved layouts are listed by name; an empty store shows an explicit "no saved
   layouts" message.
-- [ ] 6.2 Register `settings.show_layouts` (title "Settings: Show Layouts", no default binding,
+- [x] 6.2 Register `settings.show_layouts` (title "Settings: Show Layouts", no default binding,
   context `SettingsWindow`, menu `None`), matching `settings.show_panels`'s existing pattern. Verify:
   a test dispatches the action and asserts `SettingsWindow::section()` becomes `Section::Layouts`.
-- [ ] 6.3 Add a per-row Remove control (an icon button with a tooltip, per `icon-buttons.md`, a tab
+- [x] 6.3 Add a per-row Remove control (an icon button with a tooltip, per `icon-buttons.md`, a tab
   stop reachable by Tab and activated by Enter/Space) that calls `confirm_dialog::open` with
   `Severity::Irreversible` (design.md D6), removing the saved layout via `config::saved_layouts::
   remove` on confirm. Verify: a keystroke test Tabs to a row's Remove control, activates it, asserts
   the confirmation opens with Cancel focused, presses Enter, and asserts the layout is NOT removed; a
   second test activates the confirm control and asserts the layout is gone from the section and from
   `layouts/`.
-- [ ] 6.4 Confirm the Layouts section is reachable and operable end-to-end by keyboard: Tab from the
+- [x] 6.4 Confirm the Layouts section is reachable and operable end-to-end by keyboard: Tab from the
   sidebar into the list, through each row's Remove control, matching the other Settings sections'
   tab order conventions. Verify: a `VisualTestContext::simulate_keystrokes` test Tabs from the sidebar
   button through the section without using the mouse and removes a layout entirely by keyboard.
