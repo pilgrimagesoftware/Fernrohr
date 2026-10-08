@@ -19,7 +19,8 @@ deliberately, as many times as needed, independent of whatever the window curren
 - **What a saved layout captures**: the dock tree (splits, panel sizes, tab order, active tab,
   zoom), the Resource panel's width and visibility, each panel's content key (kind, object,
   namespace selection, and cluster context), each list panel's filter text and sort column and
-  direction, and the window's size and position.
+  direction, and the window's size (not its position: an open window can only be resized, and
+  loading never opens a new one).
 - **One file per saved layout**, under a new `layouts/` folder in the application's state
   directory, rather than one file holding every saved layout. A layout's filename is derived from
   its display name; the display name itself is stored inside the file, so sanitizing or

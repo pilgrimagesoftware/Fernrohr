@@ -60,7 +60,10 @@ first-class target rather than a follow-up (see `bootstrap-fernrohr`'s task 9.1)
 - **Persistence** (pattern from `pilgrimagesoftware/dtrpg-app.rs`): the `dirs` crate, one central
   `paths.rs`. macOS directory name is the reverse-domain bundle id, Linux is `fernrohr`.
   `dirs::data_dir()/<id>/` holds state (`window_state.toml`, `workspace.toml`, `tunnels.toml`
-  non-secret fields). `dirs::preference_dir()/<id>/` holds `ui.toml` and `keymap.toml`.
+  non-secret fields, `dock-layouts.json` - each window's dock arrangement, restored on relaunch -
+  and `layouts/`, the user's named saved layouts: one JSON file per layout, named after it, written
+  atomically via a temp file and rename, an unreadable file skipped and reported rather than
+  reset). `dirs::preference_dir()/<id>/` holds `ui.toml` and `keymap.toml`.
   `dirs::cache_dir()/<id>/` holds the discovery cache and metric buffers. Each file has a typed
   serde struct with `load()`/`save()`: first run writes defaults; a parse failure keeps the file
   untouched and falls back to defaults. Secrets (SSH passphrases, passwords) go in the OS keychain

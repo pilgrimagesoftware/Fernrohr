@@ -41,11 +41,21 @@ The automatic restore already in place (`app/src/util/shell/persist.rs`,
 - A panel's namespace selection is already in its key (`PanelKey.namespaces`), so saving it needs
   nothing new. A list panel's *view state* - its filter text and its sort column and direction -
   is not persisted anywhere today (the automatic restore drops it too). This change adds it to
-  each list panel's (Pods, ObjectList, Events) `DockAreaState` panel `data` as optional
-  `filter` and `sort: { column, descending }` fields. They're written on save and applied after
-  the panel is built on load. Fields stay optional, so older saved files and the automatic
-  restore's `dock-layouts.json` still decode, and an unknown sort column is ignored rather than
-  failing the panel. The automatic restore picks up the same fields as a side effect.
+  each list panel's `DockAreaState` panel `data` as optional fields, where the panel has that
+  view state at all:
+  - **ObjectList**: `filter` text and `sort: { column, descending }`.
+  - **Pods**: `sort: { column, descending }` only - the Pods panel has no filter input
+    (`pods/rows.rs`'s `matches_filter`/`view_rows` are unwired), so there is no filter to save.
+  - **Events**: `filter` (its search text). Its sort was already persisted before this change, in
+    its own tri-state shape `sort: { column, order: "ascending" | "descending" | "default" }`
+    (`events_browser/restore.rs`); that shape is kept, not reshaped, so files already written
+    still decode.
+
+  The fields are written on save and applied after the panel is built on load (an ObjectList
+  builds its filter input before it reads its rows, so a restored filter applies on the first
+  frame). They stay optional, so older saved files and the automatic restore's
+  `dock-layouts.json` still decode, and an unknown sort column is ignored rather than failing the
+  panel. The automatic restore picks up the same fields as a side effect.
 - A panel whose saved state can't be restored already has a placeholder, not a dropped tab or a
   crash: `ui::unrestored::restore_with` wraps each panel kind's own restore function and, on
   `Err(reason)`, logs it and shows an `UnrestoredPanel` - a panel that names its own kind and the
@@ -218,10 +228,17 @@ existing pattern of panel-scoped commands (`object-detail`'s per-tab, per-action
 
 - **Replace** (`saved_layouts.load_replace`, default `enter`): closes the window's current panels
   and rebuilds its dock from the saved `DockAreaState` via `DockArea::load` - the same rebuild path
-  a window already uses when it opens - then applies the saved `resource_panel_width` and window
-  bounds (`window_bounds`'s existing fallback already handles a saved position that no longer fits
-  any connected display). This is a wholesale swap: "I asked for *that* layout," not a
-  content-only merge.
+  a window already uses when it opens - then applies the saved `resource_panel_width` and the saved
+  window *size* (`Window::resize`). A saved layout carries no window position: GPUI (0.3.7) can
+  resize an open window but has no call to move one, so a position could never be applied to the
+  current window, and Replace never opens a new one. This is a wholesale swap: "I asked for *that*
+  layout," not a content-only merge.
+
+  `enter` reaches Replace through the picker list's own confirm (`Command::on_confirm`), the way
+  `ClusterPicker`'s Enter connects: the list widget binds `enter` itself, deeper in the tree than
+  the picker, so a separately bound action would never see the keystroke. `saved_layouts.
+  load_replace` stays a registered command (palette, hint row, `keymap.toml`) whose handler does
+  the same thing.
 - **Add** (`saved_layouts.load_add`, default `secondary-enter`, the app's existing cross-platform
   idiom for a modified-Enter variant - e.g. the Pods and Resource-list panels' own
   open-in-background binding): decodes the saved layout's panels into `(NavTarget, context_name,
@@ -249,13 +266,30 @@ is still the authoritative, context-aware check at implementation time.
 
 | id | title | default binding | context |
 |---|---|---|---|
-| `layouts.save` | Save Panel Layout… | `cmd-shift-s` | `Workspace` (not available from the empty cluster picker) |
-| `layouts.manage` | Saved Layouts… | `cmd-shift-o` | none (available even from the cluster picker, so a fresh window can load a layout straight away) |
+| `layouts.save` | Save Panel Layout… | `secondary-shift-s` | none - but handled only on the workspace body, so unavailable from the empty cluster picker (see below) |
+| `layouts.manage` | Saved Layouts… | `secondary-shift-o` | none (available even from the cluster picker, so a fresh window can load a layout straight away) |
 | `saved_layouts.load_replace` | Load (Replace) | `enter` | `SavedLayoutsPicker` |
 | `saved_layouts.load_add` | Load (Add) | `secondary-enter` | `SavedLayoutsPicker` |
 | `saved_layouts.rename_selected` | Rename | `r` | `SavedLayoutsPicker` |
 | `saved_layouts.delete_selected` | Delete | `backspace` | `SavedLayoutsPicker` |
 | `settings.show_layouts` | Settings: Show Layouts | `` (no default; a `cmd-<digit>` would collide with global show-panel keys, same as the other `ShowX` section commands) | `SettingsWindow` |
+
+The picker-scoped commands are registered in context `SavedLayoutsPicker && !Input`, so `r` and
+`backspace` type into the rename field rather than acting on the list; the picker's root sets
+the bare `SavedLayoutsPicker` key context, which is also what its hint row looks keys up in.
+
+`layouts.save` is not context-gated, because the menu is built once at startup and no context-
+gated command sits in it (`ui::menu`'s own invariant). It is unavailable from the cluster picker
+another way: its handler is attached to the workspace body rather than the window root, and a
+menu item is enabled exactly while a handler for its action is on the focus path
+(`is_action_available`). So from the picker the Window-menu item shows disabled and the key does
+nothing.
+
+Bindings are written the codebase's cross-platform way, `secondary-…` (`cmd` on macOS, `ctrl`
+elsewhere), as `secondary-enter` and `secondary-backspace` already are. `Workspace` is a new key
+context set on a window's workspace body (`util/shell/render.rs`); the keymap tests already used
+the name. Overwriting a saved layout on save asks at `Severity::Irreversible`, as deleting one
+does (D6): it destroys the layout's previous content with no undo.
 
 ### D5: Restoring never silently drops state
 Each saved panel's context is classified against the window's own held contexts
@@ -278,8 +312,26 @@ kind handling rather than adding a new one; it does not add a retry affordance b
 existing requirement already provides.
 
 An unrecognized panel kind in a saved layout's dock JSON - from a newer build that wrote the file -
-goes through `ui::unrestored` exactly as the automatic restore's own unknown-panel case already
-does: that one slot shows "not restored" and every other panel in the layout restores normally.
+is handled exactly as the automatic restore's own unknown-panel case already is. That case never
+reaches `ui::unrestored`: a `panel_name` no kind registered has no restore function for
+`restore_with` to wrap, so the dock's panel registry builds nothing and gpui-component's
+`DockSkin` substitutes its own `InvalidPanel` placeholder in that slot. `ui::unrestored` only
+stands in for a *registered* kind whose saved data didn't parse. Either way that one slot shows a
+placeholder and every other panel in the layout restores normally.
+
+**How the not-held-context placeholder is built.** Every panel kind's own constructor calls
+`ClusterRegistry::connection`, which connects a context lazily on first use - so building a saved
+panel's real kind for a context the window doesn't hold *would* connect it. Both modes therefore
+divert such a panel before it is built:
+- **Replace** rewrites the saved dock tree before `DockArea::load`, swapping each not-held leaf for
+  a placeholder leaf in the same position.
+- **Add** inserts the placeholder where a newly opened panel goes, instead of calling
+  `open_target_in`.
+
+The placeholder is `ui::unrestored::UnrestoredPanel`, registered as a panel kind (`Unrestored`)
+whose saved data wraps the original panel state and the reason. It dumps the original state back,
+so a later load in a window that holds the context restores the real panel. It has no `PanelKey`,
+so it isn't in `open_panels`.
 
 ### D6: Deleting a saved layout is Irreversible
 Deleting a saved layout cannot be recovered (there is no undo, no trash), so it is asked through
@@ -318,9 +370,8 @@ it, as a structural regression guard rather than a behavioral one.
 - [A saved layout's dock JSON references panel kinds the current build doesn't know about, from a
   newer version that wrote the file] -> handled by the existing `ui::unrestored` placeholder (D5);
   every other panel still restores.
-- [Window size/position in a saved layout no longer fits any connected display (laptop vs. external
-  monitor)] -> Replace reuses `layout.rs`'s existing `window_bounds()` clamping/centering fallback,
-  which already handles a missing or stale position for the automatic restore.
+- [A saved window size no longer fits the current display (laptop vs. external monitor)] -> Replace
+  only resizes; the platform keeps the window on screen. Position isn't saved (D4).
 - [A user deletes a saved layout by mistake] -> `Severity::Irreversible` confirmation (D6); no undo
   is added in this change, matching the lack of undo elsewhere for an Irreversible action today.
 - [Two different display names slugify to the same filename] -> numeric-suffix disambiguation on
