@@ -228,10 +228,17 @@ existing pattern of panel-scoped commands (`object-detail`'s per-tab, per-action
 
 - **Replace** (`saved_layouts.load_replace`, default `enter`): closes the window's current panels
   and rebuilds its dock from the saved `DockAreaState` via `DockArea::load` - the same rebuild path
-  a window already uses when it opens - then applies the saved `resource_panel_width` and window
-  bounds (`window_bounds`'s existing fallback already handles a saved position that no longer fits
-  any connected display). This is a wholesale swap: "I asked for *that* layout," not a
-  content-only merge.
+  a window already uses when it opens - then applies the saved `resource_panel_width` and the saved
+  window *size* (`Window::resize`). A saved layout carries no window position: GPUI (0.3.7) can
+  resize an open window but has no call to move one, so a position could never be applied to the
+  current window, and Replace never opens a new one. This is a wholesale swap: "I asked for *that*
+  layout," not a content-only merge.
+
+  `enter` reaches Replace through the picker list's own confirm (`Command::on_confirm`), the way
+  `ClusterPicker`'s Enter connects: the list widget binds `enter` itself, deeper in the tree than
+  the picker, so a separately bound action would never see the keystroke. `saved_layouts.
+  load_replace` stays a registered command (palette, hint row, `keymap.toml`) whose handler does
+  the same thing.
 - **Add** (`saved_layouts.load_add`, default `secondary-enter`, the app's existing cross-platform
   idiom for a modified-Enter variant - e.g. the Pods and Resource-list panels' own
   open-in-background binding): decodes the saved layout's panels into `(NavTarget, context_name,
@@ -338,9 +345,8 @@ it, as a structural regression guard rather than a behavioral one.
 - [A saved layout's dock JSON references panel kinds the current build doesn't know about, from a
   newer version that wrote the file] -> handled by the existing `ui::unrestored` placeholder (D5);
   every other panel still restores.
-- [Window size/position in a saved layout no longer fits any connected display (laptop vs. external
-  monitor)] -> Replace reuses `layout.rs`'s existing `window_bounds()` clamping/centering fallback,
-  which already handles a missing or stale position for the automatic restore.
+- [A saved window size no longer fits the current display (laptop vs. external monitor)] -> Replace
+  only resizes; the platform keeps the window on screen. Position isn't saved (D4).
 - [A user deletes a saved layout by mistake] -> `Severity::Irreversible` confirmation (D6); no undo
   is added in this change, matching the lack of undo elsewhere for an Irreversible action today.
 - [Two different display names slugify to the same filename] -> numeric-suffix disambiguation on

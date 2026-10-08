@@ -13,14 +13,14 @@ The application SHALL let the user save the current window's arrangement under a
 tree (splits, panel sizes, tab order, active tab, and zoom state), the Resource panel's width and
 visibility, each panel's content key (kind, object, namespace selection, and cluster context),
 each list panel's view state (its filter text and its sort column and direction), and the
-window's size and position. Saving under a name that already identifies a saved layout (compared
+window's size. Saving under a name that already identifies a saved layout (compared
 without regard to case) SHALL ask for confirmation before overwriting it.
 
 #### Scenario: Saving a new layout
 - **WHEN** the user runs Save Panel Layout and enters a name that does not already identify a
   saved layout
 - **THEN** a new saved layout is created capturing the window's current dock tree, panel content
-  keys, Resource panel width and visibility, and window size and position
+  keys, Resource panel width and visibility, and window size
 
 #### Scenario: Namespaces and filters are saved and restored
 - **WHEN** a list panel is scoped to one or more namespaces, has filter text entered (where the
@@ -91,18 +91,19 @@ and activating it by Tab, or its dedicated shortcut.
 The application SHALL let the user load a saved layout into the current window in one of two ways,
 as two distinct actions: Add, which opens the saved layout's panels alongside the panels already
 open in the window, and Replace, which replaces the window's current arrangement with the saved
-one entirely, including its Resource panel state and window size and position. Neither way of
-loading a saved layout opens a new window.
+one entirely, including its Resource panel state and window size. Neither way of loading a saved
+layout opens a new window, and neither moves the current one: an open window's position can't be
+set by the application.
 
 #### Scenario: Loading with Replace
 - **WHEN** the user loads a saved layout with Replace
-- **THEN** the window's arrangement - its dock tree, panels, Resource panel state, and window size
-  and position - is replaced by the saved layout's
+- **THEN** the window's arrangement - its dock tree, panels, Resource panel state, and window
+  size - is replaced by the saved layout's
 
 #### Scenario: Loading with Add
 - **WHEN** the user loads a saved layout with Add while the window already shows other panels
 - **THEN** the saved layout's panels open alongside the window's existing panels, and the window's
-  Resource panel state and window size and position are unchanged
+  Resource panel state and window size are unchanged
 
 #### Scenario: Loading with Add does not duplicate an already-open panel
 - **WHEN** the user loads with Add a saved layout containing a panel with the same content key

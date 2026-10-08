@@ -89,13 +89,14 @@
 
 ## 4. Loading a saved layout: Add and Replace
 
-- [ ] 4.1 Register `saved_layouts.load_replace` (default binding `enter`, context
+- [x] 4.1 Register `saved_layouts.load_replace` (default binding `enter`, context
   `SavedLayoutsPicker`): closes the window's current panels and rebuilds its dock via `DockArea::load`
-  from the saved `DockAreaState`, then applies the saved Resource panel width and window bounds
-  (`window_bounds`'s existing clamping/centering fallback). Verify: a test opens the picker from a
-  window with one arrangement, loads a different saved layout with Replace, and asserts the window's
-  dock, Resource panel width, and bounds now match the saved layout, not the prior state.
-- [ ] 4.2 Register `saved_layouts.load_add` (default binding `secondary-enter`, context
+  from the saved `DockAreaState`, then applies the saved Resource panel width and window size
+  (GPUI can resize an open window but not move it - see design.md D4). Verify: a test opens the
+  picker from a window with one arrangement, loads a different saved layout with Replace, and
+  asserts the window's dock, Resource panel width, and size now match the saved layout, not the
+  prior state.
+- [x] 4.2 Register `saved_layouts.load_add` (default binding `secondary-enter`, context
   `SavedLayoutsPicker`): decodes the saved layout's panels via `restored_panel_keys`/`panel_key` (per
   design.md D3) and opens each one through `MainWindow::open_target_in`, leaving the window's existing
   panels, Resource panel state, and bounds untouched. Verify: a test loads with Add into a window that
@@ -103,7 +104,7 @@
   layout's panels, with Resource panel width and window bounds unchanged; a second test loads with Add
   a saved layout containing a panel whose content key matches a panel already open and asserts no
   duplicate panel is created.
-- [ ] 4.3 Because `app/src/util/shell/panels.rs`'s `PanelKey`/`restored_panel_keys` are `pub(super)`,
+- [x] 4.3 Because `app/src/util/shell/panels.rs`'s `PanelKey`/`restored_panel_keys` are `pub(super)`,
   add the capture/apply logic (2.2's dock capture, 4.1's Replace, 4.2's Add) as a new sibling module
   `app/src/util/shell/saved_layouts.rs` inside `util::shell` (per design.md D3), not as a widened-
   visibility export. Verify: `cargo build` succeeds with no visibility widened beyond `pub(super)`/
