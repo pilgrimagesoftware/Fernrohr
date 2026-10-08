@@ -305,8 +305,26 @@ kind handling rather than adding a new one; it does not add a retry affordance b
 existing requirement already provides.
 
 An unrecognized panel kind in a saved layout's dock JSON - from a newer build that wrote the file -
-goes through `ui::unrestored` exactly as the automatic restore's own unknown-panel case already
-does: that one slot shows "not restored" and every other panel in the layout restores normally.
+is handled exactly as the automatic restore's own unknown-panel case already is. That case never
+reaches `ui::unrestored`: a `panel_name` no kind registered has no restore function for
+`restore_with` to wrap, so the dock's panel registry builds nothing and gpui-component's
+`DockSkin` substitutes its own `InvalidPanel` placeholder in that slot. `ui::unrestored` only
+stands in for a *registered* kind whose saved data didn't parse. Either way that one slot shows a
+placeholder and every other panel in the layout restores normally.
+
+**How the not-held-context placeholder is built.** Every panel kind's own constructor calls
+`ClusterRegistry::connection`, which connects a context lazily on first use - so building a saved
+panel's real kind for a context the window doesn't hold *would* connect it. Both modes therefore
+divert such a panel before it is built:
+- **Replace** rewrites the saved dock tree before `DockArea::load`, swapping each not-held leaf for
+  a placeholder leaf in the same position.
+- **Add** inserts the placeholder where a newly opened panel goes, instead of calling
+  `open_target_in`.
+
+The placeholder is `ui::unrestored::UnrestoredPanel`, registered as a panel kind (`Unrestored`)
+whose saved data wraps the original panel state and the reason. It dumps the original state back,
+so a later load in a window that holds the context restores the real panel. It has no `PanelKey`,
+so it isn't in `open_panels`.
 
 ### D6: Deleting a saved layout is Irreversible
 Deleting a saved layout cannot be recovered (there is no undo, no trash), so it is asked through

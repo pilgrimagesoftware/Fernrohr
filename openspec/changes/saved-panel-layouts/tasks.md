@@ -113,7 +113,7 @@
 
 ## 5. Missing context, namespace, object, and panel-kind handling on restore
 
-- [ ] 5.1 For each panel decoded while loading (Add or Replace), check its `context_name` against
+- [x] 5.1 For each panel decoded while loading (Add or Replace), check its `context_name` against
   the window's currently held contexts (`WindowMode::Workspace`'s `contexts`); a context not held
   restores that one panel as a placeholder naming the context and stating this window isn't
   connected to it, without opening it via `open_target_in` and without adding the context to the
@@ -121,15 +121,16 @@
   does not hold and asserts that panel renders as a placeholder, while every other panel in the
   layout restores normally; a test confirms the window's held-context list is unchanged after the
   load.
-- [ ] 5.2 Confirm a restored panel whose namespace or object no longer exists uses each panel kind's
+- [x] 5.2 Confirm a restored panel whose namespace or object no longer exists uses each panel kind's
   own existing not-found handling (e.g. `pod-detail`'s "pod no longer exists" requirement), with no
   new per-saved-layout logic required. Verify: a test loads a layout whose pod detail panel points at
   a pod that no longer exists and asserts that panel shows the existing not-found state, without
   erroring, closing, or affecting the rest of the restored layout.
-- [ ] 5.3 Confirm an unrecognized/future panel kind in a saved layout's dock JSON goes through
+- [x] 5.3 Confirm an unrecognized/future panel kind in a saved layout's dock JSON goes through
   `ui::unrestored::restore_with` exactly as the automatic restore's own unknown-panel case does.
   Verify: a test loads a `SavedLayout` fixture containing one panel of a synthetic unrecognized kind
-  and asserts every other panel restores while that slot shows an `UnrestoredPanel`.
+  and asserts every other panel restores while that slot shows the dock's own placeholder
+  (`InvalidPanel` - see design.md D5).
 
 ## 6. Settings "Layouts" section
 
