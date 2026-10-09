@@ -118,12 +118,13 @@ There is no separate status-bar item. The waiting context already has a status-b
 by `render_capsule` from its `ContextHealth`, so `AwaitingConfirmation` changes how that capsule
 looks and what its menu offers:
 
-- **Look:** the same rounded, bordered capsule layout with name, tunnel, state text, and elapsed
-  time. A new `Severity::Attention` fills the capsule with the theme's warning color and draws its
+- **Look:** the same rounded, bordered capsule layout as every other context (see
+  `status-capsule-icons`: name, `[tunnel]`, state icon, elapsed time). A new `Severity::Attention` fills the capsule with the theme's warning color and draws its
   contents in the matching foreground. Every other state only tints the text. A filled capsule
-  stays the most visible thing in the row, and still reads as a context. The state text is
-  "Awaiting confirmation" with an attention icon from the existing set. The tunnel's message is in
-  the capsule's tooltip rather than inline, so a long message never widens the status bar.
+  stays the most visible thing in the row, and still reads as a context. The state icon is an
+  attention icon from the existing set, distinct from every other state's icon. Its tooltip reads
+  "Awaiting confirmation", with the elapsed wait and the tunnel's message, so a long message never
+  widens the status bar.
 - **Menu:** the chevron's dropdown lists Proceed and Cancel, a separator, then the existing
   Disconnect. Proceed and Cancel call the same `ManualConfirmations` resolution as the commands,
   and their menu rows show the commands' bound keys. Clicking the capsule body still activates the

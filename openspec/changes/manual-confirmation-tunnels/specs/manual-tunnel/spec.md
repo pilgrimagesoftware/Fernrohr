@@ -75,11 +75,11 @@ While a manual tunnel awaits confirmation, the application SHALL post one deskto
 - **THEN** a desktop notification names `corp-vpn` and shows its message
 
 ### Requirement: Awaiting-confirmation context capsule
-While a context awaits confirmation, its status-bar capsule SHALL keep the standard capsule layout, drawn in an attention color distinct from every other connection state, naming the tunnel and showing the elapsed wait, with the tunnel's message in its tooltip. Its menu SHALL offer Proceed and Cancel above Disconnect.
+While a context awaits confirmation, its status-bar capsule SHALL keep the standard capsule layout, drawn in an attention color distinct from every other connection state, with an awaiting-confirmation state icon whose tooltip names the state, the elapsed wait, and the tunnel's message. Its menu SHALL offer Proceed and Cancel above Disconnect.
 
 #### Scenario: Capsule draws attention
 - **WHEN** a context is waiting on `corp-vpn`
-- **THEN** its capsule is drawn in the attention color with the tunnel name and elapsed time, and hovering it shows the tunnel's message
+- **THEN** its capsule is drawn in the attention color with the tunnel name, its own state icon, and the elapsed time, and hovering the icon shows "Awaiting confirmation" with the tunnel's message
 
 #### Scenario: Proceed from the capsule menu
 - **WHEN** the user opens the waiting context's capsule menu and chooses Proceed
