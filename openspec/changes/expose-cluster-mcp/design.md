@@ -48,12 +48,15 @@ The only state-changing tools are these, each with typed fields rather than a re
 | `set_configmap_value` | ConfigMap | Sets or removes one key in `data` via a merge patch; no other field changes |
 | `scale_workload` | Deployment, StatefulSet, ReplicaSet | Sets replicas through the `scale` subresource |
 | `restart_workload` | Deployment, StatefulSet, DaemonSet | Rollout restart via the `kubectl.kubernetes.io/restartedAt` pod-template annotation |
-| `delete_pods` | Pods, by explicit name list in one namespace | Deletes those Pods; owning controllers recreate them |
+| `rollback_workload` | Deployment, StatefulSet, DaemonSet | Rolls back to the previous revision, as `kubectl rollout undo` |
+| `set_rollout_paused` | Deployment | Pauses or resumes the rollout by setting `spec.paused` |
+| `delete_pods` | Pods, 1 to 10 explicit names in one namespace | Deletes those Pods; owning controllers recreate them |
 | `trigger_cronjob` | CronJob | Creates a Job from the CronJob's template, as `kubectl create job --from=cronjob/<name>` |
+| `set_cronjob_suspended` | CronJob | Suspends or resumes the schedule by setting `spec.suspend` |
 
-The server builds each request itself from those fields, so an agent cannot change any field outside the action's scope. `delete_pods` takes names rather than a label selector, so the confirmation dialog can list exactly what will be deleted, and it caps how many names one call accepts. Adding an action later means adding a named tool to this table, not widening an existing one.
+The server builds each request itself from those fields, so an agent cannot change any field outside the action's scope. `delete_pods` takes names rather than a label selector, so the confirmation dialog can list exactly what will be deleted, and it accepts at most 10 names per call. Adding an action later means adding a named tool to this table, not widening an existing one.
 
-Each tool calls the same `resource_actions` function as the matching in-app action (`bulk-select-list-actions` for scale and restart, `resource-specific-actions` for CronJob trigger, the shipped single-row delete for Pods). That way MCP and UI actions behave identically.
+Each tool calls the same `resource_actions` function as the matching in-app action (`bulk-select-list-actions` for scale, restart, and rollback; `resource-specific-actions` for CronJob trigger, CronJob suspend/resume, and Deployment pause/resume; the shipped single-row delete for Pods). That way MCP and UI actions behave identically.
 
 A generic patch tool constrained by a field allowlist was considered and rejected: it is harder to show clearly in a confirmation dialog and easier to widen by accident.
 
@@ -63,7 +66,7 @@ A generic patch tool constrained by a field allowlist was considered and rejecte
 
 ### App-owned confirmation gate
 
-The app routes every action tool through one confirmation request entity. The RPC call waits for an allow or deny response, with a bounded timeout. The dialog names the action, context, namespace, kind, and every target resource name, plus the action's parameters: the ConfigMap key with its old and new values, or the old and new replica counts. A denied or timed-out request reaches no Kubernetes API. Read, panel, and layout tools need no confirmation.
+The app routes every action tool through one confirmation request entity. The RPC call waits for an allow or deny response, with a bounded timeout. The dialog names the action, context, namespace, kind, and every target resource name, plus the action's parameters: the ConfigMap key with its old and new values, the old and new replica counts, or the revision a rollback returns to. A denied or timed-out request reaches no Kubernetes API. Read, panel, and layout tools need no confirmation.
 
 MCP client confirmation annotations cannot guarantee an interactive desktop approval and vary by client, so they cannot be the authority for writes.
 

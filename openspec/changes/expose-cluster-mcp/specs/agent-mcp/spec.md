@@ -29,7 +29,7 @@ The MCP server SHALL provide tools that list available contexts, report their co
 - **THEN** the MCP response identifies the unavailable kind and does not issue a Kubernetes request
 
 ### Requirement: Allowlisted cluster actions
-The MCP server SHALL provide only these state-changing tools: set or remove one key in a ConfigMap's `data`, scale a Deployment, StatefulSet, or ReplicaSet, restart the rollout of a Deployment, StatefulSet, or DaemonSet, delete Pods named explicitly in one namespace, and trigger a Job from a CronJob. Each tool SHALL accept typed fields rather than a resource document, and the server SHALL construct the Kubernetes request so that no field outside the action's scope changes. Before executing an action, Fernrohr SHALL require approval in its user interface for the exact action, context, namespace, kind, every target resource name, and the action's parameters. The tool result SHALL identify whether the action was approved, denied, or failed.
+The MCP server SHALL provide only these state-changing tools: set or remove one key in a ConfigMap's `data`, scale a Deployment, StatefulSet, or ReplicaSet, restart or roll back to the previous revision the rollout of a Deployment, StatefulSet, or DaemonSet, pause or resume a Deployment's rollout, delete between 1 and 10 Pods named explicitly in one namespace, trigger a Job from a CronJob, and suspend or resume a CronJob. Each tool SHALL accept typed fields rather than a resource document, and the server SHALL construct the Kubernetes request so that no field outside the action's scope changes. Before executing an action, Fernrohr SHALL require approval in its user interface for the exact action, context, namespace, kind, every target resource name, and the action's parameters. The tool result SHALL identify whether the action was approved, denied, or failed.
 
 #### Scenario: User approves a scale action
 - **WHEN** an agent requests scaling Deployment `api` to 3 replicas and the user approves the displayed action, which shows the current and requested replica counts
@@ -40,7 +40,11 @@ The MCP server SHALL provide only these state-changing tools: set or remove one 
 - **THEN** Fernrohr does not contact the Kubernetes API and returns a denied result
 
 #### Scenario: Action targets an unsupported kind
-- **WHEN** an agent requests a scale action on a DaemonSet, or a ConfigMap value change on a Secret
+- **WHEN** an agent requests a scale action on a DaemonSet, a rollout pause on a StatefulSet, or a ConfigMap value change on a Secret
+- **THEN** the MCP response rejects the request without prompting the user or issuing a Kubernetes request
+
+#### Scenario: Pod deletion exceeds the limit
+- **WHEN** an agent requests deletion of 11 or more Pods in one call
 - **THEN** the MCP response rejects the request without prompting the user or issuing a Kubernetes request
 
 ### Requirement: No arbitrary resource writes
