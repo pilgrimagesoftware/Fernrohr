@@ -140,16 +140,25 @@ launch, reconnecting every context a window used.
 ### Requirement: Window status bar
 
 Every workspace window SHALL show a status bar along its bottom edge with one capsule per cluster
-context the window uses, followed by the add-context control. Each capsule SHALL show the context
-name, the name of its bound tunnel if any, and its connection state, and for any state other than
-connected, how long it has been in that state. Capsules in a non-connected state SHALL be listed
+context the window uses, followed by the add-context control. Each capsule SHALL show, in order,
+the context name, the name of its bound tunnel if any in square brackets, and an icon for its
+connection state, and for any state other than connected, how long it has been in that state. The
+tunnel name and the elapsed time SHALL render smaller than the context name, in the data font and
+the theme's muted foreground color. The state icon SHALL have a tooltip naming the state and, for
+any state other than connected, how long it has lasted. Capsules in a non-connected state SHALL be listed
 before connected ones.
 
 #### Scenario: One item per cluster in the window
 
 - **WHEN** a window uses `cluster-a` (through `qa-bastion`) and `cluster-b` (direct)
-- **THEN** its status bar shows a `cluster-a` capsule naming `qa-bastion` and a `cluster-b` capsule
-  with no tunnel name, and no capsule for contexts only other windows use
+- **THEN** its status bar shows a `cluster-a` capsule reading `cluster-a [qa-bastion]` followed by
+  its state icon, a `cluster-b` capsule with no tunnel name, and no capsule for contexts only other
+  windows use
+
+#### Scenario: State shown as an icon
+
+- **WHEN** the user hovers the state icon of a connected `cluster-b` capsule
+- **THEN** a tooltip reads "Connected", and the capsule itself shows no state text
 
 #### Scenario: Problem items first
 
@@ -169,7 +178,8 @@ before connected ones.
 ### Requirement: Status severity is visually distinct
 
 The status bar SHALL color each item by severity using the theme's semantic colors, and SHALL pair
-every state with its own icon and text so the state can be read without color:
+every state with its own distinct icon, and its state text in the icon's tooltip, so the state can
+be read without color:
 
 - connected: muted
 - waiting for tunnel, or refreshing credentials: info
@@ -179,12 +189,12 @@ every state with its own icon and text so the state can be read without color:
 #### Scenario: Reconnecting draws attention
 
 - **WHEN** a context's tunnel drops and its connection pauses to reconnect
-- **THEN** its status bar item changes to the warning color with a reconnecting icon and the text "Reconnecting", and its elapsed time counts up each second
+- **THEN** its status bar item changes to the warning color with a reconnecting icon whose tooltip reads "Reconnecting", and its elapsed time counts up each second
 
 #### Scenario: Long pause escalates
 
 - **WHEN** a pause has lasted more than 30 seconds
-- **THEN** the item changes to the danger color while keeping its reason text
+- **THEN** the item changes to the danger color while keeping its icon and its reason in the tooltip
 
 #### Scenario: Recovery returns to muted
 
@@ -194,7 +204,7 @@ every state with its own icon and text so the state can be read without color:
 #### Scenario: Readable without color
 
 - **WHEN** the status bar is viewed without color, for example in a grayscale screenshot
-- **THEN** each item's state is identifiable from its icon and text alone
+- **THEN** each item's state is identifiable from its icon alone
 
 ### Requirement: Add a context to a window
 
