@@ -83,7 +83,7 @@ Each command embeds the absolute, shell-quoted path of the running executable (`
 
 OpenCode's config schema differs between major versions (`mcp.<name>` in v1, `mcp.servers.<name>` in v2), and older releases lack the non-interactive `mcp add` form. Its entry therefore also offers a copyable config snippet, `{"type": "local", "command": ["<exe>", "mcp"]}`, with a note on where it goes. The harness list is one data table, so adding a harness or updating a command syntax touches nothing else.
 
-When the executable path is unstable, the section warns instead of offering a command that will break later. That covers a macOS App Translocation path (the app was opened straight from Downloads or a mounted disk image) and a build-tree path such as `target/debug`. On platforms without the endpoint (Windows), the section says agent access is unavailable and offers no command.
+When the executable path is unstable, the section warns instead of offering a command that will break later. That covers a macOS App Translocation path (the app was opened straight from Downloads or a mounted disk image) and a build-tree path such as `target/debug`. On platforms without the endpoint (Windows), the section says agent access is unavailable and offers no command. A development build run from `target/` always shows the unstable-path warning, so the copy buttons only appear in an installed build. Settings: Show Agent Access opens the section directly, and Copy MCP Setup Command opens Settings at Agent Access instead of the picker when no command can be offered.
 
 ### App-owned confirmation gate
 

@@ -31,5 +31,5 @@
 
 ## 6. In-app agent setup
 
-- [ ] 6.1 Add the harness command table (Claude Code, Codex, Gemini CLI, OpenCode plus its config snippet) built from the shell-quoted executable path, with translocation, build-tree, and AppImage handling; verify unit tests for each harness command, quoting of paths with spaces and quotes, and unstable-path detection.
-- [ ] 6.2 Add the Agent access Settings section with instructions, per-harness copy icon buttons with tooltips, unstable-path warning, and unsupported-platform state, plus the Copy MCP Setup Command palette command with a harness picker; verify keyboard-driven tests (`simulate_keystrokes`) copy the selected harness's command to the clipboard.
+- [x] 6.1 Add the harness command table (Claude Code, Codex, Gemini CLI, OpenCode plus its config snippet) built from the shell-quoted executable path, with translocation, build-tree, and AppImage handling; verify unit tests for each harness command, quoting of paths with spaces and quotes, and unstable-path detection.
+- [x] 6.2 Add the Agent access Settings section with instructions, per-harness copy icon buttons with tooltips, unstable-path warning, and unsupported-platform state, plus the Copy MCP Setup Command palette command with a harness picker; verify keyboard-driven tests (`simulate_keystrokes`) copy the selected harness's command to the clipboard.
