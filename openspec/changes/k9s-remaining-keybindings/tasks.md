@@ -98,26 +98,26 @@
 
 ## 9. Manual checks (need a person, a real keyboard and a cluster)
 
-- [ ] 9.1 Delete and kill: on a throwaway pod, `ctrl-d` asks "Delete Pod?" - Cancel leaves it,
+- [x] 9.1 Delete and kill: on a throwaway pod, `ctrl-d` asks "Delete Pod?" - Cancel leaves it,
       Delete removes the row once the cluster drops the pod; `ctrl-k` removes it at once. With an
       account that may not delete pods, the refusal shows above the table and the row stays.
-- [ ] 9.2 Edit YAML: open a Deployment, `e`, change `spec.replicas`, `cmd-s` - the panel shows the new
+- [x] 9.2 Edit YAML: open a Deployment, `e`, change `spec.replicas`, `cmd-s` - the panel shows the new
       count. Edit again, change the object elsewhere (e.g. `kubectl scale`), then `cmd-s` - the
       conflict shows and the edited text stays. `e` on a Secret says it can't be edited here.
-- [ ] 9.3 Shell: `s` on a running single-container pod opens a shell panel; `ls` + Enter lists files;
+- [x] 9.3 Shell: `s` on a running single-container pod opens a shell panel; `ls` + Enter lists files;
       `exit` + Enter marks the session ended with the transcript kept. On a two-container pod, `s`
       asks which container. On a pod with nothing running, `s` does nothing and the palette doesn't
       offer it.
-- [ ] 9.4 Port-forward: `shift-f` on a pod declaring one port prints where it listens; `curl` that
+- [x] 9.4 Port-forward: `shift-f` on a pod declaring one port prints where it listens; `curl` that
       address reaches the pod. On a Service row, the chosen port reaches a pod behind it. Manage
       Tunnels (`cmd-shift-t`) lists the forward as Up; Stop removes it and the local port closes.
-- [ ] 9.5 Previous logs: on a container that has restarted, `p` in the Logs panel shows the previous
+- [x] 9.5 Previous logs: on a container that has restarted, `p` in the Logs panel shows the previous
       instance's log and the title reads "(previous)"; `p` again returns to the live log. On a
       container that never restarted, `p` says there is no previous instance.
-- [ ] 9.6 Keys on a real keyboard: `?` (shift-/ on a US layout) opens Key Hints outside a text field
+- [x] 9.6 Keys on a real keyboard: `?` (shift-/ on a US layout) opens Key Hints outside a text field
       and types `?` inside one; `alt-1`..`alt-9` and `alt-0` jump namespaces with Option held on
       macOS (Option-digit types a symbol in text fields, so check it doesn't fire there).
-- [ ] 9.7 Delete everywhere: in a Secrets list, `ctrl-d` on a throwaway Secret asks with its name
+- [x] 9.7 Delete everywhere: in a Secrets list, `ctrl-d` on a throwaway Secret asks with its name
       quoted in the accent colour and both buttons showing their keys; Enter deletes it. In a pod's
       detail panel, `s` opens a shell, `shift-f` forwards, `ctrl-d` asks and the panel then shows the
       pod deleted. A metrics kind's list offers neither Delete nor Edit.
