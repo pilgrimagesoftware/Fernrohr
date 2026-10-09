@@ -75,12 +75,12 @@
 
 ## 6. Verification
 
-- [ ] 6.1 Manual check: create a proxy-mode command tunnel from a real IAP/bastion command with
+- [x] 6.1 Manual check: create a proxy-mode command tunnel from a real IAP/bastion command with
       `{port}`, bind a context, and connect. Confirm that resources list and logs stream.
       **Needs user confirmation.**
-- [ ] 6.2 Manual check: quit Fernrohr with the tunnel Up, and confirm with `ps` that no `gcloud` or
+- [x] 6.2 Manual check: quit Fernrohr with the tunnel Up, and confirm with `ps` that no `gcloud` or
       `ssh` from it remains. Relaunch and reconnect. **Needs user confirmation.**
-- [ ] 6.3 Manual check: open a pod shell and a port-forward through the proxy-mode tunnel, which
+- [x] 6.3 Manual check: open a pod shell and a port-forward through the proxy-mode tunnel, which
       covers websocket upgrades over `CONNECT`. **Needs user confirmation.**
 
 ## Notes
