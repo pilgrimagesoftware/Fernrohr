@@ -91,7 +91,9 @@ the URL omits one. SSH forwards SHALL be shared per tunnel and API server host a
 using the same tunnel and API server share one forward, and contexts using the same tunnel for
 different API servers each get their own. A command tunnel SHALL NOT derive a target from the
 context. All contexts bound to the same command tunnel SHALL share one running command, whatever
-their API servers.
+their API servers. A manual tunnel SHALL NOT derive a target or rewrite the client
+address; once confirmed, its contexts SHALL connect directly to their API servers. All contexts
+bound to the same manual tunnel SHALL share one confirmation, whatever their API servers.
 
 #### Scenario: Target from the kubeconfig server
 
@@ -107,6 +109,11 @@ their API servers.
 
 - **WHEN** contexts for two different API servers are both bound to the command tunnel `qa-iap` and both connect
 - **THEN** exactly one `qa-iap` command is running and both connections use it
+
+#### Scenario: One manual tunnel, two clusters
+
+- **WHEN** contexts for two different API servers are both bound to the manual tunnel `corp-vpn` and both connect
+- **THEN** the user confirms `corp-vpn` once, and each connection reaches its own API server directly without an address rewrite
 
 #### Scenario: Unsupported server URL
 

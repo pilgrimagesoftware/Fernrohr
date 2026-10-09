@@ -8,12 +8,13 @@ fields persisted to disk and secrets held only in the operating system keychain.
 ### Requirement: Define and manage named tunnels
 
 The application SHALL provide a Tunnels panel where the user can create, edit, rename, and delete
-named tunnel configurations. Each tunnel SHALL be one of two kinds, chosen in the editor: an SSH
-tunnel or a command tunnel. An SSH tunnel describes only how to reach a bastion: a host (a
+named tunnel configurations. Each tunnel SHALL be one of three kinds, chosen in the editor: an SSH
+tunnel, a command tunnel, or a manual tunnel. An SSH tunnel describes only how to reach a bastion: a host (a
 hostname or an SSH client configuration alias), a port, a login user, an authentication method
 (the SSH client's own configuration and agent, or a private key held in the OS keychain), an
 optional ordered jump-host list, and keepalive settings. A command tunnel is described by the
-settings in "Command tunnel settings". An SSH tunnel SHALL NOT name a forward target; the target
+settings in "Command tunnel settings". A manual tunnel is described by the settings in "Manual
+tunnel settings". An SSH tunnel SHALL NOT name a forward target; the target
 is taken from the connecting context. The Tunnels panel SHALL NOT assign contexts to tunnels.
 
 #### Scenario: Create a tunnel
@@ -25,6 +26,11 @@ is taken from the connecting context. The Tunnels panel SHALL NOT assign context
 
 - **WHEN** the user creates a tunnel named `qa-iap`, chooses the command kind, and enters a command line
 - **THEN** the tunnel appears in the tunnel list marked as a command tunnel and is offered as a choice in every context's tunnel selector
+
+#### Scenario: Create a manual tunnel
+
+- **WHEN** the user creates a tunnel named `corp-vpn` and chooses the manual kind
+- **THEN** the tunnel appears in the tunnel list marked as a manual tunnel and is offered as a choice in every context's tunnel selector
 
 #### Scenario: Rename and edit
 
