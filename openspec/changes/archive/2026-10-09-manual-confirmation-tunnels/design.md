@@ -43,7 +43,10 @@ See [proposal.md](proposal.md), `manual-tunnel`, and `desktop-notifications` for
 Add `TunnelKind::Manual` and a flattened `manual` table holding `message: Option<String>` and
 `skip_when_reachable: bool`, which defaults to `true`. This follows the command-tunnel approach, so
 switching kind keeps every kind's settings and files without the table still load. The editor shows
-a message field and a skip-when-reachable toggle, and the tunnel list shows a manual badge.
+an Instruction field (blank saves as no message) and a reachability choice, "Skip the prompt" or
+"Always prompt", as a two-button switch like the command form's mode. A manual tunnel has no Test
+action, since there is nothing to start. The tunnel list shows a Manual badge and, as the summary,
+the instruction (truncated) or "Confirmed by hand".
 
 ### D2. A transport that waits on the user, keyed by tunnel
 
@@ -100,6 +103,8 @@ where the platform reports clicks. On macOS, a build without a bundle identifier
 `cargo run` development build, may not show notifications, and the spec accepts that because the
 in-app prompt remains.
 
+On Linux, a click is reported through the D-Bus default action and focuses the originating window. On macOS, the notification posts under the app's bundle identifier (otherwise it appears to come from Finder) and has no click callback, since waiting for one would block the main run loop. `notify-rust` is a Unix-only dependency, and Windows logs that notifications are unsupported.
+
 One notification is posted per pending entry, when the entry is created. Contexts that join an
 existing entry do not post again.
 
@@ -138,6 +143,37 @@ not cancel the tunnel for others; if it was the last waiter, the entry goes away
 
 Separate Proceed and Cancel icon buttons were considered. They would add a second control style
 next to every other capsule's single menu, and widen the row while waiting.
+
+### D9. Implementation notes from the lifecycle work
+
+- The non-retryable outcome is `ForwardTransport::connect_outcome() -> Result<(), ConnectFailure>`
+  with `Retry` and `GiveUp`. Its default wraps `connect()` as `Retry`, so the SSH, command, and
+  pod port-forward transports are unchanged. On `GiveUp`, the supervisor records the reason and
+  ends, which closes the state channel; `connect_and_probe` fails with that reason.
+- Manual tunnels use a new `TunnelRoute::Direct`: no address rewrite and no proxy.
+- A connection whose route is `Direct` releases its forward handle when it fails. That is what
+  makes Cancel, and a failure after Proceed, withdraw the confirmation so the next attempt prompts
+  again. SSH and command forwards keep their handles on failure, as before.
+- `ManualConfirmations` (in `tunnel::manual`) exposes `pending()`, `pending_for(tunnel_id)`,
+  `for_context(name)`, and `resolve(tunnel_id, Proceed | Cancel)`. An entry's `contexts` is
+  recorded at acquire time; a context that disconnects while others keep waiting stays listed
+  until the entry resolves, so the UI reads each context's own connection state too.
+
+### D10. Implementation notes from the prompt UI
+
+- `ContextHealth::AwaitingConfirmation` applies only while the context's own connection is
+  `WaitingForTunnel` and the pending entry lists it; Failed and Paused take precedence. Its icon is
+  `BellRing`, used by no other state.
+- The commands are `tunnel.manual.proceed` (⌘⌥P) and `tunnel.manual.cancel` (⌘⌥C), in the
+  Context menu after Manage Tunnels. A capsule's menu rows show those keys but answer that
+  capsule's own tunnel directly, never opening the picker.
+- `ManualConfirmations` starts at launch and emits a `Prompted` event once per new entry, which
+  the notification posting subscribes to. A notification click focuses the active main window,
+  or the first one: the app does not record which window started a connection, so "the window
+  that started the waiting connection" is approximated.
+- With `status-capsule-icons` merged first, the awaiting capsule uses its layout: the bell icon's
+  tooltip comes from the shared capsule tooltip, reading "Awaiting confirmation for <elapsed>:
+  <message>". The MCP server's `list_contexts` also reports `awaiting_confirmation` as a status.
 
 ## Risks / Trade-offs
 
