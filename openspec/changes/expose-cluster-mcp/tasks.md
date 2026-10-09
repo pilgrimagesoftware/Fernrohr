@@ -14,9 +14,9 @@
 
 ## 3. Allowlisted cluster actions
 
-- [ ] 3.1 Define typed inputs for `set_configmap_value`, `scale_workload`, `restart_workload`, `rollback_workload`, `set_rollout_paused`, `delete_pods`, `trigger_cronjob`, and `set_cronjob_suspended`, with per-tool kind allowlists and a 10-name cap on `delete_pods`; verify unsupported kinds, Secrets, and over-cap requests are rejected before confirmation or any Kubernetes call, and that the tool list exposes no other state-changing tool.
-- [ ] 3.2 Add the foreground confirmation gate showing action, context, namespace, kind, every target name, and parameters (ConfigMap key old/new value, current/requested replicas, rollback target revision), with cancel handling and timeout; verify denial, timeout, and client-disconnect tests make no Kubernetes write call.
-- [ ] 3.3 Route approved actions through the shared `resource_actions` functions, adding ConfigMap key set/remove, scale, rollout restart, rollout undo, rollout pause/resume, CronJob trigger, and CronJob suspend/resume where `bulk-select-list-actions` or `resource-specific-actions` have not already; verify fixture requests change only the action's own fields and that results redact upstream authentication data.
+- [x] 3.1 Define typed inputs for `set_configmap_value`, `scale_workload`, `restart_workload`, `rollback_workload`, `set_rollout_paused`, `delete_pods`, `trigger_cronjob`, and `set_cronjob_suspended`, with per-tool kind allowlists and a 10-name cap on `delete_pods`; verify unsupported kinds, Secrets, and over-cap requests are rejected before confirmation or any Kubernetes call, and that the tool list exposes no other state-changing tool.
+- [x] 3.2 Add the foreground confirmation gate showing action, context, namespace, kind, every target name, and parameters (ConfigMap key old/new value, current/requested replicas, rollback target revision), with cancel handling and timeout; verify denial, timeout, and client-disconnect tests make no Kubernetes write call.
+- [x] 3.3 Route approved actions through the shared `resource_actions` functions, adding ConfigMap key set/remove, scale, rollout restart, rollout undo, rollout pause/resume, CronJob trigger, and CronJob suspend/resume where `bulk-select-list-actions` or `resource-specific-actions` have not already; verify fixture requests change only the action's own fields and that results redact upstream authentication data.
 
 ## 4. Panel and layout navigation
 
