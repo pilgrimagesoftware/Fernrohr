@@ -7,10 +7,10 @@
 
 ## 2. Confirmation lifecycle
 
-- [ ] 2.1 Add a non-retryable outcome to `ForwardTransport::connect` that makes the supervisor close the forward's state channel with the transport's reason; verify SSH and command transports keep their retry behavior and `connect_and_probe` fails with that reason.
-- [ ] 2.2 Add `ForwardKey::Manual { tunnel_id }`, `ManualTransport`, and the `ManualConfirmations` global with Proceed and Cancel resolution, entry removal on forward drop, and no client address rewrite; verify tests for proceed, cancel, two contexts sharing one entry, an already-confirmed tunnel connecting without a prompt, a re-prompt after the last disconnect, and a re-prompt after a failed connection following Proceed.
-- [ ] 2.3 Implement the skip-when-reachable TCP probe with a 2-second timeout; verify tests for reachable, unreachable, and setting-off cases using a local listener.
-- [ ] 2.4 Verify non-blocking behavior: with one context awaiting confirmation, a test connects a second, unbound context and loads its data while the first still waits.
+- [x] 2.1 Add a non-retryable outcome to `ForwardTransport::connect` that makes the supervisor close the forward's state channel with the transport's reason; verify SSH and command transports keep their retry behavior and `connect_and_probe` fails with that reason.
+- [x] 2.2 Add `ForwardKey::Manual { tunnel_id }`, `ManualTransport`, and the `ManualConfirmations` global with Proceed and Cancel resolution, entry removal on forward drop, and no client address rewrite; verify tests for proceed, cancel, two contexts sharing one entry, an already-confirmed tunnel connecting without a prompt, a re-prompt after the last disconnect, and a re-prompt after a failed connection following Proceed.
+- [x] 2.3 Implement the skip-when-reachable TCP probe with a 2-second timeout; verify tests for reachable, unreachable, and setting-off cases using a local listener.
+- [x] 2.4 Verify non-blocking behavior: with one context awaiting confirmation, a test connects a second, unbound context and loads its data while the first still waits.
 
 ## 3. Desktop notifications
 

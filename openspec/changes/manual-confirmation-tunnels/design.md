@@ -142,6 +142,21 @@ not cancel the tunnel for others; if it was the last waiter, the entry goes away
 Separate Proceed and Cancel icon buttons were considered. They would add a second control style
 next to every other capsule's single menu, and widen the row while waiting.
 
+### D9. Implementation notes from the lifecycle work
+
+- The non-retryable outcome is `ForwardTransport::connect_outcome() -> Result<(), ConnectFailure>`
+  with `Retry` and `GiveUp`. Its default wraps `connect()` as `Retry`, so the SSH, command, and
+  pod port-forward transports are unchanged. On `GiveUp`, the supervisor records the reason and
+  ends, which closes the state channel; `connect_and_probe` fails with that reason.
+- Manual tunnels use a new `TunnelRoute::Direct`: no address rewrite and no proxy.
+- A connection whose route is `Direct` releases its forward handle when it fails. That is what
+  makes Cancel, and a failure after Proceed, withdraw the confirmation so the next attempt prompts
+  again. SSH and command forwards keep their handles on failure, as before.
+- `ManualConfirmations` (in `tunnel::manual`) exposes `pending()`, `pending_for(tunnel_id)`,
+  `for_context(name)`, and `resolve(tunnel_id, Proceed | Cancel)`. An entry's `contexts` is
+  recorded at acquire time; a context that disconnects while others keep waiting stays listed
+  until the entry resolves, so the UI reads each context's own connection state too.
+
 ## Risks / Trade-offs
 
 - [The VPN drops after it was confirmed] -> Kubernetes requests fail through the existing
