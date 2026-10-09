@@ -8,14 +8,16 @@ Fernrohr owns authenticated `ClusterSession` instances in its primary process, w
 
 **Goals:**
 
-- Give a local MCP client a stable tool surface for cluster reads, approved writes, logs, and panel navigation.
+- Give a local MCP client a stable tool surface for cluster reads, logs, panel and saved-layout navigation, and a small allowlist of approved operational actions.
 - Route all Kubernetes work through existing sessions, discovery data, watcher caches, tunnels, and foreground UI dispatch.
 - Keep the MCP endpoint local and keep secrets out of tool arguments, responses, and logs.
 
 **Non-Goals:**
 
 - Network-accessible MCP transports, multi-user access, arbitrary shell commands, port-forward control, and streaming watch subscriptions.
-- Bypassing Kubernetes RBAC or user approval for writes.
+- Generic create, apply, patch, or delete of arbitrary resources, YAML editing, and any write to Secrets.
+- Saving, renaming, or deleting saved layouts; the agent can only list and load them.
+- Bypassing Kubernetes RBAC or user approval for actions.
 
 ## Decisions
 
@@ -33,13 +35,35 @@ Filesystem placement alone is insufficient on shared machines. Passing the token
 
 ### Explicit typed tools
 
-The server will expose a narrow named set of tools: contexts, discovered kinds, list/get resources, pod logs, create/apply/patch/delete resources, and open panel. Typed inputs are validated against session discovery before reaching `kube-rs`; resource writes accept a resource document and target context rather than arbitrary API paths.
+The server will expose a narrow named set of tools: contexts, discovered kinds, list/get resources, pod logs, open panel, list/load saved layouts, and the action tools below. Typed inputs are validated against session discovery before reaching `kube-rs`, and no tool accepts arbitrary API paths or resource documents.
 
 An unrestricted Kubernetes HTTP proxy would be shorter initially but would make authorization, validation, audit logging, and future compatibility harder.
 
+### Allowlisted action tools instead of generic writes
+
+The only state-changing tools are these, each with typed fields rather than a resource document:
+
+| Tool | Targets | Effect |
+|---|---|---|
+| `set_configmap_value` | ConfigMap | Sets or removes one key in `data` via a merge patch; no other field changes |
+| `scale_workload` | Deployment, StatefulSet, ReplicaSet | Sets replicas through the `scale` subresource |
+| `restart_workload` | Deployment, StatefulSet, DaemonSet | Rollout restart via the `kubectl.kubernetes.io/restartedAt` pod-template annotation |
+| `delete_pods` | Pods, by explicit name list in one namespace | Deletes those Pods; owning controllers recreate them |
+| `trigger_cronjob` | CronJob | Creates a Job from the CronJob's template, as `kubectl create job --from=cronjob/<name>` |
+
+The server builds each request itself from those fields, so an agent cannot change any field outside the action's scope. `delete_pods` takes names rather than a label selector, so the confirmation dialog can list exactly what will be deleted, and it caps how many names one call accepts. Adding an action later means adding a named tool to this table, not widening an existing one.
+
+Each tool calls the same `resource_actions` function as the matching in-app action (`bulk-select-list-actions` for scale and restart, `resource-specific-actions` for CronJob trigger, the shipped single-row delete for Pods). That way MCP and UI actions behave identically.
+
+A generic patch tool constrained by a field allowlist was considered and rejected: it is harder to show clearly in a confirmation dialog and easier to widen by accident.
+
+### Saved-layout tools
+
+`list_layouts` returns the display names of the user's saved layouts. `load_layout` loads one by name into the focused window in Add or Replace mode, through the same foreground command path as the in-app Load Layout command. Loading follows the `saved-panel-layouts` rules unchanged: a panel whose context the window does not hold restores as a placeholder rather than connecting a context. Saving, renaming, and deleting layouts stay user-only.
+
 ### App-owned confirmation gate
 
-The app routes all writes through one confirmation request entity. The RPC call waits for an allow or deny response, with a bounded timeout. The dialog names the action, context, namespace, kind, and resource name; it never renders secret content. A denied or timed-out request reaches no Kubernetes API.
+The app routes every action tool through one confirmation request entity. The RPC call waits for an allow or deny response, with a bounded timeout. The dialog names the action, context, namespace, kind, and every target resource name, plus the action's parameters: the ConfigMap key with its old and new values, or the old and new replica counts. A denied or timed-out request reaches no Kubernetes API. Read, panel, and layout tools need no confirmation.
 
 MCP client confirmation annotations cannot guarantee an interactive desktop approval and vary by client, so they cannot be the authority for writes.
 
@@ -62,7 +86,7 @@ Direct access to GPUI state from the RPC task would violate GPUI's thread owners
 1. Add the app-local endpoint disabled only when Fernrohr is not running.
 2. Add `fernrohr mcp` and document its MCP client command configuration.
 3. Release read tools and panel navigation with fixture-based tests.
-4. Release write tools behind the app confirmation gate.
+4. Release the allowlisted action tools behind the app confirmation gate.
 5. Remove endpoint artifacts at app shutdown; retain no migration state.
 
 Rollback removes the CLI MCP command and stops the app endpoint. No cluster resources or persistent format changes are required.
