@@ -33,6 +33,10 @@ On startup, the app will generate a random endpoint token, store it with owner-o
 
 Filesystem placement alone is insufficient on shared machines. Passing the token as a command-line value would expose it to process inspection.
 
+The endpoint is Unix-only: on Windows the app serves nothing and `fernrohr mcp` exits with an explanatory error. The directory is `$XDG_RUNTIME_DIR/fernrohr/mcp` on Linux and the app's cache directory on macOS, which has no per-user runtime directory. The directory is `0700`, and the socket and token are `0600`. The app also checks the connecting peer's uid against its own. A live endpoint is detected by connect-probing the socket rather than with a pidfile; a second app instance keeps no endpoint and logs a warning.
+
+The adapter is built on the official `rmcp` SDK (server and stdio transport only), which owns protocol-version negotiation, JSON-RPC framing, and cancellation. Tools are registered only in the app; the adapter fetches the tool list from the app, so adding a tool never touches the adapter.
+
 ### Explicit typed tools
 
 The server will expose a narrow named set of tools: contexts, discovered kinds, list/get resources, pod logs, open panel, list/load saved layouts, and the action tools below. Typed inputs are validated against session discovery before reaching `kube-rs`, and no tool accepts arbitrary API paths or resource documents.
@@ -64,9 +68,28 @@ A generic patch tool constrained by a field allowlist was considered and rejecte
 
 `list_layouts` returns the display names of the user's saved layouts. `load_layout` loads one by name into the focused window in Add or Replace mode, through the same foreground command path as the in-app Load Layout command. Loading follows the `saved-panel-layouts` rules unchanged: a panel whose context the window does not hold restores as a placeholder rather than connecting a context. Saving, renaming, and deleting layouts stay user-only.
 
+### In-app agent setup
+
+A Settings section, Agent access, explains what the MCP server offers, that Fernrohr must be running for it to answer, and that every action asks for approval in the app. It then shows a ready-to-run registration command for each supported harness, each with a copy icon button. A palette command, Copy MCP Setup Command, opens a harness picker and copies the chosen command, so the whole flow is keyboard-reachable.
+
+Each command embeds the absolute, shell-quoted path of the running executable (`std::env::current_exe`, or `$APPIMAGE` when running from an AppImage), so it keeps working regardless of `PATH`. Every command registers at user scope, so the server is available in every project:
+
+| Harness | Command |
+|---|---|
+| Claude Code | `claude mcp add --scope user fernrohr -- '<exe>' mcp` |
+| Codex | `codex mcp add fernrohr -- '<exe>' mcp` |
+| Gemini CLI | `gemini mcp add --scope user fernrohr '<exe>' mcp` |
+| OpenCode | `opencode mcp add fernrohr --global -- '<exe>' mcp` |
+
+OpenCode's config schema differs between major versions (`mcp.<name>` in v1, `mcp.servers.<name>` in v2), and older releases lack the non-interactive `mcp add` form. Its entry therefore also offers a copyable config snippet, `{"type": "local", "command": ["<exe>", "mcp"]}`, with a note on where it goes. The harness list is one data table, so adding a harness or updating a command syntax touches nothing else.
+
+When the executable path is unstable, the section warns instead of offering a command that will break later. That covers a macOS App Translocation path (the app was opened straight from Downloads or a mounted disk image) and a build-tree path such as `target/debug`. On platforms without the endpoint (Windows), the section says agent access is unavailable and offers no command. A development build run from `target/` always shows the unstable-path warning, so the copy buttons only appear in an installed build. Settings: Show Agent Access opens the section directly, and Copy MCP Setup Command opens Settings at Agent Access instead of the picker when no command can be offered.
+
 ### App-owned confirmation gate
 
-The app routes every action tool through one confirmation request entity. The RPC call waits for an allow or deny response, with a bounded timeout. The dialog names the action, context, namespace, kind, and every target resource name, plus the action's parameters: the ConfigMap key with its old and new values, the old and new replica counts, or the revision a rollback returns to. A denied or timed-out request reaches no Kubernetes API. Read, panel, and layout tools need no confirmation.
+The app routes every action tool through one confirmation request entity. The RPC call waits for an allow or deny response, with a bounded timeout. The dialog names the action, context, namespace, kind, and every target resource name, plus the action's parameters: the ConfigMap key with its old and new values, the old and new replica counts, or the revision a rollback returns to. A denied or timed-out request sends no write to the Kubernetes API. Actions that show a current or old value (scale, rollback, pause, suspend, trigger, and ConfigMap changes) read the target before asking; `delete_pods` and `restart_workload` make no request before approval. The ConfigMap and rollback writes carry the `resourceVersion` that was read, so the user approves exactly the state they saw, and a concurrent change is refused with a conflict instead of being overwritten. Questions are asked one at a time, and a question nobody answers times out after 120 seconds. The dialog uses the app's shared confirmation dialog: `delete_pods` and `rollback_workload` use the irreversible tier, and the other actions use the recoverable tier. Read, panel, and layout tools need no confirmation.
+
+Each input type is its own allowlist. The kind fields of `scale_workload`, `restart_workload`, and `rollback_workload` are closed enumerations, and the other action tools take no kind, so an out-of-scope kind or a Secret cannot even be expressed. Rollback mirrors `kubectl rollout undo`: a Deployment restores the previous owned ReplicaSet's template, and a StatefulSet or DaemonSet applies the previous ControllerRevision. A triggered Job is named `<cronjob>-manual-<suffix>`, at most 63 characters, and the CronJob is its owner.
 
 MCP client confirmation annotations cannot guarantee an interactive desktop approval and vary by client, so they cannot be the authority for writes.
 
@@ -76,12 +99,19 @@ Internal RPC handlers run on the Tokio runtime. Read requests call the selected 
 
 Direct access to GPUI state from the RPC task would violate GPUI's thread ownership.
 
+Tools never connect a context. They use only sessions that are already open, through non-connecting registry accessors: an unknown context is `unknown_context`, and a known but unopened one is `disconnected`. Kind names resolve against discovery by kind, plural, or singular in any case, with an optional group; a name served by several groups is `ambiguous_kind`. Every object, namespace, and container name passes a strict name check before it reaches `kube-rs`, which joins names onto the URL path unescaped, so `?`, `#`, `/`, `%`, and dot segments are refused.
+
+### Read results
+
+Resources come back with `apiVersion` and `kind` filled in and `managedFields` stripped. Secret values (`data`, `stringData`, and the last-applied annotation) are replaced by their sizes, as in the detail panel. A list page over the 1 MiB result budget keeps whole leading items, is marked truncated, and drops `continue`, which would otherwise skip the cut items. A single object over budget is `result_too_large`. Pod logs keep the newest bytes up to the requested limit, starting at a line boundary. Context status in `list_contexts` withholds failure reasons, which can carry exec-plugin output.
+
 ## Risks / Trade-offs
 
 - [MCP adapter starts before the app] -> Return a stable unavailable error and do not launch a GUI.
 - [A client disconnects while awaiting confirmation] -> Cancel the pending request and close its dialog when possible; otherwise discard approval and do not execute it.
 - [A large resource or log response consumes memory] -> Cap response bytes and return a continuation or truncation indicator.
 - [Socket/token files remain after a crash] -> Validate the active app process and token during handshake; remove stale files on next startup.
+- [The app is moved or reinstalled to a different path after a harness was registered] -> The harness launches a missing executable and reports it; the Agent access section always shows the current path so the user can re-copy.
 - [A panel request targets a closed window] -> Open it in the primary window or return an unavailable UI error when no window exists.
 
 ## Migration Plan

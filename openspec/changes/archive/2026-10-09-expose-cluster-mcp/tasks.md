@@ -1,0 +1,35 @@
+# Tasks
+
+## 1. Local endpoint and protocol
+
+- [x] 1.1 Add app lifecycle support for a user-owned Unix socket, rotating token file, stale-file cleanup, and authenticated internal RPC handshake; verify socket integration tests reject missing and stale tokens.
+- [x] 1.2 Add the `fernrohr mcp` stdio command and MCP protocol adapter; verify an MCP client fixture lists tools through a running app and receives an unavailable error without one.
+- [x] 1.3 Define typed RPC and MCP request and response models, size limits, safe error mapping, and structured logging that excludes secrets; verify serialization and error-redaction unit tests pass.
+
+## 2. Cluster MCP tools
+
+- [x] 2.1 Implement context status and discovered-resource-kind tools backed by `ClusterRegistry` and `ClusterSession`; verify fixture sessions return only their own discovery data.
+- [x] 2.2 Implement list and get resource tools with context, namespace, and discovery validation; verify unknown contexts and unsupported kinds do not reach the Kubernetes client.
+- [x] 2.3 Implement bounded pod-log retrieval and resource response truncation behavior; verify an oversized fixture response reports truncation without exceeding the configured limit.
+
+## 3. Allowlisted cluster actions
+
+- [x] 3.1 Define typed inputs for `set_configmap_value`, `scale_workload`, `restart_workload`, `rollback_workload`, `set_rollout_paused`, `delete_pods`, `trigger_cronjob`, and `set_cronjob_suspended`, with per-tool kind allowlists and a 10-name cap on `delete_pods`; verify unsupported kinds, Secrets, and over-cap requests are rejected before confirmation or any Kubernetes call, and that the tool list exposes no other state-changing tool.
+- [x] 3.2 Add the foreground confirmation gate showing action, context, namespace, kind, every target name, and parameters (ConfigMap key old/new value, current/requested replicas, rollback target revision), with cancel handling and timeout; verify denial, timeout, and client-disconnect tests make no Kubernetes write call.
+- [x] 3.3 Route approved actions through the shared `resource_actions` functions, adding ConfigMap key set/remove, scale, rollout restart, rollout undo, rollout pause/resume, CronJob trigger, and CronJob suspend/resume where `bulk-select-list-actions` or `resource-specific-actions` have not already; verify fixture requests change only the action's own fields and that results redact upstream authentication data.
+
+## 4. Panel and layout navigation
+
+- [x] 4.1 Add the open-or-focus panel RPC route through the existing command and workspace path; verify requests cross from the Tokio handler to the GPUI foreground executor.
+- [x] 4.2 Support context, kind, namespace scope, and optional resource selection in panel requests; verify panel integration tests preserve panels in other windows and return an opaque panel ID.
+- [x] 4.3 Add `list_layouts` and `load_layout` (Add or Replace) through the existing saved-layout load command; verify a missing-context panel restores as a placeholder, is reported in the response, and no context is connected.
+
+## 5. Integration checks
+
+- [x] 5.1 Add MCP client integration coverage for reads, approved and denied actions, panel and layout navigation, and unavailable app behavior using recorded Kubernetes fixtures; verify `cargo test` passes without a live cluster.
+- [x] 5.2 Document MCP client command configuration and user approval behavior; verify `cargo fmt -- --check`, `cargo clippy -- -D warnings`, and `cargo test` pass.
+
+## 6. In-app agent setup
+
+- [x] 6.1 Add the harness command table (Claude Code, Codex, Gemini CLI, OpenCode plus its config snippet) built from the shell-quoted executable path, with translocation, build-tree, and AppImage handling; verify unit tests for each harness command, quoting of paths with spaces and quotes, and unstable-path detection.
+- [x] 6.2 Add the Agent access Settings section with instructions, per-harness copy icon buttons with tooltips, unstable-path warning, and unsupported-platform state, plus the Copy MCP Setup Command palette command with a harness picker; verify keyboard-driven tests (`simulate_keystrokes`) copy the selected harness's command to the clipboard.
