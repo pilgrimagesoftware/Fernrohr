@@ -45,7 +45,7 @@
 
 ## 5. Verification
 
-- [ ] 5.1 Manual check on a running build. **Needs user confirmation.**
+- [x] 5.1 Manual check on a running build. **Needs user confirmation.**
       1. Focus a panel and press `cmd-k`. The status bar shows `⌘K …`, and above it five rows:
          the four arrows (Split Group Left/Right/Up/Down) and `w` (Close Group).
       2. Press `←`. The group splits, and the indicator and list disappear.
