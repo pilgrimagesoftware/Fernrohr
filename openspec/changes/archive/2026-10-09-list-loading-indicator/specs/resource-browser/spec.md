@@ -25,8 +25,12 @@ When a list panel's list has completed with no rows, the table area SHALL say th
 - **THEN** the table area says no rows match the filter
 
 ### Requirement: Refreshing keeps rows visible
-When a list panel relists while it already shows rows, for example after a namespace scope change or a watch restart, it SHALL keep showing its rows and SHALL show a small refreshing indicator in the panel header until the relist completes.
+When a list panel relists while it already shows rows, for example after a watch restart or when a paused connection resumes, it SHALL keep showing its rows and SHALL show a small refreshing indicator in the panel header until the relist completes.
 
-#### Scenario: Scope change
+#### Scenario: Watch restart
+- **WHEN** a loaded Pods panel's watch restarts and relists
+- **THEN** the current rows stay visible with a refreshing indicator in the header until the relist completes
+
+#### Scenario: Scope change is instant
 - **WHEN** the user changes a loaded Pods panel from `team-a` to all namespaces
-- **THEN** the current rows stay visible with a refreshing indicator in the header until the new list completes, then the table shows the new rows
+- **THEN** the rows update at once without a refreshing indicator, since the panel already holds every namespace's rows

@@ -37,8 +37,12 @@ small type used by all three stores, so their behavior cannot drift apart.
 - Refresh with rows on screen: the rows stay, and a small spinner with the tooltip "Refreshing"
   shows in the panel header beside the namespace selector.
 
-Rows that arrive during the first load are buffered until `InitDone`, as today, so the table never
-renders half a list in a misleading order.
+The stores upsert rows as `InitApply` events arrive, but the table area shows the loading state until
+the first `InitDone`, so a half-loaded list is never presented as complete. The loading and empty
+views are drawn over the still-mounted table rather than replacing it, which keeps keyboard focus
+in the panel. A namespace scope change filters rows the panel already watches, so it is instant and
+never a refresh. A node's embedded Pods table keeps its own empty text and has no header spinner.
+The spinner is gpui-component's `Spinner`.
 
 ### D3. Delay
 
