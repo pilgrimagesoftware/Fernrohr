@@ -32,10 +32,10 @@
 
 ## 5. Verification
 
-- [ ] 5.1 Manual check: in a Pods panel, `cmd`-click three pods and `cmd-enter` a fourth. Four
+- [x] 5.1 Manual check: in a Pods panel, `cmd`-click three pods and `cmd-enter` a fourth. Four
       detail tabs appear without focus leaving the list, and the selection doesn't move.
       Middle-click a Deployment row. `cmd`-click an owner link in a pod detail panel.
-      **Needs user confirmation.**
+      Confirmed by user.
 
 ## Notes
 

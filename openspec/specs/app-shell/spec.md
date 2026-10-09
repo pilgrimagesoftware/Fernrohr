@@ -386,7 +386,9 @@ another panel that is zoomed - SHALL NOT receive focus this way.
 
 When the user opens a panel, or shows one that is already open, the application SHALL move
 keyboard focus to that panel, whichever route opened it (a click, a command, or a panel's own
-shortcut).
+shortcut). The one exception is a background open (a modifier-click, a middle-click, or the "Open
+in Background" command): it SHALL add the panel as an inactive tab, or leave an already-open panel
+as it is, and SHALL NOT move keyboard focus.
 
 #### Scenario: Opening a panel from the keyboard focuses it
 
@@ -398,6 +400,11 @@ shortcut).
 
 - **WHEN** the user asks for a panel that is already open in the window
 - **THEN** that panel is brought to the front of its tab group and has keyboard focus
+
+#### Scenario: A background open leaves focus alone
+
+- **WHEN** the user opens a pod's detail panel in the background from a Pods panel
+- **THEN** the pod detail panel exists as an inactive tab, and the Pods panel still has keyboard focus
 
 ### Requirement: Closing a panel closes the panel the user pointed at
 Every docked panel tab SHALL carry its own close control that closes that tab's panel. Any close
