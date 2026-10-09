@@ -68,3 +68,12 @@ The application SHALL remember the last sort the user chose in a list panel for 
 
 - **WHEN** the user sorts a Services panel by Type, quits, relaunches, and opens a new Services panel
 - **THEN** it opens sorted by Type ascending
+
+### Requirement: Keyboard sorting
+
+A list panel SHALL let the user sort from the keyboard with registered commands, available from the command palette and rebindable: Sort by Next Column, Sort by Previous Column, and Cycle Sort, which steps the current column through ascending, descending, and the default sort. A keyboard sort change SHALL be remembered like a header click.
+
+#### Scenario: Sort without the mouse
+
+- **WHEN** a Pods table has focus and the user presses the Sort by Next Column key, then the Cycle Sort key
+- **THEN** the sort moves to the next column ascending, then to that column descending, and a new Pods panel opens with that sort

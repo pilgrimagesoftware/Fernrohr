@@ -58,6 +58,15 @@ column applies the default sort, which moves the indicator to the default column
 column itself, the cycle alternates ascending and descending. Returning to the default is a user
 choice, so it is remembered like any other (D2), which lets the user reset a kind's remembered sort.
 
+### D5. Keyboard sort commands
+
+Sorting had no keyboard route, which the keyboard-first rule requires. Three commands, in a
+`SortableList` key context, provide one: Sort by Next Column (`shift-.`), Sort by Previous Column
+(`shift-,`), and Cycle Sort (`o`). Each is a palette entry and rebindable. The header cycle
+overrides gpui-component's own default, descending, ascending cycle in each table delegate. The
+shared logic is a `SortableTable` trait in `ui::list_sort`, implemented by the object list, Pods,
+and events delegates.
+
 ## Risks / Trade-offs
 
 - [Users who relied on watch order lose it] -> Watch order is not meaningful to a user, and every
