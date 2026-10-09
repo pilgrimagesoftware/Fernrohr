@@ -29,15 +29,7 @@ The MCP server SHALL provide tools that list available contexts, report their co
 - **THEN** the MCP response identifies the unavailable kind and does not issue a Kubernetes request
 
 ### Requirement: Allowlisted cluster actions
-The MCP server SHALL provide only these state-changing tools: set or remove one key in a ConfigMap's `data`, scale a Deployment, StatefulSet, or ReplicaSet, restart or roll back to the previous revision the rollout of a Deployment, StatefulSet, or DaemonSet, pause or resume a Deployment's rollout, delete between 1 and 10 Pods named explicitly in one namespace, trigger a Job from a CronJob, and suspend or resume a CronJob. Each tool SHALL accept typed fields rather than a resource document, and the server SHALL construct the Kubernetes request so that no field outside the action's scope changes. Before executing an action, Fernrohr SHALL require approval in its user interface for the exact action, context, namespace, kind, every target resource name, and the action's parameters. The tool result SHALL identify whether the action was approved, denied, or failed.
-
-#### Scenario: User approves a scale action
-- **WHEN** an agent requests scaling Deployment `api` to 3 replicas and the user approves the displayed action, which shows the current and requested replica counts
-- **THEN** Fernrohr sets the replica count through the scale subresource and returns the Kubernetes API result
-
-#### Scenario: User denies a Pod deletion
-- **WHEN** an agent requests deletion of named Pods and the user denies the displayed action
-- **THEN** Fernrohr does not contact the Kubernetes API and returns a denied result
+The MCP server SHALL provide only these state-changing tools: set or remove one key in a ConfigMap's `data`, scale a Deployment, StatefulSet, or ReplicaSet, restart or roll back to the previous revision the rollout of a Deployment, StatefulSet, or DaemonSet, pause or resume a Deployment's rollout, delete between 1 and 10 Pods named explicitly in one namespace, trigger a Job from a CronJob, and suspend or resume a CronJob.
 
 #### Scenario: Action targets an unsupported kind
 - **WHEN** an agent requests a scale action on a DaemonSet, a rollout pause on a StatefulSet, or a ConfigMap value change on a Secret
@@ -46,6 +38,24 @@ The MCP server SHALL provide only these state-changing tools: set or remove one 
 #### Scenario: Pod deletion exceeds the limit
 - **WHEN** an agent requests deletion of 11 or more Pods in one call
 - **THEN** the MCP response rejects the request without prompting the user or issuing a Kubernetes request
+
+### Requirement: Typed action requests
+Each action tool SHALL accept typed fields rather than a resource document, and the server SHALL construct the Kubernetes request so that no field outside the action's scope changes.
+
+#### Scenario: ConfigMap value change touches one key
+- **WHEN** an agent sets key `LOG_LEVEL` in a ConfigMap
+- **THEN** the request Fernrohr sends changes only that key in `data`
+
+### Requirement: Action approval
+Before executing an action, Fernrohr SHALL require approval in its user interface for the exact action, context, namespace, kind, every target resource name, and the action's parameters. The tool result SHALL identify whether the action was approved, denied, or failed.
+
+#### Scenario: User approves a scale action
+- **WHEN** an agent requests scaling Deployment `api` to 3 replicas and the user approves the displayed action, which shows the current and requested replica counts
+- **THEN** Fernrohr sets the replica count through the scale subresource and returns the Kubernetes API result
+
+#### Scenario: User denies a Pod deletion
+- **WHEN** an agent requests deletion of named Pods and the user denies the displayed action
+- **THEN** Fernrohr does not contact the Kubernetes API and returns a denied result
 
 ### Requirement: No arbitrary resource writes
 The MCP server SHALL NOT provide tools that create, apply, patch, replace, or delete arbitrary resources, edit resource YAML, accept raw Kubernetes API paths, or write Secrets.
@@ -82,6 +92,32 @@ Read, panel navigation, and saved layout tools SHALL execute without a confirmat
 #### Scenario: Agent lists Pods
 - **WHEN** an agent lists Pods in a connected context
 - **THEN** Fernrohr returns the list without showing a confirmation dialog
+
+### Requirement: In-app agent setup instructions
+Fernrohr SHALL provide an Agent access section in Settings that describes the MCP server, states that Fernrohr must be running for it to respond and that actions require in-app approval, and shows a registration command for at least Claude Code, Codex, Gemini CLI, and OpenCode. Each command SHALL invoke the running installation's absolute executable path with the `mcp` argument and register the server at user scope.
+
+#### Scenario: Commands use the installed executable
+- **WHEN** the user opens the Agent access section
+- **THEN** each harness's command runs this installation's absolute executable path with the `mcp` argument
+
+### Requirement: Copying agent setup commands
+Each harness's registration command SHALL be copyable to the clipboard with an icon button and through a command-palette command. For OpenCode, the section SHALL also offer a copyable configuration snippet.
+
+#### Scenario: Copy a harness command
+- **WHEN** the user activates the copy button for Claude Code in the Agent access section
+- **THEN** the clipboard holds a `claude mcp add` command that runs this installation's executable with the `mcp` argument at user scope
+
+#### Scenario: Copy from the keyboard
+- **WHEN** the user runs Copy MCP Setup Command from the command palette and picks Codex
+- **THEN** the clipboard holds the Codex registration command without the user touching the mouse
+
+#### Scenario: Unstable executable path
+- **WHEN** Fernrohr is running from a macOS translocated path or a build directory
+- **THEN** the Agent access section warns that the path will not persist and explains how to install the app before copying
+
+#### Scenario: Platform without the endpoint
+- **WHEN** Fernrohr runs on a platform where the MCP endpoint is unavailable
+- **THEN** the Agent access section states that agent access is unavailable and offers no command
 
 ### Requirement: Credential and error safety
 The MCP server SHALL use only Fernrohr's existing cluster sessions and SHALL never return Kubernetes credentials, kubeconfig contents, authorization headers, tunnel secrets, or internal error details to an MCP client.

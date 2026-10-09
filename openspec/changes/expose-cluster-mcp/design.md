@@ -68,6 +68,23 @@ A generic patch tool constrained by a field allowlist was considered and rejecte
 
 `list_layouts` returns the display names of the user's saved layouts. `load_layout` loads one by name into the focused window in Add or Replace mode, through the same foreground command path as the in-app Load Layout command. Loading follows the `saved-panel-layouts` rules unchanged: a panel whose context the window does not hold restores as a placeholder rather than connecting a context. Saving, renaming, and deleting layouts stay user-only.
 
+### In-app agent setup
+
+A Settings section, Agent access, explains what the MCP server offers, that Fernrohr must be running for it to answer, and that every action asks for approval in the app. It then shows a ready-to-run registration command for each supported harness, each with a copy icon button. A palette command, Copy MCP Setup Command, opens a harness picker and copies the chosen command, so the whole flow is keyboard-reachable.
+
+Each command embeds the absolute, shell-quoted path of the running executable (`std::env::current_exe`, or `$APPIMAGE` when running from an AppImage), so it keeps working regardless of `PATH`. Every command registers at user scope, so the server is available in every project:
+
+| Harness | Command |
+|---|---|
+| Claude Code | `claude mcp add --scope user fernrohr -- '<exe>' mcp` |
+| Codex | `codex mcp add fernrohr -- '<exe>' mcp` |
+| Gemini CLI | `gemini mcp add --scope user fernrohr '<exe>' mcp` |
+| OpenCode | `opencode mcp add fernrohr --global -- '<exe>' mcp` |
+
+OpenCode's config schema differs between major versions (`mcp.<name>` in v1, `mcp.servers.<name>` in v2), and older releases lack the non-interactive `mcp add` form. Its entry therefore also offers a copyable config snippet, `{"type": "local", "command": ["<exe>", "mcp"]}`, with a note on where it goes. The harness list is one data table, so adding a harness or updating a command syntax touches nothing else.
+
+When the executable path is unstable, the section warns instead of offering a command that will break later. That covers a macOS App Translocation path (the app was opened straight from Downloads or a mounted disk image) and a build-tree path such as `target/debug`. On platforms without the endpoint (Windows), the section says agent access is unavailable and offers no command.
+
 ### App-owned confirmation gate
 
 The app routes every action tool through one confirmation request entity. The RPC call waits for an allow or deny response, with a bounded timeout. The dialog names the action, context, namespace, kind, and every target resource name, plus the action's parameters: the ConfigMap key with its old and new values, the old and new replica counts, or the revision a rollback returns to. A denied or timed-out request reaches no Kubernetes API. Read, panel, and layout tools need no confirmation.
@@ -86,6 +103,7 @@ Direct access to GPUI state from the RPC task would violate GPUI's thread owners
 - [A client disconnects while awaiting confirmation] -> Cancel the pending request and close its dialog when possible; otherwise discard approval and do not execute it.
 - [A large resource or log response consumes memory] -> Cap response bytes and return a continuation or truncation indicator.
 - [Socket/token files remain after a crash] -> Validate the active app process and token during handshake; remove stale files on next startup.
+- [The app is moved or reinstalled to a different path after a harness was registered] -> The harness launches a missing executable and reports it; the Agent access section always shows the current path so the user can re-copy.
 - [A panel request targets a closed window] -> Open it in the primary window or return an unavailable UI error when no window exists.
 
 ## Migration Plan
