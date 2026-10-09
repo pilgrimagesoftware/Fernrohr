@@ -20,9 +20,9 @@
 
 ## 4. Panel and layout navigation
 
-- [ ] 4.1 Add the open-or-focus panel RPC route through the existing command and workspace path; verify requests cross from the Tokio handler to the GPUI foreground executor.
-- [ ] 4.2 Support context, kind, namespace scope, and optional resource selection in panel requests; verify panel integration tests preserve panels in other windows and return an opaque panel ID.
-- [ ] 4.3 Add `list_layouts` and `load_layout` (Add or Replace) through the existing saved-layout load command; verify a missing-context panel restores as a placeholder, is reported in the response, and no context is connected.
+- [x] 4.1 Add the open-or-focus panel RPC route through the existing command and workspace path; verify requests cross from the Tokio handler to the GPUI foreground executor.
+- [x] 4.2 Support context, kind, namespace scope, and optional resource selection in panel requests; verify panel integration tests preserve panels in other windows and return an opaque panel ID.
+- [x] 4.3 Add `list_layouts` and `load_layout` (Add or Replace) through the existing saved-layout load command; verify a missing-context panel restores as a placeholder, is reported in the response, and no context is connected.
 
 ## 5. Integration checks
 
