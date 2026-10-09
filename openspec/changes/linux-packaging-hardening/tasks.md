@@ -39,7 +39,7 @@
 
 ## 5. Verification
 
-- [ ] 5.1 Manual check on a real Linux machine, needing user confirmation:
+- [x] 5.1 Manual check on a real Linux machine, needing user confirmation:
       - Install the x86_64 `.deb` with `apt`, and confirm `openssh-client` is pulled in.
       - Launch from the desktop menu, and confirm the entry's name and icon look right and the
         window groups under the entry (`StartupWMClass`).
