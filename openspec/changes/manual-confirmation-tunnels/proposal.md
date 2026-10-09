@@ -16,8 +16,9 @@ switch the VPN on first.
 - A manual tunnel carries an optional instruction message, for example "Connect the corporate VPN
   in the menu bar", shown in every prompt. It also has a reachability shortcut, on by default:
   when the context's API server already answers a TCP connect, the prompt is skipped.
-- The prompt appears in three places: a desktop notification, a status-bar item with Proceed and
-  Cancel controls, and the cluster picker's status line. Proceed and Cancel are also
+- The prompt appears in three places: a desktop notification, the waiting context's own
+  status-bar capsule, and the cluster picker's status line. The capsule is drawn in an attention
+  color and offers Proceed and Cancel in its menu, alongside Disconnect. Proceed and Cancel are also
   command-palette commands.
 - The wait never blocks the UI or any other context's connection. Contexts bound to the same
   manual tunnel share one prompt, so one Proceed releases all of them. Cancel fails each waiting
