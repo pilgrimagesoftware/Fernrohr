@@ -7,12 +7,10 @@ multi-container Pods.
 
 ### Requirement: Each pod's logs open in a panel of their own
 
-The application SHALL by default open a pod's logs in a Logs panel for that pod alone, so the
-user can keep several pods' logs open side by side, rather than retargeting a single Logs panel to
+The application SHALL by default open a pod's logs in a Logs panel for that pod alone, so the user
+can keep several pods' logs open side by side, rather than retargeting a single Logs panel to
 whichever pod was opened last. Opening the same pod's logs again SHALL focus its panel rather than
 add a second, and opening another container of that pod SHALL switch its panel to that container.
-A pod's panel SHALL stay on its pod when other pods are selected later, and SHALL restore as that
-pod's panel from a saved layout.
 
 #### Scenario: Per-pod panels are the default
 
@@ -107,3 +105,18 @@ to stream and SHALL default to the first container.
 
 - **WHEN** the Pod has exactly one container
 - **THEN** that container's logs stream without requiring the user to pick one
+
+### Requirement: A pod's logs panel stays on its pod
+
+A pod's Logs panel SHALL stay on its pod when other pods are selected later, and SHALL restore as
+that pod's panel from a saved layout.
+
+#### Scenario: Restored from a saved layout
+
+- **WHEN** a layout holding a pod's Logs panel is saved and later loaded
+- **THEN** the restored panel shows that pod's logs
+
+#### Scenario: Later selections leave it alone
+
+- **WHEN** the user selects another pod without opening its logs
+- **THEN** the open pod's Logs panel keeps showing its own pod

@@ -205,12 +205,10 @@ Volumes, 5 Events, 6 Managed Fields.
 - **THEN** the Configuration tab is shown
 
 ### Requirement: Large ConfigMap values start collapsed
-In the Configuration tab, a ConfigMap value longer than 100 characters or spanning more than one line
-SHALL be shown collapsed by default, as its first 20 characters of its first line followed by an
-ellipsis, with a control placed directly beside the key's name, reachable by Tab and operable with
-Enter, Space or a click, that expands it to its full contents and collapses it again. Values SHALL start collapsed again when the tab is
-shown again. Secret values SHALL NOT be collapsed: they stay hidden until revealed, and a revealed
-value is shown in full.
+
+In the Configuration tab, a ConfigMap value longer than 100 characters or spanning more than one
+line SHALL be shown collapsed by default, as the first 20 characters of its first line followed by
+an ellipsis.
 
 #### Scenario: A long value starts collapsed
 - **WHEN** a ConfigMap key holds a multi-line value and the user opens the Configuration tab
@@ -333,12 +331,9 @@ selected tab, scroll position and any revealed or expanded state.
 - **THEN** its restart count and state update in place, and the user stays on the tab they were on
 
 ### Requirement: Pod detail follows its pod's deletion live
-While its detail panel is open, a pod's deletion SHALL be reflected live. Once the pod has a deletion
-timestamp, the panel SHALL show it as Terminating with its remaining grace period. Once the pod is
-gone, the panel SHALL say within a few seconds that it was deleted and when, SHALL keep showing its
-last known state marked as stale rather than clearing it, SHALL keep its Events tab listing the pod's
-events, and SHALL stay open until the user closes it. If a new pod then appears under the same name
-(a different uid), the panel SHALL switch to the new pod and show that it replaced the deleted one.
+
+While its detail panel is open, a pod's deletion SHALL be reflected live. Once the pod has a
+deletion timestamp, the panel SHALL show it as Terminating with its remaining grace period.
 
 #### Scenario: Deleted while open
 - **WHEN** a pod's detail panel is open and the pod is deleted
@@ -366,3 +361,55 @@ the user to return to the Pods list.
 - **WHEN** the user opens logs from the detail panel of a pod with more than one container
 - **THEN** the Logs panel defaults to the first container and lets the user choose another, the
   same as opening logs from the Pods list does
+
+### Requirement: A collapsed ConfigMap value has an expand control
+
+Each collapsed ConfigMap value SHALL have a control placed directly beside the key's name,
+reachable by Tab and operable with Enter, Space or a click, that expands the value to its full
+contents and collapses it again.
+
+#### Scenario: Expand and collapse from the keyboard
+
+- **WHEN** a large value is collapsed and the user tabs to its control and presses Enter
+- **THEN** the value is shown in full, and pressing Enter again collapses it
+
+### Requirement: ConfigMap values collapse again when the tab is shown again
+
+Large ConfigMap values SHALL start collapsed again each time the Configuration tab is shown
+again.
+
+#### Scenario: Showing the tab again
+
+- **WHEN** the user expands a large value, shows another tab, then shows the Configuration tab again
+- **THEN** the value is collapsed again
+
+### Requirement: Secret values are never collapsed
+
+Secret values in the Configuration tab SHALL NOT be collapsed: they SHALL stay hidden until
+revealed, and a revealed value SHALL be shown in full.
+
+#### Scenario: A revealed Secret value is shown in full
+
+- **WHEN** a Secret key holds a long value and the user reveals it
+- **THEN** the value is shown in full, with no collapse control
+
+### Requirement: Pod detail keeps a deleted pod's last state
+
+Once its pod is gone, a pod's detail panel SHALL say within a few seconds that the pod was
+deleted and when, SHALL keep showing its last known state marked as stale rather than clearing it,
+SHALL keep its Events tab listing the pod's events, and SHALL stay open until the user closes it.
+
+#### Scenario: Deleted while open
+
+- **WHEN** a pod's detail panel is open and the pod is deleted
+- **THEN** the panel says the pod was deleted and when, keeps its last known fields visible as stale, still lists its events, and stays open
+
+### Requirement: Pod detail switches to a pod recreated under the same name
+
+If a new pod appears under a deleted pod's name with a different uid, the deleted pod's detail
+panel SHALL switch to the new pod and show that it replaced the deleted one.
+
+#### Scenario: Recreated under the same name
+
+- **WHEN** a StatefulSet pod's detail panel is open and the pod is deleted and recreated as `web-0`
+- **THEN** the panel switches to the new `web-0` and shows that it replaced the deleted pod

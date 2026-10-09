@@ -1,9 +1,6 @@
-## Purpose
+# Spec Delta
 
-Managing named tunnel configurations (SSH tunnels and command tunnels) - their settings, credentials, and options - with non-secret
-fields persisted to disk and secrets held only in the operating system keychain.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Define and manage named tunnels
 
@@ -47,95 +44,6 @@ tunnel, a command tunnel, or a manual tunnel. A command tunnel is described by t
 - **WHEN** the user saves an SSH tunnel with an empty host or user, or a port outside 1-65535
 - **THEN** the tunnel is not saved and the offending field is marked with the reason
 
-### Requirement: Persist non-secret fields only
-
-The application SHALL persist tunnel configurations to `tunnels.toml` in the state directory
-containing no secret material, and SHALL reload them on the next launch.
-
-#### Scenario: Round-trip across restart
-
-- **WHEN** the user defines two tunnels and relaunches the application
-- **THEN** both tunnels are present with their non-secret fields intact
-
-#### Scenario: No secrets on disk
-
-- **WHEN** a tunnel uses password or key-passphrase authentication
-- **THEN** `tunnels.toml` contains no password, passphrase, or private-key bytes
-
-### Requirement: Secrets in the OS keychain
-
-The application SHALL store tunnel secrets (passwords, private-key passphrases) in the operating
-system keychain, keyed by tunnel identity, and retrieve them when establishing the tunnel.
-
-#### Scenario: Secret saved and reused
-
-- **WHEN** the user supplies a passphrase for a tunnel and later starts that tunnel in a new session
-- **THEN** the passphrase is read from the keychain without prompting the user again
-
-#### Scenario: No keychain daemon available
-
-- **WHEN** the platform has no available keychain or Secret Service daemon
-- **THEN** the application prompts for the secret for the current session instead of failing
-
-#### Scenario: Secret removed with the tunnel
-
-- **WHEN** the user deletes a tunnel
-- **THEN** its keychain entry is removed
-
-### Requirement: Tunnel usage is shown read-only
-
-The Tunnels panel SHALL show, for each tunnel, how many contexts are bound to it and whether it is
-currently running, without offering any control there to change which contexts use it.
-
-#### Scenario: Usage count
-
-- **WHEN** contexts `cluster-a` and `cluster-b` are bound to `qa-bastion`
-- **THEN** the Tunnels panel shows `qa-bastion` in use by two contexts
-
-#### Scenario: Running state
-
-- **WHEN** a connected context is using `qa-bastion`
-- **THEN** the Tunnels panel shows `qa-bastion` as running, and as idle once no connection uses it
-
-### Requirement: Test a tunnel
-
-The Tunnels panel SHALL let the user test a tunnel without connecting any context. Testing an SSH
-tunnel SHALL establish an SSH session to the bastion with the tunnel's settings, without forwarding
-any port, and report success or the SSH client's failure output. Testing a command tunnel SHALL run
-its command until the tunnel is ready or its startup timeout expires, then stop the command, and
-report success or the command's recent output.
-
-#### Scenario: Test succeeds
-
-- **WHEN** the user tests a tunnel whose bastion accepts the configured user and authentication
-- **THEN** the panel reports the tunnel as reachable
-
-#### Scenario: Test fails
-
-- **WHEN** the user tests a tunnel whose bastion cannot be reached or rejects authentication
-- **THEN** the panel reports the failure with the SSH client's error output, and no context connection is affected
-
-#### Scenario: Command tunnel test succeeds
-
-- **WHEN** the user tests a command tunnel whose command starts listening on its local port within the startup timeout
-- **THEN** the panel reports the tunnel as reachable, and the command is no longer running afterward
-
-#### Scenario: Command tunnel test fails
-
-- **WHEN** the user tests a command tunnel whose command exits, or does not listen before the startup timeout
-- **THEN** the panel reports the failure with the command's recent output, and no process from the test is left running
-
-### Requirement: Legacy tunnel entries load
-
-The application SHALL load a `tunnels.toml` whose tunnels still carry a forward target from an
-earlier version, ignoring those fields, and SHALL write the file without them the next time it
-saves.
-
-#### Scenario: Old file loads
-
-- **WHEN** `tunnels.toml` contains a tunnel with `remote_host` and `remote_port` fields
-- **THEN** the tunnel and its context bindings load normally, and the next save omits both fields
-
 ### Requirement: Command tunnel settings
 
 A command tunnel SHALL carry:
@@ -165,21 +73,7 @@ A command tunnel SHALL carry:
 - **WHEN** the user saves a command tunnel whose command has no `{port}` and that has no fixed local port
 - **THEN** the tunnel is not saved and the command field is marked with the reason
 
-### Requirement: Tunnels without a kind load as SSH
-
-The application SHALL load a tunnel from `tunnels.toml` that has no kind as an SSH tunnel, with its
-fields and context bindings unchanged. A command tunnel's command line SHALL be persisted as an
-ordinary non-secret field.
-
-#### Scenario: Existing file loads unchanged
-
-- **WHEN** `tunnels.toml` was written by a build that had no command tunnels
-- **THEN** every tunnel loads as an SSH tunnel and its context bindings work as before
-
-#### Scenario: Command tunnel round-trips
-
-- **WHEN** the user defines a command tunnel and relaunches the application
-- **THEN** the tunnel is present with the same command line, mode, fixed local port, and startup timeout
+## ADDED Requirements
 
 ### Requirement: SSH tunnel settings
 

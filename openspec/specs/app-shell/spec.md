@@ -142,11 +142,7 @@ launch, reconnecting every context a window used.
 Every workspace window SHALL show a status bar along its bottom edge with one capsule per cluster
 context the window uses, followed by the add-context control. Each capsule SHALL show, in order,
 the context name, the name of its bound tunnel if any in square brackets, and an icon for its
-connection state, and for any state other than connected, how long it has been in that state. The
-tunnel name and the elapsed time SHALL render smaller than the context name, in the data font and
-the theme's muted foreground color. The state icon SHALL have a tooltip naming the state and, for
-any state other than connected, how long it has lasted. Capsules in a non-connected state SHALL be listed
-before connected ones.
+connection state, and for any state other than connected, how long it has been in that state.
 
 #### Scenario: One item per cluster in the window
 
@@ -393,10 +389,7 @@ per window at a time.
 
 The application SHALL let the user move keyboard focus between the visible panels of a window
 from the keyboard, as registered commands offered in the command palette, bound to default keys
-the user's keymap can override, and listed in the application menu. "Next" and "previous" SHALL
-follow one stable order over the window's visible panels, wrapping from the last panel to the
-first and from the first to the last. Panels the user cannot see - in a collapsed dock, or behind
-another panel that is zoomed - SHALL NOT receive focus this way.
+the user's keymap can override, and listed in the application menu.
 
 #### Scenario: Focus moves to the next panel
 
@@ -524,11 +517,9 @@ palette.
 ### Requirement: Keyboard switching between the tabs of a group
 
 The application SHALL let the user switch which tab a tab group displays from the keyboard: to
-the next or previous tab, and to a tab by its position. These SHALL be registered commands
-offered in the command palette, bound to default keys the user's keymap can override. They act
-on the focused tab group: the group whose displayed panel keyboard focus is inside, or, when
-focus is outside every group, the first group in panel-focus order. The tab shown by one of these
-commands SHALL receive keyboard focus.
+the next or previous tab, and to a tab by its position, as registered commands offered in the
+command palette, bound to default keys the user's keymap can override. The tab shown by one of
+these commands SHALL receive keyboard focus.
 
 #### Scenario: Next tab shows and focuses the following tab
 
@@ -580,3 +571,63 @@ commands SHALL receive keyboard focus.
 - **WHEN** the user opens the command palette in a window with panels
 - **THEN** "next tab", "previous tab" and "select tab 1" through "select tab 9" are offered, each
   showing its key binding
+
+### Requirement: Status capsule secondary text is muted
+
+In a status bar capsule, the tunnel name and the elapsed time SHALL render smaller than the
+context name, in the data font and the theme's muted foreground color.
+
+#### Scenario: Tunnel and elapsed time are secondary
+
+- **WHEN** a capsule shows a bound tunnel's name and an elapsed time
+- **THEN** both render smaller than the context name, in the data font and the theme's muted foreground color
+
+### Requirement: Status capsule state icon has a tooltip
+
+A status bar capsule's state icon SHALL have a tooltip naming the state and, for any state other
+than connected, how long it has lasted.
+
+#### Scenario: Hovering a connected capsule's icon
+
+- **WHEN** the user hovers the state icon of a connected capsule
+- **THEN** a tooltip reads "Connected"
+
+### Requirement: Non-connected capsules are listed first
+
+Status bar capsules in a non-connected state SHALL be listed before connected ones.
+
+#### Scenario: A paused context comes first
+
+- **WHEN** `cluster-b` is connected and `cluster-a` is paused
+- **THEN** the `cluster-a` capsule is listed before the `cluster-b` capsule
+
+### Requirement: Panel focus order is stable and wraps
+
+Moving focus to the next or previous panel SHALL follow one stable order over the window's
+visible panels, wrapping from the last panel to the first and from the first to the last.
+
+#### Scenario: Next from the last panel
+
+- **WHEN** the last panel in the order has keyboard focus and the user invokes "focus next panel"
+- **THEN** keyboard focus moves to the first panel
+
+### Requirement: Hidden panels never receive focus by panel navigation
+
+Panels the user cannot see - in a collapsed dock, or behind another panel that is zoomed - SHALL
+NOT receive focus from the next and previous panel commands.
+
+#### Scenario: A collapsed dock is skipped
+
+- **WHEN** a dock is collapsed and the user moves focus with "focus next panel"
+- **THEN** focus only ever lands on panels that are visible
+
+### Requirement: Tab switching acts on the focused tab group
+
+The tab switching commands SHALL act on the focused tab group: the group whose displayed panel
+keyboard focus is inside, or, when focus is outside every group, the first group in panel-focus
+order.
+
+#### Scenario: Focus outside the dock
+
+- **WHEN** keyboard focus is in the Resource panel, the dock has panels, and the user invokes "next tab"
+- **THEN** the first group in panel-focus order switches to its next tab

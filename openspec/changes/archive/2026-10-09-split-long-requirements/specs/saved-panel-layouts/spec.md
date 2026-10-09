@@ -1,11 +1,6 @@
-# saved-panel-layouts Specification
+# Spec Delta
 
-## Purpose
-Lets a user capture a window's current panel arrangement under a name and bring it back later, as
-many times as needed, independent of the single implicit arrangement the application already
-restores automatically on relaunch.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Saving a layout
 The application SHALL let the user save the current window's arrangement under a name: the dock tree
@@ -35,24 +30,6 @@ list panel's view state (its filter text and its sort column and direction), and
 - **WHEN** a panel in the window has a Secret value revealed and the user saves a layout
 - **THEN** the saved layout contains no Secret value, consistent with `object-detail`'s existing
   guarantee that a revealed value cannot be serialized
-
-### Requirement: Listing and managing saved layouts
-The application SHALL provide a picker listing every saved layout by name, from which the user can
-load, rename, or delete a saved layout.
-
-#### Scenario: Opening the picker with no saved layouts
-- **WHEN** the user opens the saved layouts picker and no layout has been saved yet
-- **THEN** the picker shows that there are no saved layouts, rather than an empty list with no
-  explanation
-
-#### Scenario: Renaming a saved layout
-- **WHEN** the user renames a saved layout to a name that does not identify another saved layout
-- **THEN** the saved layout is listed under the new name and its contents are unchanged
-
-#### Scenario: Renaming to a name already in use
-- **WHEN** the user renames a saved layout to a name that already identifies a different saved
-  layout, including one that differs from it only in case
-- **THEN** the rename is rejected and both saved layouts keep their original names
 
 ### Requirement: A Settings section lists and removes saved layouts
 The application's Settings window SHALL have a "Layouts" section, reachable and keyboard-operable
@@ -145,27 +122,7 @@ The application SHALL persist each saved layout as its own file, in a versioned 
 - **WHEN** the user saves the first layout and no `layouts/` folder exists yet
 - **THEN** the folder is created and the layout is saved inside it
 
-### Requirement: Saving, loading, and managing saved layouts are keyboard-operable commands
-Save Panel Layout and the saved-layouts picker SHALL each be a registered command with a stable
-identifier, a title, a default key binding, and a Window-menu entry, reachable from the command
-palette. Within the picker, loading with Add, loading with Replace, renaming, and deleting SHALL
-each be reachable by keyboard, and moving the keyboard highlight SHALL be unaffected by mouse
-hover.
-
-#### Scenario: Save and the picker are registered commands
-- **WHEN** the user opens the command palette
-- **THEN** Save Panel Layout and the saved-layouts picker command both appear, each showing its
-  current key binding
-
-#### Scenario: Hover does not move the keyboard selection
-- **WHEN** the user is navigating the saved layouts picker by keyboard and the mouse passes over a
-  different row
-- **THEN** the keyboard-selected row does not change
-
-#### Scenario: The picker is fully operable by keyboard
-- **WHEN** the user opens the saved layouts picker using only the keyboard
-- **THEN** the user can move the selection, load it with Add or with Replace, rename it, and
-  delete it (including confirming or cancelling the deletion) without using the mouse
+## ADDED Requirements
 
 ### Requirement: Saving over an existing layout name is confirmed
 Saving a layout under a name that already identifies a saved layout (compared without regard to

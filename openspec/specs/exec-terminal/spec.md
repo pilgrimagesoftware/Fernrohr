@@ -28,14 +28,8 @@ full-screen programs and the alternate screen, the way a standalone terminal wou
 While a shell session panel has focus and its session is running, the application SHALL send
 every key press, including control keys (Ctrl-C, Ctrl-D, Ctrl-Z), Tab, Escape, arrow keys and
 function keys, to the container as terminal input. It SHALL NOT trigger application commands from
-those keys, except for a small reserved set:
-
-- the platform's copy and paste shortcuts
-- the command palette
-- the panel focus and tab navigation shortcuts
-
-The reserved set SHALL be listed in the panel's hint row. Pasted text SHALL use bracketed paste
-when the program in the container enables it.
+those keys, except for a small reserved set: the platform's copy and paste shortcuts, the command
+palette, and the panel focus and tab navigation shortcuts.
 
 #### Scenario: Interrupt
 
@@ -85,3 +79,23 @@ selectable, and show an ended notice that includes the exit status when it is kn
 
 - **WHEN** the user types `exit` in the session
 - **THEN** the panel shows the session as ended with the exit status, and the earlier output is still visible and can be copied
+
+### Requirement: The shell panel's hint row lists its reserved keys
+
+The shell session panel's hint row SHALL list the reserved set of keys that keep their
+application commands while its session is running.
+
+#### Scenario: Reserved keys are shown
+
+- **WHEN** a shell session panel with a running session is shown
+- **THEN** its hint row lists the copy and paste shortcuts, the command palette, and the panel focus and tab navigation shortcuts
+
+### Requirement: Pasting into a shell uses bracketed paste
+
+Text pasted into a running shell session SHALL be sent using bracketed paste when the program
+in the container enables it.
+
+#### Scenario: Paste into a program that enables bracketed paste
+
+- **WHEN** the program in the container has enabled bracketed paste and the user pastes text into the session
+- **THEN** the text reaches the container wrapped in bracketed-paste markers

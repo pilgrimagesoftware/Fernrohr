@@ -1,34 +1,6 @@
-## Purpose
+# Spec Delta
 
-Discovering Kubernetes contexts from the user's kubeconfig and establishing a working API connection
-to one selected context, including API resource discovery for that connection.
-
-## Requirements
-
-### Requirement: Read-only kubeconfig context discovery
-
-The application SHALL load Kubernetes contexts from the kubeconfig referenced by `$KUBECONFIG`, or
-`~/.kube/config` when that variable is unset, and SHALL never modify the kubeconfig file.
-
-#### Scenario: Contexts listed from default kubeconfig
-
-- **WHEN** the application starts and `~/.kube/config` contains three contexts
-- **THEN** all three contexts are listed by name for the user to choose from
-
-#### Scenario: KUBECONFIG override honored
-
-- **WHEN** `$KUBECONFIG` points to a specific file
-- **THEN** contexts are read from that file instead of `~/.kube/config`
-
-#### Scenario: Missing kubeconfig is handled
-
-- **WHEN** no kubeconfig file exists at the resolved path
-- **THEN** the application reports that no contexts were found and remains usable
-
-#### Scenario: Kubeconfig is never written
-
-- **WHEN** the user connects to, disconnects from, or switches contexts
-- **THEN** the kubeconfig file's contents and modification time are unchanged
+## MODIFIED Requirements
 
 ### Requirement: Connect a single context
 
@@ -62,23 +34,6 @@ failure.
 - **WHEN** the user connects a context whose bound tunnel cannot reach Up
 - **THEN** the connection fails with the tunnel's failure reason and no client is built
 
-### Requirement: API resource discovery
-
-On connecting, the application SHALL run Kubernetes API discovery for that connection and make the set
-of available API groups, versions, and resource kinds queryable within the application. When the
-connection is routed through a tunnel, discovery SHALL run over the tunneled client.
-
-#### Scenario: Discovery populates available kinds
-
-- **WHEN** a connection is established to a cluster
-- **THEN** the discovered resource kinds for that connection include the core kinds such as Pod, and
-  discovery completes without blocking the user interface
-
-#### Scenario: Discovery over a tunneled connection
-
-- **WHEN** a connection is established through a tunnel
-- **THEN** discovery completes using the tunneled client and populates the available kinds
-
 ### Requirement: Recoverable connection interruptions
 
 The application SHALL treat a bound tunnel dropping, or an exec credential-plugin `401` requiring
@@ -106,26 +61,7 @@ re-authentication succeeds.
 - **WHEN** three panels in one window show the same paused context
 - **THEN** the pause is shown once, in that window's status bar, and none of the three panels shows its own pause message
 
-### Requirement: Connections shared across windows
-
-The application SHALL keep at most one connection per context, shared by every window that uses
-that context. A connection, and any tunnel it holds, SHALL stay open while at least one window uses
-the context, and SHALL be shut down when the last such window disconnects the context or closes.
-
-#### Scenario: Shared by two windows
-
-- **WHEN** two windows both use `cluster-a`
-- **THEN** one connection, one set of watches, and at most one tunnel forward serve both
-
-#### Scenario: One window lets go
-
-- **WHEN** one of those windows disconnects `cluster-a`
-- **THEN** the other window's `cluster-a` panels keep receiving live updates without reconnecting
-
-#### Scenario: Last window lets go
-
-- **WHEN** the last window using `cluster-a` disconnects it or closes
-- **THEN** `cluster-a`'s connection and watches stop, and its tunnel forward is released
+## ADDED Requirements
 
 ### Requirement: Connecting through a bound tunnel
 

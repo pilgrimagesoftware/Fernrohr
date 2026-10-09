@@ -75,11 +75,7 @@ Stopping a port-forward SHALL ask for confirmation on every path that stops one:
 - the Stop Port Forward command
 - Manage Tunnels' Stop button
 
-The confirmation SHALL name the pod or service, the local address and the target port, with the
-names set apart from the surrounding text as other confirmations do. It SHALL be fully operable
-from the keyboard: Enter confirms, Escape cancels, and Tab moves between the buttons. Each button
-SHALL show its key (`⏎` and `esc`). Cancelling
-SHALL leave the forward running.
+Cancelling SHALL leave the forward running.
 
 #### Scenario: Cancel keeps the forward
 
@@ -101,3 +97,29 @@ and the reason.
 
 - **WHEN** a forward can't start because the pod declares no container ports
 - **THEN** a notification says so, and no notice appears inside the Pods list
+
+### Requirement: The stop confirmation names the forward
+
+The confirmation for stopping a port-forward SHALL name the pod or service, the local address and
+the target port, with the names set apart from the surrounding text as other confirmations do.
+
+#### Scenario: The forward is named
+
+- **WHEN** the user stops a forward from a pod's local address to one of its ports
+- **THEN** the confirmation names the pod, the local address, and the target port
+
+### Requirement: The stop confirmation is keyboard-operable
+
+The confirmation for stopping a port-forward SHALL be fully operable from the keyboard: Enter
+confirms, Escape cancels, and Tab moves between the buttons. Each button SHALL show its key (`⏎` and
+`esc`).
+
+#### Scenario: Escape keeps the forward
+
+- **WHEN** the stop confirmation is open and the user presses Escape
+- **THEN** the confirmation closes and the forward keeps running
+
+#### Scenario: Enter stops it
+
+- **WHEN** the stop confirmation is open and the user presses Enter
+- **THEN** the forward stops
