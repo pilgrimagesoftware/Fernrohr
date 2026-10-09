@@ -26,7 +26,7 @@
 
 - [x] 3.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
   pass.
-- [ ] 3.2 Manual smoke test: open two pods' logs with `l` and confirm each has its own panel; `l` on
+- [x] 3.2 Manual smoke test: open two pods' logs with `l` and confirm each has its own panel; `l` on
   the first again focuses it; `shift-l` on a third opens the shared panel; set Settings → Panels to
   one shared panel and confirm `l` now retargets the shared panel and `shift-l` opens a pod's own.
 
