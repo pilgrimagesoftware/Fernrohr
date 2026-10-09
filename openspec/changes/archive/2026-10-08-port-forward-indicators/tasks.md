@@ -50,7 +50,7 @@
 
 ## 7. Verification
 
-- [ ] 7.1 Manual check, needing user confirmation:
+- [x] 7.1 Manual check, needing user confirmation:
       - Forward a pod with `shift-f` and see the row indicator.
       - Open its detail panel and see the strip. Copy the address and `curl` it.
       - In the Containers tab, click a second port's forward icon.
