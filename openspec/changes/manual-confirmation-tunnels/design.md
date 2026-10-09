@@ -108,10 +108,35 @@ existing entry do not post again.
 Register two commands, `tunnel.manual.proceed` ("Proceed with Manual Tunnel") and
 `tunnel.manual.cancel` ("Cancel Manual Tunnel"), in the global key context, each with a
 keymap-overridable default binding. With one pending entry they act on it directly. With several,
-they open a picker of pending tunnels that follows the picker selection model. The status-bar item
-gets Proceed and Cancel icon buttons with tooltips that show the bound keys, and the cluster
-picker's status line gets the same controls. Cancel is recoverable, since connecting again prompts
-again, so it needs no confirmation dialog.
+they open a picker of pending tunnels that follows the picker selection model. The cluster
+picker's status line gets Proceed and Cancel controls. Cancel is recoverable, since connecting
+again prompts again, so it needs no confirmation dialog.
+
+### D8. The waiting context's own capsule carries the prompt
+
+There is no separate status-bar item. The waiting context already has a status-bar capsule, drawn
+by `render_capsule` from its `ContextHealth`, so `AwaitingConfirmation` changes how that capsule
+looks and what its menu offers:
+
+- **Look:** the same rounded, bordered capsule layout with name, tunnel, state text, and elapsed
+  time. A new `Severity::Attention` fills the capsule with the theme's warning color and draws its
+  contents in the matching foreground. Every other state only tints the text. A filled capsule
+  stays the most visible thing in the row, and still reads as a context. The state text is
+  "Awaiting confirmation" with an attention icon from the existing set. The tunnel's message is in
+  the capsule's tooltip rather than inline, so a long message never widens the status bar.
+- **Menu:** the chevron's dropdown lists Proceed and Cancel, a separator, then the existing
+  Disconnect. Proceed and Cancel call the same `ManualConfirmations` resolution as the commands,
+  and their menu rows show the commands' bound keys. Clicking the capsule body still activates the
+  context, as it does for every other capsule.
+- **Sorting:** capsules already sort non-connected first. Attention sorts ahead of every other
+  state, so a waiting context is never pushed off the visible end of the row.
+
+Every context waiting on the same tunnel gets this treatment, and resolving from any of them
+resolves the shared entry (D4). Disconnect on a waiting capsule only closes that context. It does
+not cancel the tunnel for others; if it was the last waiter, the entry goes away with the forward.
+
+Separate Proceed and Cancel icon buttons were considered. They would add a second control style
+next to every other capsule's single menu, and widen the row while waiting.
 
 ## Risks / Trade-offs
 

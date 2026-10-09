@@ -68,15 +68,26 @@ When skip-when-reachable is on, before prompting the application SHALL try a sho
 - **THEN** every new confirmation prompts, even when the API server is reachable
 
 ### Requirement: Prompt surfaces
-While a manual tunnel awaits confirmation, the application SHALL post one desktop notification and show a status-bar item and a cluster-picker status line. Each SHALL name the tunnel and waiting contexts and show the tunnel's message. The status-bar item and picker line SHALL offer Proceed and Cancel.
+While a manual tunnel awaits confirmation, the application SHALL post one desktop notification and show a cluster-picker status line with Proceed and Cancel, each naming the tunnel and waiting contexts and showing the tunnel's message.
 
 #### Scenario: User is in another app
 - **WHEN** a context bound to `corp-vpn` starts waiting while Fernrohr is not the active application
 - **THEN** a desktop notification names `corp-vpn` and shows its message
 
-#### Scenario: Status bar controls
+### Requirement: Awaiting-confirmation context capsule
+While a context awaits confirmation, its status-bar capsule SHALL keep the standard capsule layout, drawn in an attention color distinct from every other connection state, naming the tunnel and showing the elapsed wait, with the tunnel's message in its tooltip. Its menu SHALL offer Proceed and Cancel above Disconnect.
+
+#### Scenario: Capsule draws attention
 - **WHEN** a context is waiting on `corp-vpn`
-- **THEN** the status bar shows an awaiting-confirmation item for it with Proceed and Cancel icon buttons, each with a tooltip naming the action and its key
+- **THEN** its capsule is drawn in the attention color with the tunnel name and elapsed time, and hovering it shows the tunnel's message
+
+#### Scenario: Proceed from the capsule menu
+- **WHEN** the user opens the waiting context's capsule menu and chooses Proceed
+- **THEN** every connection waiting on `corp-vpn` proceeds, and the capsule returns to its normal connected appearance once connected
+
+#### Scenario: Shared tunnel, two capsules
+- **WHEN** two contexts in the window are waiting on `corp-vpn`
+- **THEN** both capsules show the attention state, and Proceed or Cancel from either capsule's menu resolves both
 
 ### Requirement: Keyboard-operable confirmation
 Proceed and Cancel SHALL be registered commands available from the command palette and keybindings while any manual tunnel awaits confirmation. When several tunnels are waiting, the command SHALL ask which tunnel it applies to.

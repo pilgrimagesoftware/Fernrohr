@@ -18,11 +18,12 @@
 
 ## 4. Prompt UI and commands
 
-- [ ] 4.1 Add `ContextHealth::AwaitingConfirmation` and its status-bar item showing the tunnel name, message, and elapsed time, with Proceed and Cancel icon buttons and tooltips that show their keys; verify render tests find the buttons by id and assert the tooltip text.
-- [ ] 4.2 Show the awaiting-confirmation line with Proceed and Cancel in the cluster picker's status line; verify picker tests for the waiting, proceed, and cancelled states.
-- [ ] 4.3 Register `tunnel.manual.proceed` and `tunnel.manual.cancel` with default bindings and a pending-tunnel picker when several are waiting; verify keystroke tests for the single-entry and multi-entry cases.
-- [ ] 4.4 Post one desktop notification when a pending entry is created, naming the tunnel and showing its message; verify that a second context joining the entry posts nothing.
-- [ ] 4.5 Document manual tunnels (purpose, settings, prompt surfaces, Proceed and Cancel keys, macOS development-build notification caveat) in the user docs; verify the docs contain no infrastructure identifiers.
+- [ ] 4.1 Add `ContextHealth::AwaitingConfirmation` and `Severity::Attention`, and draw the waiting context's capsule filled in the attention color with "Awaiting confirmation", the tunnel name, the elapsed time, and the tunnel's message as its tooltip, sorted ahead of every other state; verify render tests for the fill, text, tooltip, and sort order.
+- [ ] 4.2 Add Proceed and Cancel, with their bound keys, above Disconnect in the waiting capsule's menu; verify keyboard tests open the menu with real keystrokes and that Proceed or Cancel from either of two capsules sharing a tunnel resolves both, while Disconnect closes only its own context.
+- [ ] 4.3 Show the awaiting-confirmation line with Proceed and Cancel in the cluster picker's status line; verify picker tests for the waiting, proceed, and cancelled states.
+- [ ] 4.4 Register `tunnel.manual.proceed` and `tunnel.manual.cancel` with default bindings and a pending-tunnel picker when several are waiting; verify keystroke tests for the single-entry and multi-entry cases.
+- [ ] 4.5 Post one desktop notification when a pending entry is created, naming the tunnel and showing its message; verify that a second context joining the entry posts nothing.
+- [ ] 4.6 Document manual tunnels (purpose, settings, prompt surfaces, Proceed and Cancel keys, macOS development-build notification caveat) in the user docs; verify the docs contain no infrastructure identifiers.
 
 ## 5. Integration
 
