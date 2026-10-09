@@ -28,16 +28,31 @@ The MCP server SHALL provide tools that list available contexts, report their co
 - **WHEN** an agent requests a resource kind absent from the selected context's discovery data
 - **THEN** the MCP response identifies the unavailable kind and does not issue a Kubernetes request
 
-### Requirement: State-changing cluster operations
-The MCP server SHALL provide explicit create, apply, patch, and delete tools for Kubernetes resources. Before executing one of those operations, Fernrohr SHALL require approval in its user interface for the exact operation, context, namespace, kind, and resource name. The tool result SHALL identify whether the operation was approved, denied, or failed.
+### Requirement: Allowlisted cluster actions
+The MCP server SHALL provide only these state-changing tools: set or remove one key in a ConfigMap's `data`, scale a Deployment, StatefulSet, or ReplicaSet, restart or roll back to the previous revision the rollout of a Deployment, StatefulSet, or DaemonSet, pause or resume a Deployment's rollout, delete between 1 and 10 Pods named explicitly in one namespace, trigger a Job from a CronJob, and suspend or resume a CronJob. Each tool SHALL accept typed fields rather than a resource document, and the server SHALL construct the Kubernetes request so that no field outside the action's scope changes. Before executing an action, Fernrohr SHALL require approval in its user interface for the exact action, context, namespace, kind, every target resource name, and the action's parameters. The tool result SHALL identify whether the action was approved, denied, or failed.
 
-#### Scenario: User approves an apply operation
-- **WHEN** an agent requests an apply operation and the user approves the displayed operation
-- **THEN** Fernrohr submits the resource to the selected cluster and returns the Kubernetes API result
+#### Scenario: User approves a scale action
+- **WHEN** an agent requests scaling Deployment `api` to 3 replicas and the user approves the displayed action, which shows the current and requested replica counts
+- **THEN** Fernrohr sets the replica count through the scale subresource and returns the Kubernetes API result
 
-#### Scenario: User denies a delete operation
-- **WHEN** an agent requests deletion of a resource and the user denies the displayed operation
+#### Scenario: User denies a Pod deletion
+- **WHEN** an agent requests deletion of named Pods and the user denies the displayed action
 - **THEN** Fernrohr does not contact the Kubernetes API and returns a denied result
+
+#### Scenario: Action targets an unsupported kind
+- **WHEN** an agent requests a scale action on a DaemonSet, a rollout pause on a StatefulSet, or a ConfigMap value change on a Secret
+- **THEN** the MCP response rejects the request without prompting the user or issuing a Kubernetes request
+
+#### Scenario: Pod deletion exceeds the limit
+- **WHEN** an agent requests deletion of 11 or more Pods in one call
+- **THEN** the MCP response rejects the request without prompting the user or issuing a Kubernetes request
+
+### Requirement: No arbitrary resource writes
+The MCP server SHALL NOT provide tools that create, apply, patch, replace, or delete arbitrary resources, edit resource YAML, accept raw Kubernetes API paths, or write Secrets.
+
+#### Scenario: Client lists tools
+- **WHEN** an MCP client lists the server's tools
+- **THEN** the only state-changing tools listed are the allowlisted cluster actions
 
 ### Requirement: Panel navigation tool
 The MCP server SHALL provide a tool that opens or focuses a Fernrohr resource panel for a connected context, resource kind, namespace scope, and optional resource name. The tool SHALL return the created or focused panel identifier.
@@ -49,6 +64,24 @@ The MCP server SHALL provide a tool that opens or focuses a Fernrohr resource pa
 #### Scenario: Open a panel for a resource not already displayed
 - **WHEN** an agent requests a panel for a supported resource kind that has no existing panel
 - **THEN** Fernrohr creates a panel without changing panels in other windows
+
+### Requirement: Saved layout tools
+The MCP server SHALL provide a tool that lists the user's saved layouts by display name, and a tool that loads a named saved layout into the focused window in Add or Replace mode, following the same restore rules as loading it from the app. The MCP server SHALL NOT save, rename, or delete saved layouts.
+
+#### Scenario: Load a saved layout
+- **WHEN** an agent requests the saved layout `triage` in Replace mode
+- **THEN** Fernrohr replaces the focused window's arrangement with `triage` exactly as the in-app Load Layout command would
+
+#### Scenario: Layout references a context the window does not hold
+- **WHEN** a loaded layout contains a panel for a context the window does not currently hold
+- **THEN** that panel restores as a placeholder and the MCP response reports it, without connecting the context
+
+### Requirement: Read and navigation tools need no approval
+Read, panel navigation, and saved layout tools SHALL execute without a confirmation prompt.
+
+#### Scenario: Agent lists Pods
+- **WHEN** an agent lists Pods in a connected context
+- **THEN** Fernrohr returns the list without showing a confirmation dialog
 
 ### Requirement: Credential and error safety
 The MCP server SHALL use only Fernrohr's existing cluster sessions and SHALL never return Kubernetes credentials, kubeconfig contents, authorization headers, tunnel secrets, or internal error details to an MCP client.

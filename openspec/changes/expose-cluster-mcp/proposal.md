@@ -2,14 +2,15 @@
 
 ## Why
 
-Agents currently have no supported route to inspect or operate the clusters connected in Fernrohr, nor to show the user the relevant resource view. An MCP server lets an agent use the app's authenticated cluster sessions and open focused panels for review.
+Agents currently have no supported route to inspect the clusters connected in Fernrohr, nor to show the user the relevant resource view. An MCP server lets an agent query cluster state and workloads through the app's authenticated sessions, drive the GUI by opening panels and saved layouts, and run a small set of everyday operational actions with the user's approval. It is deliberately not a general-purpose write path: agents cannot create or modify arbitrary resources.
 
 ## What Changes
 
 - Add an MCP server hosted by Fernrohr and exposed through a local stdio transport.
-- Expose tools that enumerate connected contexts, discover supported resources, read cluster resources and logs, and perform permitted resource operations through the selected session.
-- Expose tools that open or focus Fernrohr panels for a cluster resource, including the selected namespace and resource identity.
-- Require an explicit operation model for state-changing cluster requests and return structured, safe errors to MCP clients.
+- Expose read tools that enumerate connected contexts, discover supported resources, list and get cluster resources, and retrieve pod logs through the selected session.
+- Expose tools that open or focus Fernrohr panels for a cluster resource, including the selected namespace and resource identity, and that list and load the user's saved layouts.
+- Expose a fixed allowlist of named action tools, each confirmed by the user in the app: set or remove a ConfigMap key, scale a workload, restart or roll back a workload's rollout, pause or resume a Deployment rollout, delete up to 10 named Pods, and trigger, suspend, or resume a CronJob.
+- No tool creates, applies, patches, or deletes arbitrary resources, and none writes Secrets. Return structured, safe errors to MCP clients.
 
 ## Capabilities
 
@@ -24,5 +25,6 @@ Agents currently have no supported route to inspect or operate the clusters conn
 ## Impact
 
 - App process lifecycle and local IPC configuration.
-- Cluster session, API discovery, resource operations, log retrieval, dock panel creation, and command routing.
+- Cluster session, API discovery, log retrieval, dock panel creation, saved-layout loading, and command routing.
+- `resource_actions`: the MCP action tools call the same mutating functions as the in-app actions. Pod delete already exists there; scale, rollout restart, and rollout undo are shared with `bulk-select-list-actions`, and CronJob trigger, CronJob suspend/resume, and Deployment pause/resume with `resource-specific-actions`. Whichever change lands first adds each function, and the others reuse it.
 - A new Rust MCP transport dependency or an in-house protocol adapter, selected during implementation.

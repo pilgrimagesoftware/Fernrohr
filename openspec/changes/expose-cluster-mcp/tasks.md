@@ -12,18 +12,19 @@
 - [ ] 2.2 Implement list and get resource tools with context, namespace, and discovery validation; verify unknown contexts and unsupported kinds do not reach the Kubernetes client.
 - [ ] 2.3 Implement bounded pod-log retrieval and resource response truncation behavior; verify an oversized fixture response reports truncation without exceeding the configured limit.
 
-## 3. Approved cluster writes
+## 3. Allowlisted cluster actions
 
-- [ ] 3.1 Implement typed create, apply, patch, and delete tools through the selected `ClusterSession`; verify request validation rejects malformed target and resource documents.
-- [ ] 3.2 Add the foreground confirmation gate with operation details, cancel handling, and timeout; verify denial, timeout, and client-disconnect tests make no Kubernetes write call.
-- [ ] 3.3 Connect approved write operations to `kube-rs` and safe MCP results; verify approved fixture operations return the API result and redact upstream authentication data.
+- [ ] 3.1 Define typed inputs for `set_configmap_value`, `scale_workload`, `restart_workload`, `rollback_workload`, `set_rollout_paused`, `delete_pods`, `trigger_cronjob`, and `set_cronjob_suspended`, with per-tool kind allowlists and a 10-name cap on `delete_pods`; verify unsupported kinds, Secrets, and over-cap requests are rejected before confirmation or any Kubernetes call, and that the tool list exposes no other state-changing tool.
+- [ ] 3.2 Add the foreground confirmation gate showing action, context, namespace, kind, every target name, and parameters (ConfigMap key old/new value, current/requested replicas, rollback target revision), with cancel handling and timeout; verify denial, timeout, and client-disconnect tests make no Kubernetes write call.
+- [ ] 3.3 Route approved actions through the shared `resource_actions` functions, adding ConfigMap key set/remove, scale, rollout restart, rollout undo, rollout pause/resume, CronJob trigger, and CronJob suspend/resume where `bulk-select-list-actions` or `resource-specific-actions` have not already; verify fixture requests change only the action's own fields and that results redact upstream authentication data.
 
-## 4. Panel navigation
+## 4. Panel and layout navigation
 
 - [ ] 4.1 Add the open-or-focus panel RPC route through the existing command and workspace path; verify requests cross from the Tokio handler to the GPUI foreground executor.
 - [ ] 4.2 Support context, kind, namespace scope, and optional resource selection in panel requests; verify panel integration tests preserve panels in other windows and return an opaque panel ID.
+- [ ] 4.3 Add `list_layouts` and `load_layout` (Add or Replace) through the existing saved-layout load command; verify a missing-context panel restores as a placeholder, is reported in the response, and no context is connected.
 
 ## 5. Integration checks
 
-- [ ] 5.1 Add MCP client integration coverage for reads, writes, denied writes, panel navigation, and unavailable app behavior using recorded Kubernetes fixtures; verify `cargo test` passes without a live cluster.
+- [ ] 5.1 Add MCP client integration coverage for reads, approved and denied actions, panel and layout navigation, and unavailable app behavior using recorded Kubernetes fixtures; verify `cargo test` passes without a live cluster.
 - [ ] 5.2 Document MCP client command configuration and user approval behavior; verify `cargo fmt -- --check`, `cargo clippy -- -D warnings`, and `cargo test` pass.
