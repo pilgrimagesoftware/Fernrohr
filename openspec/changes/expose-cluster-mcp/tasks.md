@@ -2,9 +2,9 @@
 
 ## 1. Local endpoint and protocol
 
-- [ ] 1.1 Add app lifecycle support for a user-owned Unix socket, rotating token file, stale-file cleanup, and authenticated internal RPC handshake; verify socket integration tests reject missing and stale tokens.
-- [ ] 1.2 Add the `fernrohr mcp` stdio command and MCP protocol adapter; verify an MCP client fixture lists tools through a running app and receives an unavailable error without one.
-- [ ] 1.3 Define typed RPC and MCP request and response models, size limits, safe error mapping, and structured logging that excludes secrets; verify serialization and error-redaction unit tests pass.
+- [x] 1.1 Add app lifecycle support for a user-owned Unix socket, rotating token file, stale-file cleanup, and authenticated internal RPC handshake; verify socket integration tests reject missing and stale tokens.
+- [x] 1.2 Add the `fernrohr mcp` stdio command and MCP protocol adapter; verify an MCP client fixture lists tools through a running app and receives an unavailable error without one.
+- [x] 1.3 Define typed RPC and MCP request and response models, size limits, safe error mapping, and structured logging that excludes secrets; verify serialization and error-redaction unit tests pass.
 
 ## 2. Cluster MCP tools
 

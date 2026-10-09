@@ -33,6 +33,10 @@ On startup, the app will generate a random endpoint token, store it with owner-o
 
 Filesystem placement alone is insufficient on shared machines. Passing the token as a command-line value would expose it to process inspection.
 
+The endpoint is Unix-only: on Windows the app serves nothing and `fernrohr mcp` exits with an explanatory error. The directory is `$XDG_RUNTIME_DIR/fernrohr/mcp` on Linux and the app's cache directory on macOS, which has no per-user runtime directory. The directory is `0700`, and the socket and token are `0600`. The app also checks the connecting peer's uid against its own. A live endpoint is detected by connect-probing the socket rather than with a pidfile; a second app instance keeps no endpoint and logs a warning.
+
+The adapter is built on the official `rmcp` SDK (server and stdio transport only), which owns protocol-version negotiation, JSON-RPC framing, and cancellation. Tools are registered only in the app; the adapter fetches the tool list from the app, so adding a tool never touches the adapter.
+
 ### Explicit typed tools
 
 The server will expose a narrow named set of tools: contexts, discovered kinds, list/get resources, pod logs, open panel, list/load saved layouts, and the action tools below. Typed inputs are validated against session discovery before reaching `kube-rs`, and no tool accepts arbitrary API paths or resource documents.
