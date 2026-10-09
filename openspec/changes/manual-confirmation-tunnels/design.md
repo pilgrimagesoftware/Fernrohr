@@ -103,6 +103,8 @@ where the platform reports clicks. On macOS, a build without a bundle identifier
 `cargo run` development build, may not show notifications, and the spec accepts that because the
 in-app prompt remains.
 
+On Linux, a click is reported through the D-Bus default action and focuses the originating window. On macOS, the notification posts under the app's bundle identifier (otherwise it appears to come from Finder) and has no click callback, since waiting for one would block the main run loop. `notify-rust` is a Unix-only dependency, and Windows logs that notifications are unsupported.
+
 One notification is posted per pending entry, when the entry is created. Contexts that join an
 existing entry do not post again.
 

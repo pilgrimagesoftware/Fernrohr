@@ -14,7 +14,7 @@
 
 ## 3. Desktop notifications
 
-- [ ] 3.1 Add the `notify` module backed by `notify-rust`, posting on a blocking task, logging failures, and reporting activation where supported; verify unit tests through a fake backend for success, failure-is-logged-only, and activation focusing the originating window.
+- [x] 3.1 Add the `notify` module backed by `notify-rust`, posting on a blocking task, logging failures, and reporting activation where supported; verify unit tests through a fake backend for success, failure-is-logged-only, and activation focusing the originating window.
 
 ## 4. Prompt UI and commands
 
