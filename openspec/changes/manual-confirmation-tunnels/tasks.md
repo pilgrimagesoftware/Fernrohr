@@ -27,4 +27,4 @@
 
 ## 5. Integration
 
-- [ ] 5.1 Add an end-to-end test with recorded fixtures covering two contexts on one manual tunnel, an unrelated context connecting during the wait, Proceed, and Cancel; verify `cargo fmt -- --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` pass.
+- [x] 5.1 Add an end-to-end test with recorded fixtures covering two contexts on one manual tunnel, an unrelated context connecting during the wait, Proceed, and Cancel; verify `cargo fmt -- --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` pass.

@@ -171,6 +171,9 @@ next to every other capsule's single menu, and widen the row while waiting.
   the notification posting subscribes to. A notification click focuses the active main window,
   or the first one: the app does not record which window started a connection, so "the window
   that started the waiting connection" is approximated.
+- With `status-capsule-icons` merged first, the awaiting capsule uses its layout: the bell icon's
+  tooltip comes from the shared capsule tooltip, reading "Awaiting confirmation for <elapsed>:
+  <message>". The MCP server's `list_contexts` also reports `awaiting_confirmation` as a status.
 
 ## Risks / Trade-offs
 
