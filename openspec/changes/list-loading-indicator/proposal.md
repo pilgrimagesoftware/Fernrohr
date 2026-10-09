@@ -12,8 +12,8 @@ so the user cannot tell whether to wait or whether something is wrong.
   is loading ("Loading Pods…") instead of an empty table, and once rows start arriving it shows
   how many have arrived so far.
 - After loading finishes, an empty result says so ("No Pods in team-a"), distinct from loading.
-- When a panel relists with rows already on screen (a namespace scope change, or a watch restart
-  after a reconnect), the rows stay visible and a small indicator in the panel's header shows the
+- When a panel relists with rows already on screen (a watch restart after a reconnect, or a paused
+  connection resuming), the rows stay visible and a small indicator in the panel's header shows the
   refresh, instead of the table blanking.
 - The indicator appears only after a short delay, so fast loads never flicker.
 - Applies to the generic resource list panels, the Pods panel, and the events browser.
