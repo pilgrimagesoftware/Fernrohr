@@ -159,6 +159,19 @@ next to every other capsule's single menu, and widen the row while waiting.
   recorded at acquire time; a context that disconnects while others keep waiting stays listed
   until the entry resolves, so the UI reads each context's own connection state too.
 
+### D10. Implementation notes from the prompt UI
+
+- `ContextHealth::AwaitingConfirmation` applies only while the context's own connection is
+  `WaitingForTunnel` and the pending entry lists it; Failed and Paused take precedence. Its icon is
+  `BellRing`, used by no other state.
+- The commands are `tunnel.manual.proceed` (⌘⌥P) and `tunnel.manual.cancel` (⌘⌥C), in the
+  Context menu after Manage Tunnels. A capsule's menu rows show those keys but answer that
+  capsule's own tunnel directly, never opening the picker.
+- `ManualConfirmations` starts at launch and emits a `Prompted` event once per new entry, which
+  the notification posting subscribes to. A notification click focuses the active main window,
+  or the first one: the app does not record which window started a connection, so "the window
+  that started the waiting connection" is approximated.
+
 ## Risks / Trade-offs
 
 - [The VPN drops after it was confirmed] -> Kubernetes requests fail through the existing
