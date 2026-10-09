@@ -26,8 +26,8 @@
 
 ## 5. Integration checks
 
-- [ ] 5.1 Add MCP client integration coverage for reads, approved and denied actions, panel and layout navigation, and unavailable app behavior using recorded Kubernetes fixtures; verify `cargo test` passes without a live cluster.
-- [ ] 5.2 Document MCP client command configuration and user approval behavior; verify `cargo fmt -- --check`, `cargo clippy -- -D warnings`, and `cargo test` pass.
+- [x] 5.1 Add MCP client integration coverage for reads, approved and denied actions, panel and layout navigation, and unavailable app behavior using recorded Kubernetes fixtures; verify `cargo test` passes without a live cluster.
+- [x] 5.2 Document MCP client command configuration and user approval behavior; verify `cargo fmt -- --check`, `cargo clippy -- -D warnings`, and `cargo test` pass.
 
 ## 6. In-app agent setup
 
