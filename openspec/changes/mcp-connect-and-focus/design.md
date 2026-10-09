@@ -58,6 +58,16 @@ the change, in the same foreground task. `connect_context` calls it on the windo
 opened. The approval dialog keeps raising its own window. `list_layouts` and every read tool never
 call it.
 
+### D5. Implementation notes
+
+- The approval request's kind is now `Asking::Action { irreversible }` or `Asking::Connect`, so a
+  connection cannot be marked irreversible. The connect dialog has its own wording and no
+  namespace or kind rows.
+- `ToolContext` carries the tunnels file path (for the tunnel name in the question) and the
+  settle wait (`MCP_CONNECT_SETTLE`, 20 seconds, polled every 100 ms).
+- `paused` also counts as settled: the connection is up and its watches are waiting.
+- `focus_window` lives in `util::shell::agent`, and `notify::focus` now calls it.
+
 ## Risks / Trade-offs
 
 - [Focus stealing while the user types elsewhere] -> Only tools whose purpose is to show the user
