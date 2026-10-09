@@ -8,9 +8,9 @@
 
 ## 2. Cluster MCP tools
 
-- [ ] 2.1 Implement context status and discovered-resource-kind tools backed by `ClusterRegistry` and `ClusterSession`; verify fixture sessions return only their own discovery data.
-- [ ] 2.2 Implement list and get resource tools with context, namespace, and discovery validation; verify unknown contexts and unsupported kinds do not reach the Kubernetes client.
-- [ ] 2.3 Implement bounded pod-log retrieval and resource response truncation behavior; verify an oversized fixture response reports truncation without exceeding the configured limit.
+- [x] 2.1 Implement context status and discovered-resource-kind tools backed by `ClusterRegistry` and `ClusterSession`; verify fixture sessions return only their own discovery data.
+- [x] 2.2 Implement list and get resource tools with context, namespace, and discovery validation; verify unknown contexts and unsupported kinds do not reach the Kubernetes client.
+- [x] 2.3 Implement bounded pod-log retrieval and resource response truncation behavior; verify an oversized fixture response reports truncation without exceeding the configured limit.
 
 ## 3. Allowlisted cluster actions
 

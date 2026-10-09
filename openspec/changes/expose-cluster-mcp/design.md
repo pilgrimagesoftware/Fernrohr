@@ -97,6 +97,12 @@ Internal RPC handlers run on the Tokio runtime. Read requests call the selected 
 
 Direct access to GPUI state from the RPC task would violate GPUI's thread ownership.
 
+Tools never connect a context. They use only sessions that are already open, through non-connecting registry accessors: an unknown context is `unknown_context`, and a known but unopened one is `disconnected`. Kind names resolve against discovery by kind, plural, or singular in any case, with an optional group; a name served by several groups is `ambiguous_kind`. Every object, namespace, and container name passes a strict name check before it reaches `kube-rs`, which joins names onto the URL path unescaped, so `?`, `#`, `/`, `%`, and dot segments are refused.
+
+### Read results
+
+Resources come back with `apiVersion` and `kind` filled in and `managedFields` stripped. Secret values (`data`, `stringData`, and the last-applied annotation) are replaced by their sizes, as in the detail panel. A list page over the 1 MiB result budget keeps whole leading items, is marked truncated, and drops `continue`, which would otherwise skip the cut items. A single object over budget is `result_too_large`. Pod logs keep the newest bytes up to the requested limit, starting at a line boundary. Context status in `list_contexts` withholds failure reasons, which can carry exec-plugin output.
+
 ## Risks / Trade-offs
 
 - [MCP adapter starts before the app] -> Return a stable unavailable error and do not launch a GUI.
