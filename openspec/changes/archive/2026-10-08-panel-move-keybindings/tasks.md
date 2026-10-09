@@ -49,7 +49,7 @@
 
 ## 6. Keybindings editor and documentation
 
-- [ ] 6.1 Confirm the keybindings editor lists all twelve new commands (split, move, merge) and
+- [x] 6.1 Confirm the keybindings editor lists all twelve new commands (split, move, merge) and
       `ClosePanelGroup` as rebindable entries, and verify by opening the editor in a manual test pass
 - [x] 6.2 Update `tasks.md` progress and any relevant doc comments once all tests above pass
 
