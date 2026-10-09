@@ -43,7 +43,10 @@ See [proposal.md](proposal.md), `manual-tunnel`, and `desktop-notifications` for
 Add `TunnelKind::Manual` and a flattened `manual` table holding `message: Option<String>` and
 `skip_when_reachable: bool`, which defaults to `true`. This follows the command-tunnel approach, so
 switching kind keeps every kind's settings and files without the table still load. The editor shows
-a message field and a skip-when-reachable toggle, and the tunnel list shows a manual badge.
+an Instruction field (blank saves as no message) and a reachability choice, "Skip the prompt" or
+"Always prompt", as a two-button switch like the command form's mode. A manual tunnel has no Test
+action, since there is nothing to start. The tunnel list shows a Manual badge and, as the summary,
+the instruction (truncated) or "Confirmed by hand".
 
 ### D2. A transport that waits on the user, keyed by tunnel
 

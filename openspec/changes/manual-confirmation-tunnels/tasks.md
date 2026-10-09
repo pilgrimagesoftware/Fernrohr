@@ -2,8 +2,8 @@
 
 ## 1. Manual kind configuration
 
-- [ ] 1.1 Add `TunnelKind::Manual` and the flattened `manual` settings (`message`, `skip_when_reachable` defaulting to true) to `TunnelConfig`; verify `tunnels.toml` round-trip tests, including switching kind without losing other kinds' settings and loading files with no `manual` table.
-- [ ] 1.2 Add the manual kind to the tunnel editor (message field, skip-when-reachable toggle) and a manual badge in the tunnel list; verify keyboard-driven editor tests (`simulate_keystrokes`) create and switch a tunnel to the manual kind.
+- [x] 1.1 Add `TunnelKind::Manual` and the flattened `manual` settings (`message`, `skip_when_reachable` defaulting to true) to `TunnelConfig`; verify `tunnels.toml` round-trip tests, including switching kind without losing other kinds' settings and loading files with no `manual` table.
+- [x] 1.2 Add the manual kind to the tunnel editor (message field, skip-when-reachable toggle) and a manual badge in the tunnel list; verify keyboard-driven editor tests (`simulate_keystrokes`) create and switch a tunnel to the manual kind.
 
 ## 2. Confirmation lifecycle
 
