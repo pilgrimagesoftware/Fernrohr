@@ -43,7 +43,7 @@ The App tasks here ship together with `per-tab-close-button`'s tasks 2.x as one 
 
 - [x] 4.1 `cargo fmt -- --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test` all
   pass (486 passed, 2 ignored), and new or touched files stay under the 500-line limit.
-- [ ] 4.2 Manual check on a running build. Open several pod detail tabs, then cycle them with
+- [x] 4.2 Manual check on a running build. Open several pod detail tabs, then cycle them with
   `cmd-shift-]` / `cmd-shift-[` and jump with `ctrl-1`…`ctrl-9`, confirming the underline follows.
   Press `Cmd-W` from inside a tab and from the Resource panel, then with an empty dock (the
   window closes, or confirms first if a tunnel is active). **Needs user confirmation.**
