@@ -62,12 +62,7 @@ SHALL be created containing the effective defaults.
 
 While the focused window holds the start of a multi-step key binding and is waiting for its next
 key, the application SHALL show the keys typed so far in that window's status bar, followed by an
-ellipsis, using the same key notation as the command palette. Alongside them, it SHALL list each
-key that would complete a binding available in the current focus context, with that command's
-title, ordered as the command palette orders commands. The indicator and list SHALL disappear as
-soon as the binding completes, the pending keys are abandoned (a key that completes no binding, the
-timeout, or a focus change), or the window loses focus. The indicator SHALL NOT take keyboard
-focus, and the next key SHALL go to the binding exactly as it would without the indicator.
+ellipsis, using the same key notation as the command palette.
 
 #### Scenario: First key of a chord
 
@@ -97,12 +92,9 @@ focus, and the next key SHALL go to the binding exactly as it would without the 
 ### Requirement: Adjustable shortcut timeout
 
 The application SHALL provide a "Shortcut timeout" preference, stored in `ui.toml` and editable in
-the Settings panel. It accepts whole seconds from 1 to 10 and defaults to 3. When the keys typed so
+the Settings panel, accepting whole seconds from 1 to 10 and defaulting to 3. When the keys typed so
 far are themselves a complete binding and also the start of a longer one, the application SHALL
-wait for the configured time before running the shorter binding. When the keys typed so far are
-not a complete binding, the application SHALL keep waiting for the next key with no timeout. A
-value outside the range SHALL load as the nearest allowed value without discarding the rest of
-`ui.toml`.
+wait for the configured time before running the shorter binding.
 
 #### Scenario: Default timeout
 
@@ -128,10 +120,7 @@ value outside the range SHALL load as the nearest allowed value without discardi
 
 The application SHALL provide a Settings window, opened by a registered command, with a Keyboard
 Shortcuts section. It SHALL list every registered command with where it applies and its current
-key binding, marking any binding that differs from the default. It SHALL let the user record a
-new binding for a command, reset it to its default, or remove it. A change SHALL take effect
-immediately, without a restart, and SHALL be saved to `keymap.toml` in the same format the user
-can edit by hand. Every editor action SHALL be reachable from the keyboard.
+key binding, marking any binding that differs from the default.
 
 #### Scenario: Every command is listed
 
@@ -183,6 +172,87 @@ can edit by hand. Every editor action SHALL be reachable from the keyboard.
 - **THEN** the command has no key until one is recorded, and it stays available in the command palette
 
 #### Scenario: The editor works from the keyboard
+
+- **WHEN** the Keyboard Shortcuts list has focus
+- **THEN** the user can move between rows, start recording, filter, reset and remove without the mouse
+
+### Requirement: Pending shortcut completions are listed
+
+Alongside the pending shortcut indicator, the application SHALL list each key that would complete
+a binding available in the current focus context, with that command's title, ordered as the command
+palette orders commands.
+
+#### Scenario: Completions for a chord
+
+- **WHEN** a panel group has focus and the user presses `cmd-k`
+- **THEN** the status bar lists the arrow keys and `w` with the titles of the split and close-group commands
+
+### Requirement: Pending shortcut indicator clears
+
+The pending shortcut indicator and its list SHALL disappear as soon as the binding completes, the
+pending keys are abandoned (a key that completes no binding, the timeout, or a focus change), or the
+window loses focus.
+
+#### Scenario: Window loses focus
+
+- **WHEN** the indicator shows `⌘K …` and the window loses focus
+- **THEN** the indicator and list disappear
+
+### Requirement: Pending shortcut indicator never takes focus
+
+The pending shortcut indicator SHALL NOT take keyboard focus, and the next key SHALL go to the
+binding exactly as it would without the indicator.
+
+#### Scenario: Next key completes the binding
+
+- **WHEN** the indicator shows `⌘K …` and the user presses `left`
+- **THEN** the split runs exactly as it would with no indicator shown
+
+### Requirement: An unambiguous shortcut prefix never times out
+
+When the keys typed so far are not a complete binding, the application SHALL keep waiting for the
+next key with no timeout.
+
+#### Scenario: Waiting past the timeout
+
+- **WHEN** the user presses `cmd-k`, which is not a binding on its own, and waits longer than the configured timeout
+- **THEN** the indicator is still shown, and pressing `w` still runs Close Group
+
+### Requirement: An out-of-range shortcut timeout loads clamped
+
+A Shortcut timeout in `ui.toml` outside 1 to 10 seconds SHALL load as the nearest allowed value
+without discarding the rest of `ui.toml`.
+
+#### Scenario: Too large a value
+
+- **WHEN** `ui.toml` sets the shortcut timeout to 30
+- **THEN** it loads as 10, and every other preference in the file loads normally
+
+### Requirement: Keybindings can be recorded, reset and removed
+
+The Keyboard Shortcuts section SHALL let the user record a new binding for a command, reset it to
+its default, or remove it.
+
+#### Scenario: Record a new key
+
+- **WHEN** the user starts recording on a command and presses a key combination
+- **THEN** that combination becomes the command's binding
+
+### Requirement: Keybinding changes apply at once and persist
+
+A change made in the Keyboard Shortcuts section SHALL take effect immediately, without a restart,
+and SHALL be saved to `keymap.toml` in the same format the user can edit by hand.
+
+#### Scenario: Reset applies at once
+
+- **WHEN** the user resets a changed command
+- **THEN** it returns to its default binding immediately, without a restart, and in `keymap.toml`
+
+### Requirement: The keybindings editor works from the keyboard
+
+Every Keyboard Shortcuts editor action SHALL be reachable from the keyboard.
+
+#### Scenario: Editing without the mouse
 
 - **WHEN** the Keyboard Shortcuts list has focus
 - **THEN** the user can move between rows, start recording, filter, reset and remove without the mouse

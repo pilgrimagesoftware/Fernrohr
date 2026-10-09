@@ -34,10 +34,7 @@ The application SHALL load Kubernetes contexts from the kubeconfig referenced by
 
 The application SHALL connect to one user-selected context by building a Kubernetes API client from
 that context's cluster, user, and credentials, and SHALL surface connection success or a descriptive
-failure. When the selected context is bound to a tunnel, the application SHALL acquire that tunnel and
-wait for it to be Up before building the client, SHALL build the client against the tunnel's local
-loopback address with the TLS server name pinned to the context's original API server host, and SHALL
-release the tunnel when the last cluster session using it disconnects.
+failure.
 
 #### Scenario: Successful connection
 
@@ -87,9 +84,7 @@ connection is routed through a tunnel, discovery SHALL run over the tunneled cli
 The application SHALL treat a bound tunnel dropping, or an exec credential-plugin `401` requiring
 re-authentication, as a recoverable pause of that connection rather than a disconnect: its watch
 streams SHALL be suspended and then resumed and reconverged once the tunnel returns to Up or
-re-authentication succeeds. While paused, the connection's state, reason, and elapsed time SHALL be
-shown in the status bar of each window with panels for that context, and not inside individual
-panels. Paused panels SHALL stay open and keep showing their last data.
+re-authentication succeeds.
 
 #### Scenario: Tunnel drop pauses then resumes watches
 
@@ -131,3 +126,33 @@ the context, and SHALL be shut down when the last such window disconnects the co
 
 - **WHEN** the last window using `cluster-a` disconnects it or closes
 - **THEN** `cluster-a`'s connection and watches stop, and its tunnel forward is released
+
+### Requirement: Connecting through a bound tunnel
+
+When the selected context is bound to a tunnel, the application SHALL acquire that tunnel and wait
+for it to be Up before building the client, SHALL build the client against the tunnel's local
+loopback address with the TLS server name pinned to the context's original API server host, and
+SHALL release the tunnel when the last cluster session using it disconnects.
+
+#### Scenario: Client built through the tunnel
+
+- **WHEN** the user connects a context bound to a tunnel
+- **THEN** the client is built only once the tunnel is Up, against the tunnel's local loopback
+  address, with the TLS server name pinned to the original API server host
+
+#### Scenario: Tunnel released with its last session
+
+- **WHEN** the last cluster session using a tunnel disconnects
+- **THEN** the application releases that tunnel
+
+### Requirement: A paused connection is shown in the status bar
+
+While a connection is paused, its state, reason, and elapsed time SHALL be shown in the status bar
+of each window with panels for that context, and not inside individual panels. Paused panels SHALL
+stay open and keep showing their last data.
+
+#### Scenario: Panels stay open while paused
+
+- **WHEN** a context's connection pauses while panels in a window show it
+- **THEN** the window's status bar shows the pause's state, reason, and elapsed time, and the panels
+  stay open showing their last data

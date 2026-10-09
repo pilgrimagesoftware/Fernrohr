@@ -9,11 +9,8 @@ context to it, instead of retyping the same namespace list in every panel.
 ### Requirement: Named namespace sets
 
 The user SHALL be able to create a named set of namespaces. Creating a set SHALL prefill the set
-with the namespaces the focused namespaced panel is currently scoped to, so the common case is naming
-what is already on screen. A set SHALL have a non-empty name that is unique among saved sets, and at
-least one namespace; a set with no namespaces would be indistinguishable from "all namespaces" and
-SHALL NOT be saved. The user SHALL be able to cancel creation, leaving no set behind. Sets SHALL
-survive an application restart.
+with the namespaces the focused namespaced panel is currently scoped to, so the common case is
+naming what is already on screen.
 
 #### Scenario: Name the current scope
 
@@ -102,10 +99,7 @@ first, and cancelling SHALL leave the set in place.
 
 A single command SHALL open a picker listing the user's sets in a stable order - the order they were
 created in - with the digit `1` to `9` shown beside the sets in that order, a set's digit never
-changing while the application runs. Sets past the ninth SHALL be listed without a digit. Typing a
-digit SHALL switch to the set showing that digit; arrows and Enter SHALL also move and select;
-Escape SHALL close the picker without changing any panel. The command SHALL be available wherever a
-namespaced panel has focus, and SHALL appear in the command palette and be rebindable by id.
+changing while the application runs. Sets past the ninth SHALL be listed without a digit.
 
 #### Scenario: Two keystrokes to switch
 
@@ -134,10 +128,7 @@ namespaced panel has focus, and SHALL appear in the command palette and be rebin
 Applying a set SHALL set the focused namespaced panel's scope to an include set of exactly that
 set's namespaces, so the panel shows resources in those namespaces and no others. A namespace in the
 set that the connected cluster does not have SHALL simply match nothing, and SHALL NOT be dropped
-from the panel's scope or from the set. The user SHALL also be able to switch the same set onto every
-namespaced panel in the window's active context and make it that context's default, so panels opened
-later in that context start on the set. Switching SHALL NOT affect panels backed by a different
-context, and cluster-scoped panels SHALL be unchanged by either action.
+from the panel's scope or from the set.
 
 #### Scenario: Switch the focused panel
 
@@ -187,3 +178,67 @@ a key.
 
 - **WHEN** the user runs "Switch Namespace Set…" from the command palette instead of its key
 - **THEN** the same picker opens
+
+### Requirement: A namespace set needs a unique name and a namespace
+
+A namespace set SHALL have a non-empty name that is unique among saved sets, and at least one
+namespace; a set with no namespaces would be indistinguishable from "all namespaces" and SHALL NOT
+be saved.
+
+#### Scenario: A taken name is refused
+
+- **WHEN** a set named `team-workloads` exists and the user saves another set with that name
+- **THEN** the second set is not saved and the editor says the name is taken
+
+### Requirement: Cancelling set creation leaves nothing
+
+The user SHALL be able to cancel creating a namespace set, leaving no set behind.
+
+#### Scenario: Dismissing the editor
+
+- **WHEN** the user starts creating a set and dismisses the editor without saving
+- **THEN** no new set exists
+
+### Requirement: Namespace sets survive a restart
+
+Namespace sets SHALL survive an application restart.
+
+#### Scenario: A saved set after a restart
+
+- **WHEN** the user saves a set and then restarts the application
+- **THEN** the set is listed among the user's sets
+
+### Requirement: Selecting from the namespace set picker
+
+In the namespace set picker, typing a digit SHALL switch to the set showing that digit; arrows and
+Enter SHALL also move and select; Escape SHALL close the picker without changing any panel.
+
+#### Scenario: Arrows and Enter select a set
+
+- **WHEN** the picker is open and the user moves the highlight to a set with the arrows and presses
+  Enter
+- **THEN** the focused panel is switched to that set
+
+### Requirement: The namespace set picker command is available to namespaced panels
+
+The namespace set quick selection command SHALL be available wherever a namespaced panel has focus,
+and SHALL appear in the command palette and be rebindable by id.
+
+#### Scenario: Listed in the palette
+
+- **WHEN** a namespaced panel has focus and the user opens the command palette
+- **THEN** the quick selection command is listed, and its key can be rebound by the command's id
+
+### Requirement: Switching a context to a namespace set
+
+The user SHALL also be able to switch a namespace set onto every namespaced panel in the window's
+active context and make it that context's default, so panels opened later in that context start on
+the set. Switching SHALL NOT affect panels backed by a different context, and cluster-scoped panels
+SHALL be unchanged by applying a set to the focused panel or to the context.
+
+#### Scenario: A context's panels and its later panels
+
+- **WHEN** two Pods panels are open against one context and the user switches `team-workloads` onto
+  that context
+- **THEN** both panels show Pods from the set's namespaces, and a Pods panel opened later in that
+  context starts scoped to the set

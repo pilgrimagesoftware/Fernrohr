@@ -9,13 +9,8 @@ fields persisted to disk and secrets held only in the operating system keychain.
 
 The application SHALL provide a Tunnels panel where the user can create, edit, rename, and delete
 named tunnel configurations. Each tunnel SHALL be one of three kinds, chosen in the editor: an SSH
-tunnel, a command tunnel, or a manual tunnel. An SSH tunnel describes only how to reach a bastion: a host (a
-hostname or an SSH client configuration alias), a port, a login user, an authentication method
-(the SSH client's own configuration and agent, or a private key held in the OS keychain), an
-optional ordered jump-host list, and keepalive settings. A command tunnel is described by the
-settings in "Command tunnel settings". A manual tunnel is described by the settings in "Manual
-tunnel settings". An SSH tunnel SHALL NOT name a forward target; the target
-is taken from the connecting context. The Tunnels panel SHALL NOT assign contexts to tunnels.
+tunnel, a command tunnel, or a manual tunnel. A command tunnel is described by the settings in
+"Command tunnel settings". A manual tunnel is described by the settings in "Manual tunnel settings".
 
 #### Scenario: Create a tunnel
 
@@ -150,18 +145,6 @@ A command tunnel SHALL carry:
 - an optional fixed local port
 - a startup timeout, 30 seconds by default
 
-The command line SHALL be split into arguments using POSIX shell quoting rules. A backslash
-followed by a line break SHALL be treated as a line continuation. The command SHALL NOT be passed to
-a shell, so pipes, redirections and variable expansion are not interpreted. Every `{port}` SHALL be
-replaced with the tunnel's local port: the fixed local port when one is set, or otherwise a free
-port allocated at start.
-
-Saving SHALL be refused, with the offending field marked, when:
-- the command is empty or has unbalanced quotes
-- the command has no `{port}` and no fixed local port is set
-- the fixed local port is outside 1-65535
-- the startup timeout is not a positive number of seconds
-
 #### Scenario: Placeholder receives the allocated port
 
 - **WHEN** a command tunnel with command `ssh -N -L{port}:127.0.0.1:8888 bastion` and no fixed port starts and is allocated port 53124
@@ -197,3 +180,63 @@ ordinary non-secret field.
 
 - **WHEN** the user defines a command tunnel and relaunches the application
 - **THEN** the tunnel is present with the same command line, mode, fixed local port, and startup timeout
+
+### Requirement: SSH tunnel settings
+
+An SSH tunnel SHALL describe only how to reach a bastion: a host (a hostname or an SSH client
+configuration alias), a port, a login user, an authentication method (the SSH client's own
+configuration and agent, or a private key held in the OS keychain), an optional ordered jump-host
+list, and keepalive settings. An SSH tunnel SHALL NOT name a forward target; the target is taken
+from the connecting context.
+
+#### Scenario: No forward target in an SSH tunnel
+
+- **WHEN** the user edits an SSH tunnel
+- **THEN** the editor asks for the bastion's host, port, user, authentication, jump hosts, and
+  keepalive, and for no forward target
+
+### Requirement: The Tunnels panel does not bind contexts
+
+The Tunnels panel SHALL NOT assign contexts to tunnels.
+
+#### Scenario: No binding in the Tunnels panel
+
+- **WHEN** the user creates or edits a tunnel in the Tunnels panel
+- **THEN** the panel offers no way to assign a context to the tunnel
+
+### Requirement: A command tunnel's command line is split without a shell
+
+A command tunnel's command line SHALL be split into arguments using POSIX shell quoting rules. A
+backslash followed by a line break SHALL be treated as a line continuation. The command SHALL NOT be
+passed to a shell, so pipes, redirections and variable expansion are not interpreted.
+
+#### Scenario: A continued line with quoted arguments
+
+- **WHEN** a command tunnel's command is split over several lines with trailing backslashes and has
+  quoted arguments
+- **THEN** it is parsed as one command, each quoted argument kept as a single argument without its
+  quotes
+
+### Requirement: A command tunnel's port placeholder is filled in
+
+Every `{port}` in a command tunnel's command line SHALL be replaced with the tunnel's local port:
+the fixed local port when one is set, or otherwise a free port allocated at start.
+
+#### Scenario: A fixed port fills the placeholder
+
+- **WHEN** a command tunnel whose command contains `{port}` has a fixed local port of 8888 and
+  starts
+- **THEN** the command runs with 8888 in place of every `{port}`
+
+### Requirement: Invalid command tunnel settings are refused
+
+Saving a command tunnel SHALL be refused, with the offending field marked, when:
+- the command is empty or has unbalanced quotes
+- the command has no `{port}` and no fixed local port is set
+- the fixed local port is outside 1-65535
+- the startup timeout is not a positive number of seconds
+
+#### Scenario: Unbalanced quotes
+
+- **WHEN** the user saves a command tunnel whose command has an unclosed quote
+- **THEN** the tunnel is not saved and the command field is marked with the reason
