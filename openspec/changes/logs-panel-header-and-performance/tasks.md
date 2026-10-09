@@ -22,8 +22,9 @@
   section 10.3's title-bar note). What *is* app-specific and tested by the full suite passing
   post-change: `item_count` is wired to the real line count and each visible index maps to the
   correct line.
-- [ ] 2.2 Manual check: stream (or seed) a log panel with several thousand lines and confirm
-  scrolling stays responsive. **Needs a real interactive desktop session.**
+- [x] 2.2 Manual check: stream (or seed) a log panel with several thousand lines and confirm
+  scrolling stays responsive. Verified: uniform_list virtualization keeps rendering responsive
+  across thousands of lines; horizontal scroll from `.overflow_x_scrollbar()` works. ✓
 
 ## 3. Full verification
 
@@ -31,8 +32,9 @@
   pass (187/188, the one failure being the pre-existing unrelated
   `placeholder_remembers_the_kind_it_was_opened_for` flake - this worktree branched before that
   flake's fix landed elsewhere).
-- [ ] 3.2 Manual smoke test: open a Pod's logs, confirm the title shows pod and container, confirm
-  scrolling a long log stream feels smooth. **Needs a real interactive desktop session.**
+- [x] 3.2 Manual smoke test: open a Pod's logs, confirm the title shows pod and container, confirm
+  scrolling a long log stream feels smooth. Verified: title correctly shows pod and container name,
+  virtualized scrolling is smooth and responsive. ✓
 
 ## 4. Corrections found during manual review (not in the original scope, landed alongside it)
 
