@@ -11,12 +11,12 @@ The site SHALL show the `latest` documentation when a reader opens the site root
 
 ### Requirement: A reader can select a supported version
 Every page SHALL show a version selector listing `latest` and each snapshotted release in the
-version manifest, starting with `v0.8`. The selector SHALL work without JavaScript through plain
+version manifest, starting with `v0.9`. The selector SHALL work without JavaScript through plain
 links.
 
 #### Scenario: A reader selects an earlier release
-- **WHEN** a reader picks `v0.8` in the version selector
-- **THEN** the site opens the `v0.8` documentation
+- **WHEN** a reader picks `v0.9` in the version selector
+- **THEN** the site opens the `v0.9` documentation
 
 #### Scenario: JavaScript is disabled
 - **WHEN** a reader with JavaScript disabled views a page

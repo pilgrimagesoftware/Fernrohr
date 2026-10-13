@@ -15,7 +15,7 @@ Tracks pilgrimagesoftware/Fernrohr-App#239.
 - Add a Jekyll documentation site rooted at `docs/site` in the App repo. GitHub Actions publishes it
   to GitHub Pages on pushes to `master`, the release branch. `develop` stays the default and
   integration branch and doesn't publish.
-- Version the documentation: `latest` is the default, and a `v0.8` release snapshot can be picked
+- Version the documentation: `latest` is the default, and a `v0.9` release snapshot can be picked
   from a version selector.
 - Add authoring rules for agents (`docs/site/AGENTS.md`) covering structure, front matter, Markdown,
   Liquid, assets, snapshots and publishing.
@@ -44,7 +44,7 @@ None.
 ## Impact
 
 - App repo: new `docs/site/` (Jekyll config, Gemfile and lockfile, layouts, includes, stylesheet,
-  icon asset, `latest/` and `v0.8/` trees, `AGENTS.md`, `PUBLISHING.md`) and
+  icon asset, `latest/` and `v0.9/` trees, `AGENTS.md`, `PUBLISHING.md`) and
   `.github/workflows/docs-pages.yml`. `AGENTS.md` gains a Documentation section.
 - Meta repo: `AGENTS.md` gains a Documentation section. `openspec/config.yaml` gains a `rules:`
   block. `context:` and `docs/architecture.md` are not touched.

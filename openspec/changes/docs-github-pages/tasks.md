@@ -19,15 +19,15 @@
 
 ## 2. Versioned navigation
 
-- [ ] 2.1 Add `_data/versions.yml` with `latest` and `v0.8`, each with `id`, `label`, `path`,
-  `pages` and `nav`, plus a `v0.8/index.md` landing page. Verify: the manifest lists both versions
-  in display order and the build emits `/latest/` and `/v0.8/`.
+- [ ] 2.1 Add `_data/versions.yml` with `latest` and `v0.9`, each with `id`, `label`, `path`,
+  `pages` and `nav`, plus a `v0.9/index.md` landing page. Verify: the manifest lists both versions
+  in display order and the build emits `/latest/` and `/v0.9/`.
 - [ ] 2.2 Add the root `index.html` that redirects to `/latest/`, and render the sidebar from the
   selected version's `nav` entries. Verify: opening the built root shows the latest documentation.
 - [ ] 2.3 Add `_includes/version-selector.html` with a `<select>` and `<noscript>` links. Verify: a
-  reader can reach `v0.8` both with and without JavaScript.
+  reader can reach `v0.9` both with and without JavaScript.
 - [ ] 2.4 Map the current page into the selected version, falling back to that version's landing
-  page. Verify: switching from a page missing from `v0.8` lands on `/v0.8/` with `v0.8` shown as
+  page. Verify: switching from a page missing from `v0.9` lands on `/v0.9/` with `v0.9` shown as
   selected.
 
 ## 3. Authoring rules and agent instructions
@@ -58,12 +58,12 @@
   `workflow_dispatch`. Verify: a push to `develop` doesn't start the workflow, and deploy `needs`
   build, so a failed build never deploys.
 - [ ] 4.3 Set the repository's Pages source to GitHub Actions, then run the workflow by
-  `workflow_dispatch` on `master` after merge. Verify: the root, `/latest/` and `/v0.8/` URLs
+  `workflow_dispatch` on `master` after merge. Verify: the root, `/latest/` and `/v0.9/` URLs
   serve.
 
 ## 5. Validation
 
-- [ ] 5.1 Build locally and check internal links across `latest` and `v0.8`. Verify: no broken
+- [ ] 5.1 Build locally and check internal links across `latest` and `v0.9`. Verify: no broken
   version-selector or navigation target.
 - [ ] 5.2 Compare the built site with the running app in light and dark mode. Verify: the accent,
   surfaces, fonts and icon match their sources.

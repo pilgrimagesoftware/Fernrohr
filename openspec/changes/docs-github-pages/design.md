@@ -31,7 +31,7 @@ follows the same shape and adapts it to Fernrohr's branches, release line and vi
 - A page-for-page match between versions when an older release lacks a newer page.
 - Preview sites for pull requests.
 - Writing the capability pages. `backfill-documentation` (Fernrohr-App#240) does that. This change
-  seeds only an overview and the `v0.8` landing page.
+  seeds only an overview and the `v0.9` landing page.
 
 ## Decisions
 
@@ -53,14 +53,13 @@ and can't gate deployment on a successful build, so it was rejected.
 
 ### Versions are static source trees with a manifest
 
-`docs/site/_data/versions.yml` lists the versions in display order: `latest` first, then `v0.8`.
+`docs/site/_data/versions.yml` lists the versions in display order: `latest` first, then `v0.9`.
 Each has an `id`, `label`, `path`, `pages` and `nav`. The build emits `/latest/...` and
-`/v0.8/...`, and the root page redirects to `/latest/`. When a release is cut, its documentation
+`/v0.9/...`, and the root page redirects to `/latest/`. When a release is cut, its documentation
 is snapshotted into a new `vX.Y/` directory and added to the manifest. Historical snapshots are
 edited only to correct that release's documentation.
 
-`v0.8` is the first snapshot because it is the release the documentation issues were filed
-against. It starts as a landing page and gains pages only if someone backfills them.
+`v0.9` is the first snapshot because it is the latest release when the site launches. It starts as a landing page and gains pages only if someone backfills them.
 
 Generating snapshots from Git tags at build time was rejected. It means checking out old trees in
 the workflow and makes historical edits impossible to review.
@@ -134,11 +133,11 @@ placeholders.
 ## Migration Plan
 
 1. Add the Jekyll source tree, theme layer, layouts, includes, version manifest, `latest` seed and
-   `v0.8` snapshot.
+   `v0.9` snapshot.
 2. Add `docs/site/AGENTS.md`, `docs/site/PUBLISHING.md`, and the Documentation rules in both
    `AGENTS.md` files and `openspec/config.yaml`.
 3. Add the Pages workflow and set the repository's Pages source to GitHub Actions.
-4. After the next merge to `master`, verify the root opens `latest`, `v0.8` can be selected, and a
+4. After the next merge to `master`, verify the root opens `latest`, `v0.9` can be selected, and a
    failing build leaves the live deployment intact.
 5. Roll back by reverting the publishing commit, or by re-running the workflow from the last good
    commit.

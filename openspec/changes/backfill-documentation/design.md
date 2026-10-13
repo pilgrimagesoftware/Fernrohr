@@ -28,7 +28,7 @@ the same behavior in reader-facing terms, and they are the starting text for the
   change too often to publish verbatim.
 - Documenting internal structure (the tokio/GPUI bridge, watcher refcounting, crate layout), or
   anything a person running the packaged app can't observe. That stays in `docs/architecture.md`.
-- Backfilling the `v0.8` snapshot beyond its landing page.
+- Backfilling the `v0.9` snapshot beyond its landing page.
 - Documenting in-flight changes. A change that is still under `openspec/changes/` documents itself
   through the `docs/site` task that the project rules now require.
 

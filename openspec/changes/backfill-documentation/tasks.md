@@ -64,6 +64,6 @@
 - [ ] 5.2 Build with `bundle exec jekyll build` from `docs/site`. Verify: no Liquid or Markdown
   errors.
 - [ ] 5.3 Open every path in `_data/versions.yml` in the generated output. Verify: no navigation
-  target is missing, and switching to `v0.8` from a guide lands on the `v0.8` landing page.
+  target is missing, and switching to `v0.9` from a guide lands on the `v0.9` landing page.
 - [ ] 5.4 Search the new pages for real cluster or context names, IPs, bastions and cloud project
   IDs. Verify: only placeholders appear.
