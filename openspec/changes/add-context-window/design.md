@@ -45,7 +45,13 @@ shows the full-window picker, which this change leaves alone.
    If the workspace window closes first, a later Connected finds the opener gone and the Add
    Context window just closes.
 
-5. **The card fills its window up to a cap.** The card becomes `w_full` with the old 480px as
+5. **Escape is a registered command.** `add_context.close`, bound to Escape in the window's own
+   `AddContextWindow` key context, so a deeper context (an open tunnel selector) still takes
+   Escape first, and the palette offers it.
+
+6. **The row shrinks, and the card fills its window up to a cap.** The row's missing zero
+   minimum width was the clipping bug: a long name never ellipsized, so the selector was pushed
+   past the card. The row now has `min_w_0`. The card becomes `w_full` with the old 480px as
    its minimum and a maximum of 800px, inside a column padded by the existing side margin. The
    full-window picker gets the same room for long names. Names still ellipsize with a hover
    tooltip; the selector is `flex_shrink_0`, so it always stays inside the card.
@@ -56,5 +62,5 @@ shows the full-window picker, which this change leaves alone.
   window is resizable and opens wider than the 480px card.
 - [The excluded list is a snapshot from when the window opened] → `add_context` already ignores a
   context the window already uses, so a stale row cannot add a duplicate.
-- [Two windows to keep track of] → the Add Context window names its opener in its title and
+- [Two windows to keep track of] → the Add Context window brings its opener to the front and
   closes itself on success.
