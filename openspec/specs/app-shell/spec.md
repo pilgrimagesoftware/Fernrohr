@@ -228,8 +228,8 @@ panel for it, and make it the Resource panel's selected cluster.
 #### Scenario: Add fails
 
 - **WHEN** the chosen context cannot connect
-- **THEN** the add popover shows the connection failure, no capsule is added for that context, and
-  no panel is opened for it
+- **THEN** the Add Context window shows the connection failure, no capsule is added for that
+  context, and no panel is opened for it
 
 ### Requirement: Disconnect a context from a window
 
@@ -631,3 +631,32 @@ order.
 
 - **WHEN** keyboard focus is in the Resource panel, the dock has panels, and the user invokes "next tab"
 - **THEN** the first group in panel-focus order switches to its next tab
+
+### Requirement: Add Context opens a non-modal window
+
+In a window that already has a context, the add control SHALL open the context list in a separate
+Add Context window that does not block the window it was opened from. Each workspace window SHALL
+have at most one Add Context window; opening it again SHALL bring the open one to the front. Once
+the chosen context connects, the Add Context window SHALL close.
+
+#### Scenario: The workspace stays usable
+
+- **WHEN** the user opens Add Context in a window using `cluster-a` and a connection to `cluster-b`
+  is still in progress
+- **THEN** the user can still focus, scroll, and use `cluster-a`'s panels in the workspace window
+
+#### Scenario: Opening it again raises the open one
+
+- **WHEN** an Add Context window is already open for a workspace window and the user chooses Add
+  Context again in that workspace window
+- **THEN** no second Add Context window opens, and the open one comes to the front
+
+#### Scenario: A successful add closes the window
+
+- **WHEN** the context chosen in the Add Context window connects
+- **THEN** the context is added to the window it was opened from and the Add Context window closes
+
+#### Scenario: Closing it adds nothing
+
+- **WHEN** the user closes the Add Context window without connecting a context
+- **THEN** the workspace window's contexts are unchanged
