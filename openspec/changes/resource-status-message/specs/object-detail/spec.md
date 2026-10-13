@@ -92,6 +92,26 @@ instead; any other kind with neither a dedicated section nor conditions SHALL sh
   `status.conditions`
 - **THEN** it shows metadata only, unchanged from today
 
+#### Scenario: A Node lists the pods scheduled to it
+- **WHEN** a Node's panel is open in the structured view
+- **THEN** a region below its sections lists, live and across every namespace, every pod whose
+  `spec.nodeName` matches that node, as the Pods panel's own table scoped to the node, sharing
+  the context's pod watch rather than starting another
+
+#### Scenario: A node's pod is opened from the keyboard or the mouse
+- **WHEN** a pod row in a Node's pods region is selected
+- **THEN** Enter (`object_detail.node_pods.open_detail`) or `d` opens that pod's detail panel,
+  `l` its logs, and `/` searches the rows, as in the Pods panel
+
+#### Scenario: A node with no pods scheduled
+- **WHEN** a Node's panel is open for a node with no pods scheduled to it
+- **THEN** the region says no pods are scheduled on the node, rather than being omitted
+
+#### Scenario: The pod list can't be retrieved
+- **WHEN** the user may read the Node but the pod watch can't connect or is refused
+- **THEN** the Node still loads, and the region shows the Pods panel's failed state rather than
+  erroring the whole panel
+
 ### Requirement: Values can be copied
 The pod detail and object detail panels SHALL offer a Copy Resource Name command (palette and key)
 for the panel's object, and a copy control on copyable values - container images, ConfigMap keys and
