@@ -2,16 +2,16 @@
 
 ## 1. Navigation and landing page
 
-- [ ] 1.1 Add every new page to the `latest` version's `pages` and `nav` in
+- [x] 1.1 Add every new page to the `latest` version's `pages` and `nav` in
   `docs/site/_data/versions.yml`, in reading order: install, clusters, windows and panels,
   resources, details, logs and shells, tunnels and forwards, agents, settings, then the reference
   pages. Verify: `bundle exec jekyll build` renders every entry in the sidebar.
-- [ ] 1.2 Rewrite `docs/site/latest/index.md` to link every guide and reference page, grouped as
+- [x] 1.2 Rewrite `docs/site/latest/index.md` to link every guide and reference page, grouped as
   getting started, using Fernrohr, and reference. Verify: no link on the page is a dead path.
 
 ## 2. Installation
 
-- [ ] 2.1 Write `docs/site/latest/install.md` from `release-packaging` and the README's Running the
+- [x] 2.1 Write `docs/site/latest/install.md` from `release-packaging` and the README's Running the
   App and Installing on Linux sections. Cover the macOS `.dmg` (Apple silicon) with the quarantine
   workaround (`xattr -d com.apple.quarantine`, Open Anyway, `codesign` for older builds) and the
   Keychain prompt. Cover the Linux `.deb` and `.rpm` with install commands and declared dependencies,
@@ -21,49 +21,49 @@
 
 ## 3. Guides
 
-- [ ] 3.1 Write `clusters.md` from `cluster-connection` and `cluster-picker`. Verify: picker and
+- [x] 3.1 Write `clusters.md` from `cluster-connection` and `cluster-picker`. Verify: picker and
   connection states match those specs.
-- [ ] 3.2 Write `windows-panels.md` from `app-shell`, `application-menu` and `saved-panel-layouts`.
+- [x] 3.2 Write `windows-panels.md` from `app-shell`, `application-menu` and `saved-panel-layouts`.
   Verify: window, panel, tab and layout actions match those specs.
-- [ ] 3.3 Write `resources.md` from `resource-browser`, `resource-group-navigation`,
+- [x] 3.3 Write `resources.md` from `resource-browser`, `resource-group-navigation`,
   `resource-icons`, `namespace-sets` and `events-browser`. Verify: list, navigation and namespace
   behavior match those specs.
-- [ ] 3.4 Write `details.md` from `object-detail`, `pod-detail` and `resource-links`. Verify: the
+- [x] 3.4 Write `details.md` from `object-detail`, `pod-detail` and `resource-links`. Verify: the
   detail views and link-following match those specs.
-- [ ] 3.5 Write `logs-shells.md` from `pod-logs`, `exec-terminal` and the README Shells section.
+- [x] 3.5 Write `logs-shells.md` from `pod-logs`, `exec-terminal` and the README Shells section.
   Verify: log follow and scrollback, plus shell keys and exit behavior, match those specs.
-- [ ] 3.6 Write `tunnels-forwards.md` from `tunnel-config`, `manual-tunnel`,
+- [x] 3.6 Write `tunnels-forwards.md` from `tunnel-config`, `manual-tunnel`,
   `context-tunnel-binding`, `managed-forward`, `port-forward-indicators` and the README Tunnels
   section, using placeholder hosts and contexts only. Verify: tunnel kinds, binding and forward
   indicators match those specs.
-- [ ] 3.7 Write `agents.md` from `agent-mcp` and the README Agents section, covering setup, what an
+- [x] 3.7 Write `agents.md` from `agent-mcp` and the README Agents section, covering setup, what an
   agent can reach, and approving actions and connections. Verify: scope and approval rules match the
   spec.
-- [ ] 3.8 Write `settings.md` from `typography`, `visual-language`, `desktop-notifications`,
+- [x] 3.8 Write `settings.md` from `typography`, `visual-language`, `desktop-notifications`,
   `about-window` and `report-issue`. Verify: each setting and window described exists and behaves
   as specified.
-- [ ] 3.9 End every guide with a note naming its source specs. Verify: every spec in
+- [x] 3.9 End every guide with a note naming its source specs. Verify: every spec in
   `openspec/specs/` is named by at least one page.
 
 ## 4. Reference
 
-- [ ] 4.1 Write `reference/keybindings.md` from `command-system` and every command registered in
+- [x] 4.1 Write `reference/keybindings.md` from `command-system` and every command registered in
   `app/src/command.rs` (title, default binding, `KeyContext`, menu location), plus chords, the
   shortcut timeout and `keymap.toml` overrides from the README Keyboard section. Verify: the list
   matches the registry one-for-one.
-- [ ] 4.2 Write `reference/mcp-tools.md` from `agent-mcp` and every tool in `app/src/mcp/tools.rs`,
+- [x] 4.2 Write `reference/mcp-tools.md` from `agent-mcp` and every tool in `app/src/mcp/tools.rs`,
   with parameters, whether it reads, acts after approval or changes the view, and what it returns.
   Verify: the list matches the registry one-for-one. Re-run 3.9 against any spec archived since
   this proposal.
 
 ## 5. README and validation
 
-- [ ] 5.1 Trim the App `README.md` to a summary, contributor build instructions, and links to the
+- [x] 5.1 Trim the App `README.md` to a summary, contributor build instructions, and links to the
   published site. Remove the sections now on the site. Verify: no installation, keyboard, shell,
   tunnel or agent content remains duplicated.
-- [ ] 5.2 Build with `bundle exec jekyll build` from `docs/site`. Verify: no Liquid or Markdown
+- [x] 5.2 Build with `bundle exec jekyll build` from `docs/site`. Verify: no Liquid or Markdown
   errors.
-- [ ] 5.3 Open every path in `_data/versions.yml` in the generated output. Verify: no navigation
+- [x] 5.3 Open every path in `_data/versions.yml` in the generated output. Verify: no navigation
   target is missing, and switching to `v0.9` from a guide lands on the `v0.9` landing page.
-- [ ] 5.4 Search the new pages for real cluster or context names, IPs, bastions and cloud project
+- [x] 5.4 Search the new pages for real cluster or context names, IPs, bastions and cloud project
   IDs. Verify: only placeholders appear.
