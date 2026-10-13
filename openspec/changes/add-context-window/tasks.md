@@ -22,3 +22,15 @@
 
 - [x] 3.1 Update `docs/site/latest/clusters.md` "Add another context to a window"
 - [x] 3.2 List `add_context.close` in `docs/site/latest/reference/keybindings.md`
+
+## 4. Manual in-app checks
+
+- [ ] 4.1 Panels in the opener stay usable while a slow or tunnelled context connects in the Add
+      a Context window
+- [ ] 4.2 A connected context lands in the opener, which comes to the front, and the Add a
+      Context window closes
+- [ ] 4.3 A real long gcloud/aws context name ellipsizes, shows in full on hover, keeps a working
+      tunnel selector, and shows more when the window is widened
+- [ ] 4.4 Escape with the tunnel selector's popover open closes only the popover
+- [ ] 4.5 Closing the workspace window while its Add a Context window is open, then connecting,
+      breaks nothing
