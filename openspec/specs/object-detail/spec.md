@@ -39,9 +39,7 @@ kind-specific sections name, as `resource-links` references.
 The object panel SHALL show structured sections for Node, ConfigMap, Secret,
 PersistentVolumeClaim, ServiceAccount, ReplicaSet, Deployment, StatefulSet, DaemonSet, Job,
 CronJob, Service, Ingress, Endpoints, EndpointSlice, NetworkPolicy, Namespace, PersistentVolume,
-StorageClass, Role, ClusterRole, RoleBinding, ClusterRoleBinding and Event objects. Any other kind
-whose object carries a non-empty `status.conditions` array SHALL show a generic Status section
-instead; any other kind with neither a dedicated section nor conditions SHALL show metadata only.
+StorageClass, Role, ClusterRole, RoleBinding, ClusterRoleBinding and Event objects.
 
 #### Scenario: A Node shows its capacity and conditions
 - **WHEN** a Node's panel is open
@@ -115,16 +113,6 @@ instead; any other kind with neither a dedicated section nor conditions SHALL sh
   times, reporting component and instance, action, and its involved object and any related object as
   references, reading `events.k8s.io/v1` fields where the legacy ones are empty
 
-#### Scenario: A Kustomization with no dedicated section gets a generic Status section
-- **WHEN** a Kustomization's panel is open and its CRD has no kind-specific section defined
-- **THEN** it shows a Status section with its derived message and its full conditions list, rather
-  than metadata only
-
-#### Scenario: A CRD with no conditions keeps metadata only
-- **WHEN** a CRD object's panel is open and it has neither a kind-specific section nor
-  `status.conditions`
-- **THEN** it shows metadata only, unchanged from today
-
 #### Scenario: A Node lists the pods scheduled to it
 - **WHEN** a Node's panel is open in the structured view
 - **THEN** a region below its sections lists, live and across every namespace, every pod whose
@@ -144,6 +132,20 @@ instead; any other kind with neither a dedicated section nor conditions SHALL sh
 - **WHEN** the user may read the Node but the pod watch can't connect or is refused
 - **THEN** the Node still loads, and the region shows the Pods panel's failed state rather than
   erroring the whole panel
+
+### Requirement: A generic Status section for other kinds
+Any kind without dedicated sections whose object carries a non-empty `status.conditions` array
+SHALL show a generic Status section; any other kind with neither SHALL show metadata only.
+
+#### Scenario: A Kustomization with no dedicated section gets a generic Status section
+- **WHEN** a Kustomization's panel is open and its CRD has no kind-specific section defined
+- **THEN** it shows a Status section with its derived message and its full conditions list, rather
+  than metadata only
+
+#### Scenario: A CRD with no conditions keeps metadata only
+- **WHEN** a CRD object's panel is open and it has neither a kind-specific section nor
+  `status.conditions`
+- **THEN** it shows metadata only, unchanged from today
 
 ### Requirement: Secret values are hidden until revealed
 The object panel SHALL NOT display a Secret value in its YAML view. In its structured view it SHALL

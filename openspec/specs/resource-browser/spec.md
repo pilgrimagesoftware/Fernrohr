@@ -312,37 +312,10 @@ and full keyboard operation.
 
 ### Requirement: List columns follow the kind
 
-Every list panel SHALL show Name and Age, and Namespace for a namespaced kind. A list of one of
-the built-in kinds below SHALL also show that kind's columns, matching what `kubectl get` shows by
-default:
-
-| Kind | Additional columns |
-|---|---|
-| Deployment | Ready (ready/desired), Up-to-date, Available |
-| ReplicaSet | Desired, Current, Ready |
-| StatefulSet | Ready (ready/desired) |
-| DaemonSet | Desired, Current, Ready, Up-to-date, Available |
-| Job | Status, Completions, Duration |
-| CronJob | Schedule, Suspend, Active, Last schedule |
-| ConfigMap | Data (key count) |
-| Secret | Type, Data (key count) |
-| Service | Type, Cluster IP, External IP, Ports |
-| Ingress | Class, Hosts, Address, Ports |
-| Endpoints | Endpoints |
-| EndpointSlice | Address type, Ports, Endpoints |
-| NetworkPolicy | Pod selector |
-| PersistentVolumeClaim | Status, Volume, Capacity, Access modes, Storage class |
-| PersistentVolume | Capacity, Access modes, Reclaim policy, Status, Claim, Storage class |
-| StorageClass | Provisioner, Reclaim policy, Volume binding mode |
-| Node | Status, Roles, Version, Internal IP |
-| Namespace | Status |
-| ServiceAccount | Secrets (count) |
-| RoleBinding, ClusterRoleBinding | Role, Subjects |
-
-Any other kind SHALL show only the base columns, unless the panel has observed that kind's objects
-carrying a `status.conditions` array, in which case it SHALL also show a Message column (see
-"A condition-derived Message column for kinds outside the table" below). Pods keep the columns
-their existing requirement defines.
+Every list panel SHALL show Name and Age, and Namespace for a namespaced kind. A kind with no
+kind-specific columns SHALL show only these base columns, plus the condition-derived Ready and
+Message columns once its objects report conditions. Pods keep the columns their existing
+requirement defines.
 
 #### Scenario: A Services list shows service columns
 
