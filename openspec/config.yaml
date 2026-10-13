@@ -90,3 +90,14 @@ context: |
 #     apply:
 #       guidance:
 #         - Keep test summaries concise
+
+rules:
+  proposal:
+    - A user-facing change lists the docs/site pages it adds or updates under Impact.
+  tasks:
+    - Every user-facing change includes a task to write or update its pages under the App repo's
+      docs/site/ (see App/docs/site/AGENTS.md), with concise, realistic examples that use
+      placeholders, never real cluster names, hosts, IPs or bastions.
+    - A bug fix that changes documented behavior includes a task to update the affected docs/site
+      page.
+    - Adding a command or an MCP tool includes updating the matching docs/site reference page.
