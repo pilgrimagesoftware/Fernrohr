@@ -27,6 +27,6 @@
 
 - [x] 3.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
   pass.
-- [ ] 3.2 Manual smoke test: stream a busy pod's logs, scroll up and confirm Follow shows off,
+- [x] 3.2 Manual smoke test: stream a busy pod's logs, scroll up and confirm Follow shows off,
   click Follow and confirm it shows on and the view jumps to the newest line at once, scroll up
   again and confirm it flips off, click Follow off and confirm new lines no longer move the view.
