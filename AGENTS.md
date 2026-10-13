@@ -30,3 +30,16 @@ still needs one commit per coherent step, not one per task.
 Work one section at a time. Sections 1-11 of `cluster-picker-and-navigation` are done (8 and 9
 share `8-resource-panel`, since every file section 9 touched was also touched by section 8); the
 next branch continues from section 12.
+
+## Documentation
+
+User documentation is the Jekyll site in the App repo's `docs/site/`, published to GitHub Pages
+from `master`. `App/docs/site/AGENTS.md` has the authoring rules.
+
+- A new user-facing feature ships with its documentation in the same change, and a bug fix that
+  changes documented behavior updates the affected page. A proposal for a user-facing change
+  includes a `docs/site` task in its `tasks.md`. `openspec/config.yaml`'s `rules:` enforce this.
+- Documentation describes what the packaged app does, through the keyboard and the mouse. Internals
+  stay in `docs/architecture.md`.
+- Examples use placeholders only, never real cluster or context names, hosts, IPs, bastions or
+  cloud project IDs.
