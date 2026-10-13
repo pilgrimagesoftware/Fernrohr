@@ -70,6 +70,33 @@ Editing a set SHALL NOT change the scope of any panel already switched to it.
 - **THEN** the editor lists `team-c` as being in the set, marked as absent from this cluster, and
   saving still succeeds
 
+#### Scenario: Shift-click selects a range
+
+- **WHEN** the user clicks `team-a` in the editor's namespace list, then shift-clicks `team-f`
+  three rows below it
+- **THEN** every namespace between `team-a` and `team-f`, inclusive, is added to the set
+- **AND** a namespace already in the set within that range stays in the set
+
+#### Scenario: Shift-click ranges apply to removal too
+
+- **WHEN** every namespace from `team-a` to `team-f` is in the set, the user clicks `team-a`, then
+  shift-clicks `team-f`
+- **THEN** every namespace between `team-a` and `team-f`, inclusive, is removed from the set
+
+#### Scenario: Shift-click with no prior click selects from the top
+
+- **WHEN** the user shift-clicks a row with no earlier click in the list this time the editor was
+  opened
+- **THEN** every namespace from the first listed row to the shift-clicked row, inclusive, is added
+  to the set
+
+#### Scenario: A mixed range follows the anchor row's action
+
+- **WHEN** `team-a` is in the set and `team-b` through `team-f` are not, and the user clicks
+  `team-a` (removing it), then shift-clicks `team-f`
+- **THEN** every namespace from `team-a` to `team-f` is removed from the set, matching the click
+  on `team-a` rather than each row's own prior state
+
 ### Requirement: Removing a namespace set
 
 The user SHALL be able to delete a saved set. Deleting a set SHALL remove it from the user's saved
