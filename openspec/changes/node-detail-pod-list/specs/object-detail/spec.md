@@ -82,15 +82,21 @@ only for any other kind.
   references, reading `events.k8s.io/v1` fields where the legacy ones are empty
 
 #### Scenario: A Node lists the pods scheduled to it
-- **WHEN** a Node's panel is open
-- **THEN** it shows a Pods field listing, as `resource-links` references, every pod whose
-  `spec.nodeName` matches that node
+- **WHEN** a Node's panel is open in the structured view
+- **THEN** a region below its sections lists, live and across every namespace, every pod whose
+  `spec.nodeName` matches that node, as the Pods panel's own table scoped to the node, sharing
+  the context's pod watch rather than starting another
+
+#### Scenario: A node's pod is opened from the keyboard or the mouse
+- **WHEN** a pod row in a Node's pods region is selected
+- **THEN** Enter (`object_detail.node_pods.open_detail`) or `d` opens that pod's detail panel,
+  `l` its logs, and `/` searches the rows, as in the Pods panel
 
 #### Scenario: A node with no pods scheduled
 - **WHEN** a Node's panel is open for a node with no pods scheduled to it
-- **THEN** the Pods field is shown empty, not omitted
+- **THEN** the region says no pods are scheduled on the node, rather than being omitted
 
 #### Scenario: The pod list can't be retrieved
-- **WHEN** the user may read the Node but not list pods cluster-wide
-- **THEN** the Node still loads, and the Pods field says why it's empty rather than showing
-  nothing or erroring the whole panel
+- **WHEN** the user may read the Node but the pod watch can't connect or is refused
+- **THEN** the Node still loads, and the region shows the Pods panel's failed state rather than
+  erroring the whole panel
