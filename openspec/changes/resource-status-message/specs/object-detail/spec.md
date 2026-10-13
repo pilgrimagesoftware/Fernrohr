@@ -114,16 +114,25 @@ reachable by keyboard. A Secret value SHALL be copyable only while revealed.
 
 ### Requirement: A derived status message appears near the top of the panel
 
-The object panel SHALL show a single derived status message for any object that reports
-`status.conditions`, near the top of the panel: the `Ready` condition's message when present and
-non-empty, toned Good for `True`, Bad for `False`, and Warning for any other status; otherwise the
-most recently transitioned condition's non-empty message, untoned. An object with no conditions, or
-no condition with a non-empty message, SHALL show no message field. This applies both to kinds that
-already show `status.conditions` as badges and to kinds that gain the generic Status section above -
-the message is additional to, not a replacement for, the full conditions list. When the object has
-a `Ready` condition, the panel SHALL also show a Ready field with that condition's status (`True`,
-`False` or `Unknown`), toned and marked like the list's Ready cell, unless the kind's section already
-shows readiness.
+The object panel SHALL show, near the top, a single derived status message for any object whose
+`status.conditions` include a non-empty message, in addition to any conditions it already shows. The
+message SHALL be the `Ready` condition's message when present and non-empty, toned Good for `True`,
+Bad for `False` and Warning otherwise; else the most recently transitioned condition's non-empty
+message, untoned. An object with no such message SHALL show no message field.
+
+#### Scenario: An object without a message shows no message field
+- **WHEN** an object's panel is open and none of its conditions has a non-empty message
+- **THEN** the panel shows no message field
+
+### Requirement: A Ready field beside the message
+
+When an object has a `Ready` condition, the object panel SHALL show a Ready field with that
+condition's status (`True`, `False` or `Unknown`), toned and marked like the list's Ready cell,
+unless the kind's own section already shows readiness.
+
+#### Scenario: A HelmRelease shows its Ready status
+- **WHEN** a HelmRelease's panel is open and its `Ready` condition has `status: "False"`
+- **THEN** the panel shows a Ready field reading False in its Bad tone, beside the message
 
 #### Scenario: A Deployment shows its message alongside its condition badges
 - **WHEN** a Deployment's panel is open and its `Progressing` condition is the most recently
