@@ -23,7 +23,8 @@ non-modal window instead.
   permission on macOS and differs per Linux compositor.
 - Uploading attachments. `gh issue create` can't, and the browser page can't be pre-filled with
   them.
-- Redacting logs. The checkbox is off by default and its hint says what logs can contain.
+- Redacting logs. Knot doesn't redact them either. Instead the option is off by default, its hint
+  says what logs can contain, and the window shows the exact text a report will carry.
 - Log viewing in the app, log levels in settings, and size-based rotation.
 
 ## Decisions
@@ -51,6 +52,12 @@ feature request `enhancement`. Switching the type keeps the typed text and chang
 placeholders, and only a bug offers the log. If `gh` rejects the label, because most reporters can't
 label issues in the repository, the issue is filed again without it. The browser fallback passes the
 label as the `labels` parameter.
+
+### Logs: shown, then attached as shown
+
+Checking the option reads the log's end off the main thread and shows it in the window, in a
+scrollable, selectable block. The report attaches exactly that text. If Report is chosen before the
+read finishes, only the log's path goes, so nothing unseen is ever attached.
 
 ### Logs: the end of the current run's log, inside the body
 
@@ -92,8 +99,8 @@ is `info`, unless `RUST_LOG` names a level. Records also go to stderr when stder
 
 ## Risks / Trade-offs
 
-- [Logs can contain context names, hosts or paths] -> The checkbox is off by default, and its hint
-  says what logs can contain.
+- [Logs can contain context names, hosts or paths] -> The option is off by default, its hint says
+  what logs can contain, and the window shows exactly what will be attached.
 - [A non-modal window can outlive the window it reports about] -> The report doesn't refer to a
   window, and an error prefill copies its text when Report… is clicked.
 - [`gh` rejects the label] -> File again without it.

@@ -167,13 +167,20 @@ typed Subject and Description.
 ### Requirement: A bug report can attach the application log
 
 A bug report SHALL offer an "Attach the application log" option, unchecked when the window opens,
-with a hint that logs can include context names, hosts and paths. When it is checked, the report
-body SHALL carry the last 200 lines of the current log, at most 24 KiB, in a collapsed section.
+with a hint that logs can include context names, hosts and paths. When it is checked, the window
+SHALL show the last 200 lines of the current log, at most 24 KiB, and the report body SHALL carry
+exactly the shown text in a collapsed section. Nothing the reporter hasn't seen SHALL be attached.
 
 #### Scenario: The log is attached
 
 - **WHEN** the user checks the option on a bug report and reports through `gh`
-- **THEN** the body's Logs section holds the end of `fernrohr.log` in a collapsed block
+- **THEN** the window shows the end of `fernrohr.log`, and the body's Logs section holds that same
+  text in a collapsed block
+
+#### Scenario: Reporting before the log is shown
+
+- **WHEN** the user reports before the checked log has been read and shown
+- **THEN** the Logs section names the log's path instead of carrying any of its text
 
 #### Scenario: The log can't be read
 
