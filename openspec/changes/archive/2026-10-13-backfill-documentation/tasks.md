@@ -67,3 +67,22 @@
   target is missing, and switching to `v0.9` from a guide lands on the `v0.9` landing page.
 - [x] 5.4 Search the new pages for real cluster or context names, IPs, bastions and cloud project
   IDs. Verify: only placeholders appear.
+
+## 6. Process checks
+
+- [x] 6.1 Remove `ui::manual_tunnel::tests::the_manual_tunnel_docs_name_no_infrastructure`, which
+  asserted on README wording that moved to the site. Docs tests check the process, never the
+  wording. Verify: `cargo test` passes and no `include_str!` reads README or docs content.
+- [x] 6.2 Add `docs/site/_scripts/check-manifest.rb`. It checks every version in
+  `_data/versions.yml` for missing source or built pages, `nav` paths outside `pages`, unlisted
+  pages, and unlisted version directories. Verify: a planted unlisted page and a planted bad `nav`
+  path each fail the check.
+- [x] 6.3 Add `docs/site/_scripts/check.rb`. It builds with an empty base URL, fails on build
+  warnings and unknown Liquid filters, runs the manifest check, and checks internal links with
+  html-proofer (external links off). Verify: a planted dead link and a planted unknown filter each
+  fail the check.
+- [x] 6.4 Run the check in `.github/workflows/docs-pages.yml` on every run, ahead of the Pages build
+  and deploy. Verify: the pull request's workflow runs the check, and a failure stops the job before
+  upload.
+- [x] 6.5 Document `bundle exec ruby _scripts/check.rb` in `docs/site/PUBLISHING.md` and
+  `docs/site/AGENTS.md`, and remove the manual pre-merge steps it replaces.
