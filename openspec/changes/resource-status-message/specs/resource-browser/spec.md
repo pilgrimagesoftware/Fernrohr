@@ -56,14 +56,11 @@ their existing requirement defines.
 
 ### Requirement: A Ready column for kinds outside the table
 
-A list panel for a kind that has no entry in the built-in columns table SHALL show a Ready column,
-placed before the Message column, once the panel has observed at least one of that kind's objects
-carrying a `Ready` condition. The cell SHALL show the condition's status (`True`, `False` or
-`Unknown`), with a readiness indicator and tone matching the existing workload Ready cells: Good
-for `True`, Bad for `False`, Warning for `Unknown`. An object of that kind without a `Ready`
-condition SHALL show an empty cell. A kind none of whose loaded objects has a `Ready` condition
-SHALL show no Ready column. The column SHALL be resizable, reorderable, and sortable, sorting
-`False` before `Unknown` before `True` when ascending.
+A list panel for a kind outside the built-in columns table SHALL show a Ready column, before the
+Message column, once it has loaded at least one object with a `Ready` condition. The cell SHALL show
+that condition's status (`True`, `False` or `Unknown`) with a readiness indicator, toned Good, Bad
+or Warning respectively; an object without one SHALL show an empty cell. The column SHALL be
+resizable, reorderable and sortable, `False` first when ascending.
 
 #### Scenario: A Kustomization list shows Ready
 
@@ -85,16 +82,11 @@ SHALL show no Ready column. The column SHALL be resizable, reorderable, and sort
 
 ### Requirement: A condition-derived Message column for kinds outside the table
 
-A list panel for a kind that has no entry in the built-in columns table SHALL show a Message
-column once the panel has observed at least one of that kind's objects carrying a non-empty
-`status.conditions` array. The cell SHALL show the `Ready` condition's message when that condition
-is present and its message is non-empty, toned Good for `True`, Bad for `False`, and Warning for
-any other status. When no `Ready` condition is present, the cell SHALL instead show the most
-recently transitioned condition that has a non-empty message, untoned. A kind whose objects never
-carry conditions, or whose panel has no objects loaded yet, SHALL show no Message column. A kind
-already covered by the built-in columns table SHALL NOT also gain a Message column.
-
-The column SHALL behave like any other: resizable, reorderable, and sortable by its text.
+A list panel for a kind outside the built-in columns table SHALL show a Message column once it has
+loaded at least one object with a non-empty `status.conditions`. The cell SHALL show the object's
+derived status message, toned as the object detail panel tones it. A kind none of whose loaded
+objects carry conditions SHALL show no Message column, and a kind in the built-in columns table
+SHALL NOT gain one. The column SHALL be resizable, reorderable and sortable by its text.
 
 #### Scenario: A Kustomization list shows its Ready message
 
