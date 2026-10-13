@@ -313,7 +313,8 @@ and full keyboard operation.
 ### Requirement: List columns follow the kind
 
 Every list panel SHALL show Name and Age, and Namespace for a namespaced kind. A kind with no
-kind-specific columns SHALL show only these base columns. Pods keep the columns their existing
+kind-specific columns SHALL show only these base columns, plus the condition-derived Ready and
+Message columns once its objects report conditions. Pods keep the columns their existing
 requirement defines.
 
 #### Scenario: A Services list shows service columns
@@ -875,3 +876,71 @@ When a list panel relists while it already shows rows, for example after a watch
 #### Scenario: Scope change is instant
 - **WHEN** the user changes a loaded Pods panel from `team-a` to all namespaces
 - **THEN** the rows update at once without a refreshing indicator, since the panel already holds every namespace's rows
+
+### Requirement: A Ready column for kinds outside the table
+
+A list panel for a kind outside the built-in columns table SHALL show a Ready column, before the
+Message column, once it has loaded at least one object with a `Ready` condition. The cell SHALL show
+that condition's status (`True`, `False` or `Unknown`) with a readiness indicator, toned Good, Bad
+or Warning respectively; an object without one SHALL show an empty cell. The column SHALL be
+resizable, reorderable and sortable, `False` first when ascending.
+
+#### Scenario: A Kustomization list shows Ready
+
+- **WHEN** a Kustomization list panel is open and one Kustomization's `Ready` condition is
+  `"False"` while another's is `"True"`
+- **THEN** the first row's Ready cell reads False in its Bad tone, and the second reads True in
+  its Good tone
+
+#### Scenario: A CRD with conditions but no Ready condition shows no Ready column
+
+- **WHEN** a list panel is open for a CRD kind whose objects carry conditions, none of type
+  `Ready`
+- **THEN** the list shows a Message column but no Ready column
+
+#### Scenario: Sorting by Ready surfaces failures first
+
+- **WHEN** the user sorts a Kustomization list by Ready ascending
+- **THEN** rows whose Ready is False come first, then Unknown, then True
+
+### Requirement: A condition-derived Message column for kinds outside the table
+
+A list panel for a kind outside the built-in columns table SHALL show a Message column once it has
+loaded at least one object with a non-empty `status.conditions`. The cell SHALL show the object's
+derived status message, toned as the object detail panel tones it. A kind none of whose loaded
+objects carry conditions SHALL show no Message column, and a kind in the built-in columns table
+SHALL NOT gain one. The column SHALL be resizable, reorderable and sortable by its text.
+
+#### Scenario: A Kustomization list shows its Ready message
+
+- **WHEN** a Kustomization list panel is open and a Kustomization's `Ready` condition has
+  `status: "False"` and a message explaining the failed reconciliation
+- **THEN** that row's Message cell shows the failure message in its Bad tone
+
+#### Scenario: A healthy HelmRelease shows a Good-toned message
+
+- **WHEN** a HelmRelease's `Ready` condition has `status: "True"` and a message such as "Release
+  reconciliation succeeded"
+- **THEN** that row's Message cell shows that message in its Good tone
+
+#### Scenario: No Ready condition falls back to the latest transition
+
+- **WHEN** a CRD object has no `Ready` condition but has another condition with a non-empty
+  message and the most recent `lastTransitionTime`
+- **THEN** that row's Message cell shows that condition's message, untoned
+
+#### Scenario: A CRD with no conditions shows no Message column
+
+- **WHEN** a list panel is open for a CRD kind whose objects never set `status.conditions`
+- **THEN** the list shows only the base columns, with no Message column
+
+#### Scenario: A built-in kind with its own status column is unaffected
+
+- **WHEN** a Jobs list panel is open
+- **THEN** it keeps its existing Status, Completions and Duration columns and does not also gain a
+  separate Message column
+
+#### Scenario: Opening the object's detail reaches the full message
+
+- **WHEN** the user selects a row whose Message cell is truncated and presses the describe key
+- **THEN** that object's detail panel opens showing the full, untruncated message

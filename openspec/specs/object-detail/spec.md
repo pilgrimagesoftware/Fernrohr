@@ -39,8 +39,7 @@ kind-specific sections name, as `resource-links` references.
 The object panel SHALL show structured sections for Node, ConfigMap, Secret,
 PersistentVolumeClaim, ServiceAccount, ReplicaSet, Deployment, StatefulSet, DaemonSet, Job,
 CronJob, Service, Ingress, Endpoints, EndpointSlice, NetworkPolicy, Namespace, PersistentVolume,
-StorageClass, Role, ClusterRole, RoleBinding, ClusterRoleBinding and Event objects, and metadata
-only for any other kind.
+StorageClass, Role, ClusterRole, RoleBinding, ClusterRoleBinding and Event objects.
 
 #### Scenario: A Node shows its capacity and conditions
 - **WHEN** a Node's panel is open
@@ -134,6 +133,20 @@ only for any other kind.
 - **THEN** the Node still loads, and the region shows the Pods panel's failed state rather than
   erroring the whole panel
 
+### Requirement: A generic Status section for other kinds
+Any kind without dedicated sections whose object carries a non-empty `status.conditions` array
+SHALL show a generic Status section; any other kind with neither SHALL show metadata only.
+
+#### Scenario: A Kustomization with no dedicated section gets a generic Status section
+- **WHEN** a Kustomization's panel is open and its CRD has no kind-specific section defined
+- **THEN** it shows a Status section with its derived message and its full conditions list, rather
+  than metadata only
+
+#### Scenario: A CRD with no conditions keeps metadata only
+- **WHEN** a CRD object's panel is open and it has neither a kind-specific section nor
+  `status.conditions`
+- **THEN** it shows metadata only, unchanged from today
+
 ### Requirement: Secret values are hidden until revealed
 The object panel SHALL NOT display a Secret value in its YAML view. In its structured view it SHALL
 show each key's name and the value's size, with a reveal control per key that shows that one value
@@ -189,8 +202,8 @@ and by mouse.
 ### Requirement: Values can be copied
 The pod detail and object detail panels SHALL offer a Copy Resource Name command (palette and key)
 for the panel's object, and a copy control on copyable values - container images, ConfigMap keys and
-values, and similar single values - that appears on hover and is reachable by keyboard. A Secret
-value SHALL be copyable only while revealed.
+values, a derived status message, and similar single values - that appears on hover and is
+reachable by keyboard. A Secret value SHALL be copyable only while revealed.
 
 #### Scenario: Copying the name
 - **WHEN** a detail panel has focus and the user runs Copy Resource Name
@@ -199,6 +212,10 @@ value SHALL be copyable only while revealed.
 #### Scenario: Copying an image
 - **WHEN** the user hovers a container's image and clicks its copy control
 - **THEN** the full image reference is on the clipboard
+
+#### Scenario: Copying a status message
+- **WHEN** the user hovers an object's derived status message and clicks its copy control
+- **THEN** the full message text is on the clipboard
 
 ### Requirement: Large label and annotation values are shortened in the object viewer
 The object panel's structured view SHALL shorten label and annotation chips exactly as the pod
@@ -229,3 +246,46 @@ reopening or refreshing it, and keeping the user's view state.
 - **WHEN** an object's detail panel is open and the object is deleted
 - **THEN** within a few seconds the panel says it was deleted and when, keeps its last known state
   visible as stale, and stays open
+
+### Requirement: A derived status message appears near the top of the panel
+
+The object panel SHALL show, near the top, a single derived status message for any object whose
+`status.conditions` include a non-empty message, in addition to any conditions it already shows. The
+message SHALL be the `Ready` condition's message when present and non-empty, toned Good for `True`,
+Bad for `False` and Warning otherwise; else the most recently transitioned condition's non-empty
+message, untoned. An object with no such message SHALL show no message field.
+
+#### Scenario: An object without a message shows no message field
+- **WHEN** an object's panel is open and none of its conditions has a non-empty message
+- **THEN** the panel shows no message field
+
+### Requirement: A Ready field beside the message
+
+When an object has a `Ready` condition, the object panel SHALL show a Ready field with that
+condition's status (`True`, `False` or `Unknown`), toned and marked like the list's Ready cell,
+unless the kind's own section already shows readiness.
+
+#### Scenario: A HelmRelease shows its Ready status
+- **WHEN** a HelmRelease's panel is open and its `Ready` condition has `status: "False"`
+- **THEN** the panel shows a Ready field reading False in its Bad tone, beside the message
+
+#### Scenario: A Deployment shows its message alongside its condition badges
+- **WHEN** a Deployment's panel is open and its `Progressing` condition is the most recently
+  transitioned with a message, with no `Ready` condition present
+- **THEN** the panel shows that message near the top, untoned, in addition to its existing
+  Conditions badges
+
+#### Scenario: A failing HelmRelease shows a Bad-toned message
+- **WHEN** a HelmRelease's panel is open and its `Ready` condition has `status: "False"` with a
+  message describing the failure
+- **THEN** the panel shows that message near the top in its Bad tone, alongside the full
+  conditions list
+
+#### Scenario: A HelmRelease's Ready status is shown beside its message
+- **WHEN** a HelmRelease's panel is open and its `Ready` condition has `status: "False"`
+- **THEN** the panel shows a Ready field reading False, with the same readiness indicator and Bad
+  tone as the list's Ready cell, next to the message
+
+#### Scenario: An object with no conditions shows no message field
+- **WHEN** an object's panel is open and it has no `status.conditions`
+- **THEN** the panel shows no message field, unchanged from today

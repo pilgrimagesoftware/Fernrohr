@@ -79,7 +79,7 @@
 
 - [x] 6.1 Run `cargo fmt -- --check`, `cargo clippy -- -D warnings`, and `cargo test` in `App/` and
       confirm all new and existing tests pass.
-- [ ] 6.2 Manually verify against a cluster with Flux installed (or recorded fixtures standing in
+- [x] 6.2 Manually verify against a cluster with Flux installed (or recorded fixtures standing in
       for one): open a `HelmRelease` or `Kustomization` list and detail panel and confirm the
       Message column and Status section both show the Ready condition's message with the expected
       tone, with no cluster-identifying details recorded in any verification notes.
