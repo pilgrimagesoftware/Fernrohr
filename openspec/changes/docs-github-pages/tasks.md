@@ -57,7 +57,7 @@
 - [x] 4.2 Trigger on pushes to `master` that touch `docs/site/**` or the workflow, plus
   `workflow_dispatch`. Verify: a push to `develop` doesn't start the workflow, and deploy `needs`
   build, so a failed build never deploys.
-- [ ] 4.3 Set the repository's Pages source to GitHub Actions, then run the workflow by
+- [x] 4.3 Set the repository's Pages source to GitHub Actions, then run the workflow by
   `workflow_dispatch` on `master` after merge. Verify: the root, `/latest/` and `/v0.9/` URLs
   serve.
 
@@ -82,6 +82,7 @@
   - 4.1: `actionlint` wasn't installed locally. The workflow was parsed with Ruby's YAML loader and
     exercised by the PR's own run. The workflow also builds pull requests, without deploying, so a
     docs change gets a check before it merges. `develop` pushes still never publish.
-  - 4.3 waits on the repository Pages setting and the first deploy from `master`.
+  - 4.3: the user enabled Pages (`build_type=workflow`) and allowed `master` in the `github-pages`
+    environment. The first deploy waits on the next release merge to `master`.
   - 5.2: tokens were compared against their sources and screenshotted in light and dark mode. The
     app itself wasn't run side by side.
