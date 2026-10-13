@@ -1,7 +1,8 @@
 # selector-logs Specification
 
 ## Purpose
-TBD - created by archiving change selector-logs-panel. Update Purpose after archive.
+Following the logs of every pod a label selector picks, across a cluster context's namespaces, in
+one Logs panel the user opens empty and types the selector into, rather than one pod at a time.
 
 ## Requirements
 
