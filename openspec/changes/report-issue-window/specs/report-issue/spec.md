@@ -201,14 +201,20 @@ be dragged onto the issue.
 
 ### Requirement: The report window is keyboard-operable
 
-The window SHALL register Report (`secondary-enter`) and Close (`escape`) as commands in its key
-context, and each button SHALL show its key. Tab SHALL reach every control in reading order, and
-Enter in Description SHALL insert a newline.
+The window SHALL register Report (`secondary-enter`), Close (`escape`) and Add Screenshots…
+(`secondary-shift-a`) as commands in its key context, and the Close and Report buttons SHALL show
+their keys. Report's key SHALL work from Description too. Tab SHALL reach every control in reading
+order, and Enter in Description SHALL insert a newline.
 
 #### Scenario: Reporting from the keyboard
 
 - **WHEN** both fields are filled and the user presses ⌘↵ (Ctrl+Enter off macOS)
 - **THEN** the report is sent as if Report were clicked
+
+#### Scenario: Reporting from Description
+
+- **WHEN** focus is in Description and the user presses ⌘↵
+- **THEN** the report is sent rather than a newline inserted
 
 #### Scenario: Closing from the keyboard
 

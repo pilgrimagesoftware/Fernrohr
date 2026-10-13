@@ -75,10 +75,12 @@ failure warning) is pushed to the active main window instead.
 
 ### Keyboard
 
-Report Issue registers two commands in the window's `ReportIssueWindow` key context: Report
-(`secondary-enter`), and Close (`escape`). Enter inside Description stays a newline. Both buttons
-show their keys from the live keymap. Tab moves through type, Subject, Description, the log
-checkbox, Add Screenshots…, each screenshot's remove button, Close and Report.
+Report Issue registers three commands in the window's `ReportIssueWindow` key context: Report
+(`secondary-enter`), Close (`escape`) and Add Screenshots… (`secondary-shift-a`). Enter inside
+Description stays a newline. A text area takes ⌘↵ as its own Enter before any binding of ours is
+reached, so the window catches that action in the capture phase and turns it into Report. Close and
+Report show their keys from the live keymap. Tab moves through type, Subject, Description, the log
+checkbox, each screenshot's remove button, Add Screenshots…, Close and Report.
 
 ### Application log file
 
