@@ -37,7 +37,7 @@
 
 - [x] 4.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
   pass.
-- [ ] 4.2 Manual smoke test: run a short-lived Job (for example one that echoes a few lines and
+- [x] 4.2 Manual smoke test: run a short-lived Job (for example one that echoes a few lines and
   exits), wait for the pod to show Completed, open its logs, and confirm the output is visible
   with "log stream ended" after it; repeat with a Job that writes nothing and one whose pod has
   been deleted (expect the not-found message).

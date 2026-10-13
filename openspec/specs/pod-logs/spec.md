@@ -59,7 +59,8 @@ command) that opens them the other way from the preference, for that one open.
 ### Requirement: Stream a pod's logs
 
 The application SHALL open a log panel for a selected Pod that streams that Pod's container log output
-and appends new lines as they arrive.
+and appends new lines as they arrive. For a container that has already terminated, the application
+SHALL read its complete log without following it and SHALL show that output.
 
 #### Scenario: Open logs for a pod
 
@@ -69,7 +70,7 @@ and appends new lines as they arrive.
 #### Scenario: Pod terminates while streaming
 
 - **WHEN** the Pod being streamed is deleted or its container exits
-- **THEN** the panel indicates the stream has ended and retains the lines already shown
+- **THEN** the panel retains the lines already shown and indicates after them that the stream has ended
 
 #### Scenario: Log request fails
 
@@ -79,7 +80,9 @@ and appends new lines as they arrive.
 ### Requirement: Follow mode
 
 The log panel SHALL support a follow mode that keeps the newest line in view, and SHALL suspend
-following when the user scrolls up and resume it when the user returns to the bottom.
+following when the user scrolls up and resume it when the user returns to the bottom. The panel
+SHALL show whether follow is on or off with a visible indication on the Follow control, and SHALL
+scroll to the newest line when follow is turned on, if the view is not already there.
 
 #### Scenario: Following the tail
 
@@ -120,3 +123,48 @@ that pod's panel from a saved layout.
 
 - **WHEN** the user selects another pod without opening its logs
 - **THEN** the open pod's Logs panel keeps showing its own pod
+
+### Requirement: Follow state is visible
+The Follow control SHALL be visibly distinct when follow is on and when it is off, and SHALL change
+when scrolling suspends or resumes follow.
+
+#### Scenario: Follow is on
+- **WHEN** follow mode is on
+- **THEN** the Follow control is shown in its active style
+
+#### Scenario: Follow is off
+- **WHEN** follow mode is off, including after the user scrolls up
+- **THEN** the Follow control is shown in its plain style
+
+### Requirement: Turning follow on scrolls to the bottom
+Turning follow on SHALL scroll the log view to the newest line immediately when it is not already
+there, without waiting for a new line to arrive.
+
+#### Scenario: Re-enabling follow after scrolling up
+- **WHEN** the user has scrolled up and turns follow on
+- **THEN** the view scrolls to the newest line at once
+
+#### Scenario: Already at the bottom
+- **WHEN** the view is already at the newest line and the user turns follow on
+- **THEN** the view does not move
+
+### Requirement: Completed pods' logs stay readable
+
+The log panel SHALL show the full log output of a container that has already terminated, such as
+the pod of a completed Job, and SHALL mark the end of the stream after that output rather than in
+place of it.
+
+#### Scenario: Open logs for a completed pod
+
+- **WHEN** the user opens logs for a pod whose container has terminated
+- **THEN** the panel shows the container's complete output, followed by a marker that the log stream ended
+
+#### Scenario: Completed container wrote nothing
+
+- **WHEN** the user opens logs for a terminated container that wrote no output
+- **THEN** the panel says the container wrote no log output, rather than showing a failure
+
+#### Scenario: Pod no longer exists
+
+- **WHEN** the user opens logs for a pod that has been deleted
+- **THEN** the panel shows that the pod was not found
