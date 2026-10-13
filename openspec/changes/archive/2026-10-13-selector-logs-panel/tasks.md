@@ -38,7 +38,7 @@
 
 - [x] 6.1 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo test` all
   pass. Verify: all three exit zero.
-- [ ] 6.2 Manual smoke test: open the panel empty from the menu, type `app=x`, confirm matching
+- [x] 6.2 Manual smoke test: open the panel empty from the menu, type `app=x`, confirm matching
   pods stream with coloured prefixes, scale a deployment up and confirm the new pod streams and a
   deleted one stops, pick one container, change namespace scope, scroll up to pause follow, and
   restart the app to confirm the panel restores. Verify: each step behaves as described.
