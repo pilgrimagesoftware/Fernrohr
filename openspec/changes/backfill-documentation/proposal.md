@@ -35,7 +35,9 @@ Tracks pilgrimagesoftware/Fernrohr-App#240. Depends on `docs-github-pages`
 
 ### Modified Capabilities
 
-None.
+- `documentation-publishing`: the workflow validates the site on every pull request and before
+  every deploy: a warning-free build, the version manifest against the pages, and internal links.
+  The checks cover structure, not wording, and run locally with one command.
 
 ## Impact
 
