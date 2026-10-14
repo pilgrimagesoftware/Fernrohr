@@ -77,10 +77,7 @@ every checked row's kind.
 The bulk action bar's Delete action SHALL be available for any checked set regardless of kind,
 SHALL issue a delete request for each checked object using the same delete call the single-row
 Delete command (`k9s-remaining-keybindings`) already uses, and SHALL always show a confirmation
-naming how many objects of which kind(s) will be deleted before issuing any request. Bulk Delete
-is a separate command from the single-row `ctrl-d`/`ctrl-k` commands and SHALL NOT share their
-key binding; the single-row commands continue to act on the focused row alone regardless of what
-else is checked.
+naming how many objects of which kind(s) will be deleted before issuing any request.
 
 #### Scenario: Confirming a bulk delete
 
@@ -91,6 +88,18 @@ else is checked.
 
 - **WHEN** the user opens the delete confirmation and cancels it
 - **THEN** no delete request is sent and every checked row remains
+
+### Requirement: Single-row delete keeps acting on the focused row
+
+Bulk Delete SHALL be a separate command from the single-row `ctrl-d`/`ctrl-k` commands and SHALL
+NOT share their key binding. The single-row commands SHALL keep acting on the focused row alone,
+whatever else is checked.
+
+#### Scenario: ctrl-d with other rows checked
+
+- **WHEN** the user checks 3 Pods, moves the cursor to a fourth, unchecked Pod, and presses
+  `ctrl-d`
+- **THEN** the confirmation names only the focused Pod, and the 3 checked Pods are not deleted
 
 ### Requirement: Bulk Restart Rollout
 
