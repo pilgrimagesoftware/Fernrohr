@@ -15,9 +15,7 @@ row, detail panel, and the command palette, alongside the generic cross-kind act
 A Pod or Service row's context menu and its detail panel SHALL offer a Port Forward action,
 calling the same `ManagedForward` acquisition `k9s-remaining-keybindings`'s row-level Port Forward
 command already performs (including its port-choice prompt when the target exposes more than one
-port, and Service's resolution to one of its ready endpoint Pods). The forward SHALL appear
-wherever the app already lists active forwards, and SHALL be stoppable from there the same way an
-SSH tunnel is - unchanged from how it already works today.
+port, and Service's resolution to one of its ready endpoint Pods).
 
 #### Scenario: Starting a port forward from a Pod's detail panel
 
@@ -29,6 +27,18 @@ SSH tunnel is - unchanged from how it already works today.
 
 - **WHEN** a Pod is Pending or Terminated
 - **THEN** its Port Forward action is disabled or absent in its context menu and detail panel
+
+### Requirement: A forward started from these entry points is listed and stopped like any other
+
+A forward started from a context menu or a detail panel SHALL appear wherever the app already lists
+active forwards, and SHALL be stoppable from there the same way an SSH tunnel is - unchanged from
+how a forward started by the row-level command works today.
+
+#### Scenario: Stopping a forward started from a Service's context menu
+
+- **WHEN** the user starts a Port Forward from a Service row's context menu, then stops it in
+  Manage Tunnels' "Port forwards" section
+- **THEN** the forward stops, the same as one started with the row-level command
 
 ### Requirement: Trigger Now for CronJobs
 
