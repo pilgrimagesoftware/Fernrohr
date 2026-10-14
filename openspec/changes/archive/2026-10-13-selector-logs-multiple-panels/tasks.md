@@ -51,7 +51,7 @@ rewrites a real dock dump's `label_logs` to the old bare `"Typed"`.
 
 - [x] 5.1 Run `cargo fmt -- --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test`
   in `App/`. Verify: all pass.
-- [ ] 5.2 Check manually: open Logs by Label twice in one context with different selectors, and
+- [x] 5.2 Check manually: open Logs by Label twice in one context with different selectors, and
   once in another context. Switch one panel to a context another already searches. Save the layout,
   reload it, and check that every panel comes back with its own selector and streams. Record no
   cluster-identifying details.
