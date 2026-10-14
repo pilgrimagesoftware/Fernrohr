@@ -89,7 +89,7 @@ keybinding has no way to reach today.
 ## 9. Final checks
 
 - [x] 9.1 Run `cargo fmt && cargo clippy -- -D warnings && cargo test` and confirm all pass.
-- [ ] 9.2 Manually exercise every action against a test cluster (`cargo run`): open a Port Forward
+- [x] 9.2 Manually exercise every action against a test cluster (`cargo run`): open a Port Forward
   from the Pod detail panel and from a Service row's context menu (the `shift-f` keyboard path is
   already covered by `k9s-remaining-keybindings`'s own manual checks), trigger a CronJob,
   suspend/resume a Job and a CronJob, pause/resume a Deployment rollout, expand a PVC (including a
