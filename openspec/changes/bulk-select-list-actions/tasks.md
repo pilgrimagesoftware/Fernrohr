@@ -141,7 +141,7 @@
 ## 8. Final checks
 
 - [x] 8.1 Run `cargo fmt && cargo clippy -- -D warnings && cargo test` and confirm all pass.
-- [ ] 8.2 Manually exercise the full flow against a test cluster (`cargo run`): multi-select with
+- [x] 8.2 Manually exercise the full flow against a test cluster (`cargo run`): multi-select with
   mouse and keyboard in both the Pods table and a non-Pod list panel; run every bulk action
   (Delete, Restart Rollout and Rollback Rollout against each of Deployment/DaemonSet/StatefulSet,
   Scale against each of Deployment/StatefulSet/ReplicaSet, Cordon/Uncordon/Drain against Nodes,

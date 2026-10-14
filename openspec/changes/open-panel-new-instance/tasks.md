@@ -65,7 +65,7 @@ Implementation notes (Fernrohr-App):
 
 - [x] 6.1 Run `cargo fmt -- --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test`
   in `App/`. Verify: all pass.
-- [ ] 6.2 Check manually: duplicate a Deployments list with `cmd-shift-d` and scope the two
+- [x] 6.2 Check manually: duplicate a Deployments list with `cmd-shift-d` and scope the two
   differently; `alt`-click a Service row twice; `shift-enter` a pod; save the layout, reload it with
   Replace and with Add, and check that every instance comes back numbered with its own scope.
   Record no cluster-identifying details.
