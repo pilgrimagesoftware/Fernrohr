@@ -54,7 +54,7 @@ Implementation notes (Fernrohr-App, `util/logs/labels/context.rs`, `util/shell/l
 
 - [x] 3.1 Run `cargo fmt -- --check`, `cargo clippy --all-targets -- -D warnings` and `cargo test`
   in `App/`. Verify: all pass.
-- [ ] 3.2 Check manually in a window holding two contexts: open Logs by Label from the first
+- [x] 3.2 Check manually in a window holding two contexts: open Logs by Label from the first
   context's Pods list, switch to the second by keyboard and by mouse, and check that its pods
   stream. Record no cluster-identifying details.
 
