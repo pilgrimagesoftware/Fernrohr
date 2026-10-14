@@ -56,7 +56,7 @@
 - [x] 4.3 Update `App/CLAUDE.md` or the relevant doc comment in `ui/panel/tabs.rs` if the module's
   existing "what this file owns" comment no longer matches once the new commands land; verify by
   re-reading the module doc comment against the final file contents.
-- [ ] 4.4 Check manually in the app: right-click a background tab and run each item, each acting
+- [x] 4.4 Check manually in the app: right-click a background tab and run each item, each acting
   on that tab; open the focused tab's menu with `cmd-k m` and use it by keyboard; pin two tabs,
   restart, and see both still pinned and first; move a filtered, namespace-scoped list tab to a new
   window and see its filter, scope and pin carried over; run Close Other Tabs over an Exec tab and

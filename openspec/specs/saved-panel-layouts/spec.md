@@ -99,7 +99,8 @@ entirely, including its Resource panel state and window size.
 
 #### Scenario: Loading with Add does not duplicate an already-open panel
 - **WHEN** the user loads with Add a saved layout containing a panel with the same content key
-  (kind, object, namespace, and cluster context) as a panel already open in the window
+  (kind, object, namespace, cluster context, and instance number) as a panel already open in the
+  window
 - **THEN** that panel is not duplicated; the window still shows it once
 
 ### Requirement: Restoring never silently drops state
@@ -231,3 +232,22 @@ previous saved content or the new saved content on disk, never a partially writt
 - **WHEN** a save of an existing saved layout is interrupted before it completes
 - **THEN** that layout's file holds either its previous content or its new content, never a partial
   write
+
+### Requirement: Duplicate panels are saved and restored separately
+A saved layout SHALL keep each panel's instance number, so a layout holding several instances of
+one resource restores each of them, with its own state and number. A layout saved before panels had
+instance numbers SHALL restore each panel as the first instance.
+
+#### Scenario: Two instances restored
+- **WHEN** a layout holding two instances of a Deployments list, one scoped to `team-a` and one to
+  `team-b`, is loaded with Replace
+- **THEN** both lists are restored, each with its own scope, and the second's title ends in ` (2)`
+
+#### Scenario: Loading with Add keeps a saved duplicate
+- **WHEN** the window shows a Service's detail panel and the user loads with Add a layout holding
+  that Service's detail panel as instances 1 and 2
+- **THEN** instance 2 opens beside the open panel, and instance 1 is not duplicated
+
+#### Scenario: An older layout
+- **WHEN** a layout saved before instance numbers is loaded
+- **THEN** every panel restores as it did before, as the first instance
