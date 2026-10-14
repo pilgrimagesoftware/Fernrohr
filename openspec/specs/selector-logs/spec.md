@@ -6,30 +6,6 @@ one Logs panel the user opens empty and types the selector into, rather than one
 
 ## Requirements
 
-### Requirement: A Logs panel can open empty and follow a label selector
-The application SHALL let the user open a Logs panel with no pod chosen, from the command palette
-and from a menu item, and type a label selector into it. The panel SHALL stream every started
-container of the pods that selector picks, with the same follow and scrollback as a single pod's
-Logs panel. There SHALL be one such panel per cluster context; opening it again focuses it.
-
-#### Scenario: Opened empty
-- **WHEN** the user opens the label Logs panel
-- **THEN** it shows an empty selector field with focus and streams nothing
-
-#### Scenario: Applying a selector
-- **WHEN** the user types `app=web` and presses Enter
-- **THEN** the panel streams the logs of every started container of pods labelled `app=web` in its
-  namespace scope, and states how many pods and containers matched
-
-#### Scenario: Reopening focuses the panel
-- **WHEN** the label Logs panel is open and the user opens it again
-- **THEN** the existing panel is focused and no second one opens
-
-#### Scenario: Follow and scrollback
-- **WHEN** lines arrive from several pods while follow is on, then the user scrolls up
-- **THEN** the view stays on the newest line, then stops auto-scrolling until the user returns to
-  the bottom or re-enables follow
-
 ### Requirement: The selector is validated before it applies
 The panel SHALL accept `kubectl -l` selector syntax - `key`, `!key`, `key=value`, `key!=value`,
 `key in (a,b)` and `key notin (a,b)`, comma-separated - and SHALL reject text that does not parse
@@ -145,7 +121,9 @@ Changing it SHALL stop streams of pods outside it and start those inside it.
 ### Requirement: The panel is kept in saved layouts
 A label Logs panel SHALL be restored from a saved layout with its selector, namespace scope and
 container filter. A restored panel with a selector SHALL resume streaming once connected; one
-without SHALL open empty.
+without SHALL open empty. A layout holding several label Logs panels SHALL restore each of them
+separately, each with its own state. A layout saved when only one typed panel per context was
+allowed SHALL still restore.
 
 #### Scenario: Restored with a selector
 - **WHEN** a layout holding a panel following `app=web` is loaded
@@ -154,6 +132,11 @@ without SHALL open empty.
 #### Scenario: Restored empty
 - **WHEN** a layout holding a label Logs panel with no selector is loaded
 - **THEN** it opens empty with the selector field focused
+
+#### Scenario: Several panels restored
+- **WHEN** a layout holding two label Logs panels in one context, following `app=web` and
+  `app=worker`, is loaded
+- **THEN** both panels are restored, each with its own selector and streams
 
 ### Requirement: The typed panel's context is visible and can be changed
 When its window holds more than one cluster context, the typed label Logs panel SHALL show the
@@ -183,8 +166,8 @@ default key and can be rebound. A panel in a window with one context SHALL show 
 Switching the typed panel to another context SHALL stop every stream from the old context and
 stream the pods its selector picks in the new one, with the same selector and container filter.
 The namespace scope SHALL reset to all namespaces, because namespaces don't carry over between
-clusters. If the chosen context already has a typed panel, that panel SHALL be focused and this one
-left unchanged, so there is still one typed panel per context.
+clusters. The panel itself SHALL move to the chosen context, in its own tab, even when another
+typed panel already searches that context. Switching SHALL never focus a different panel.
 
 #### Scenario: The selector carries over
 - **WHEN** the panel follows `app=web` in `cluster-a`, scoped to `team-a`, and the user switches it
@@ -193,9 +176,10 @@ left unchanged, so there is still one typed panel per context.
   `cluster-b` stream, and the namespace scope shows all namespaces
 
 #### Scenario: The chosen context already has a typed panel
-- **WHEN** `cluster-b` already has a typed panel and the user switches the `cluster-a` panel to
-  `cluster-b`
-- **THEN** the `cluster-b` panel is focused, and the `cluster-a` panel still searches `cluster-a`
+- **WHEN** `cluster-b` already has a typed panel following `app=worker`, and the user switches the
+  `cluster-a` panel following `app=web` to `cluster-b`
+- **THEN** both panels search `cluster-b`, one following `app=web` in the switched panel's tab and
+  the other still following `app=worker`, and focus stays on the switched panel
 
 ### Requirement: A switched panel is saved in its new context
 A typed label Logs panel switched to another context SHALL be saved in that context, so a saved
@@ -211,3 +195,35 @@ any other saved panel is - as a placeholder naming the missing context.
 - **WHEN** a layout holding a typed panel that searched `cluster-b` is loaded into a window holding
   only `cluster-a`
 - **THEN** the panel's place shows a placeholder naming `cluster-b`, as for any other saved panel
+
+### Requirement: Label Logs panels open empty, as often as asked, and follow a label selector
+The application SHALL let the user open a Logs panel with no pod chosen, from the command palette
+and from a menu item, and type a label selector into it. The panel SHALL stream every started
+container of the pods that selector picks, with the same follow and scrollback as a single pod's
+Logs panel. Opening it SHALL always open a new, empty panel, so several can be open at once in the
+same cluster context or different ones, each with its own state.
+
+#### Scenario: Opened empty
+- **WHEN** the user opens the label Logs panel
+- **THEN** it shows an empty selector field with focus and streams nothing
+
+#### Scenario: Applying a selector
+- **WHEN** the user types `app=web` and presses Enter
+- **THEN** the panel streams the logs of every started container of pods labelled `app=web` in its
+  namespace scope, and states how many pods and containers matched
+
+#### Scenario: Opening another panel
+- **WHEN** a label Logs panel following `app=web` is open and the user opens the label Logs panel
+  again in the same context
+- **THEN** a second, empty panel opens with its selector field focused, and the first keeps
+  streaming `app=web`
+
+#### Scenario: Two panels stream independently
+- **WHEN** one label Logs panel follows `app=web` and another, in the same context, follows
+  `app=worker`
+- **THEN** each streams only its own selector's pods, and each panel's title names its selector
+
+#### Scenario: Follow and scrollback
+- **WHEN** lines arrive from several pods while follow is on, then the user scrolls up
+- **THEN** the view stays on the newest line, then stops auto-scrolling until the user returns to
+  the bottom or re-enables follow
