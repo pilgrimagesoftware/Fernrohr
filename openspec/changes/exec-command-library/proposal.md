@@ -75,5 +75,5 @@ it straight away.
 
 - Scoping an entry to particular kube contexts. Entries apply in every context.
 - Running an entry in several pods at once, or capturing its output anywhere but the shell panel.
-- Parameters or prompts inside commands.
+- Placeholders in commands. Commands are static; placeholders are tracked in Fernrohr-App#298.
 - Agent (MCP) access to the library.
