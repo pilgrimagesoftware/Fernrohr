@@ -10,13 +10,13 @@ uses.
 
 ### Requirement: Actions run through the user's helm CLI
 
-Rollback and Uninstall SHALL be performed by the user's `helm` version 3 binary, found at a path set
+Rollback and Uninstall SHALL be performed by the user's `helm` binary, version 3 or 4,, found at a path set
 in Settings or else on the login shell's PATH, so Helm's hooks, resource updates and history behave
 as they do from a terminal.
 
 #### Scenario: helm at a Settings path
 
-- **WHEN** Settings names a `helm` 3 binary that isn't on the PATH
+- **WHEN** Settings names a `helm` 3 or 4 binary that isn't on the PATH
 - **THEN** Rollback and Uninstall are available and run that binary
 
 ### Requirement: helm reaches the cluster the way the connection does
@@ -33,7 +33,7 @@ environment.
 
 ### Requirement: Unavailable without helm
 
-Without a usable `helm` 3, Rollback and Uninstall SHALL be shown disabled with the reason, in their
+Without a usable `helm` 3 or 4, Rollback and Uninstall SHALL be shown disabled with the reason, in their
 menu items, buttons and the palette.
 
 #### Scenario: helm is missing

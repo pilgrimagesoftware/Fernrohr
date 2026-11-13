@@ -35,7 +35,7 @@ own change.
 
 ### New Capabilities
 
-- `helm-releases`: discovering a cluster's Helm v3 releases from their storage Secrets, listing them
+- `helm-releases`: discovering a cluster's Helm v3/v4 releases from their storage Secrets, listing them
   live, and showing one release's overview, revision history, values, manifest, notes and created
   resources.
 - `helm-release-actions`: rolling a release back to an earlier revision and uninstalling it, through
@@ -53,7 +53,7 @@ own change.
   commands and keymap entries. Reuses the shared watch registry, list table machinery, YAML view,
   `SecretValue` hiding, `resource-links`, confirmation dialogs and refusal display.
 - Dependencies: a gzip decoder (`flate2`) and a base64 decoder if not already present; no Helm or Go
-  library. Rollback and Uninstall need the user's `helm` binary, version 3.
+  library. Rollback and Uninstall need the user's `helm` binary, version 3 or 4.
 - Writes a short-lived kubeconfig per CLI run (permissions 0600, deleted after) describing the
   connection's effective endpoint; credentials are never logged. A candidate ADR: driving `helm`
   rather than reimplementing its rollback and uninstall.
