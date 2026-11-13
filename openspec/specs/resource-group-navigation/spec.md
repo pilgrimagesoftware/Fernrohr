@@ -22,8 +22,9 @@ unchanged, and no kind SHALL appear in more than one subgroup.
 ### Requirement: Subgroup collapse and expand
 
 Each subgroup SHALL have a header that collapses and expands its kinds. Every subgroup SHALL start
-collapsed. Subgroup collapse state SHALL be held per window alongside section collapse state and
-SHALL NOT be written to the user's preference file.
+collapsed unless the context has remembered state for it. Subgroup collapse state SHALL be
+remembered per context alongside section collapse state, in the workspace state and not in the
+user's preference file.
 
 #### Scenario: Collapsing a subgroup hides its kinds
 
@@ -31,10 +32,15 @@ SHALL NOT be written to the user's preference file.
 - **THEN** that subgroup's kinds are hidden and only its header remains visible
 - **AND** other subgroups and sections are unaffected
 
-#### Scenario: A new window starts collapsed
+#### Scenario: A context without remembered state starts collapsed
 
-- **WHEN** a new window opens
+- **WHEN** a user opens a context whose subgroup state has never been saved
 - **THEN** every subgroup is collapsed, showing only its header
+
+#### Scenario: Expanded subgroups are remembered per context
+
+- **WHEN** a user expands a subgroup for a context, closes it, and reopens that context
+- **THEN** that subgroup is still expanded
 
 #### Scenario: A newly discovered group starts collapsed
 

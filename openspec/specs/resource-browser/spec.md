@@ -197,9 +197,10 @@ alphabetically, with Custom Resources last.
 ### Requirement: Sections are collapsible
 
 Each rendered section SHALL have a header that collapses and expands its rows,
-and SHALL show how many kinds it holds. Collapse state SHALL be held per window
-and SHALL NOT be written to the user's preference file, so a new window opens
-with every section expanded.
+and SHALL show how many kinds it holds. Collapse state SHALL be remembered per
+context in the workspace state, not in the user's preference file, and SHALL be
+restored when the Resource panel is built for that context or the window switches
+to it. A context with no remembered state opens with every section expanded.
 
 #### Scenario: Collapsing a section hides its rows
 
@@ -207,10 +208,15 @@ with every section expanded.
 - **THEN** that section's rows are hidden
 - **AND** its header remains, still showing the section's name and kind count
 
-#### Scenario: A new window is not collapsed
+#### Scenario: Collapse state is remembered per context
 
-- **WHEN** a user collapsed sections in one window and then opens a new window
-- **THEN** the new window's sections are all expanded
+- **WHEN** a user collapses sections for a context, closes it, and reopens that context
+- **THEN** the same sections are collapsed
+
+#### Scenario: A context without remembered state is not collapsed
+
+- **WHEN** a user opens a context whose collapse state has never been saved
+- **THEN** its sections are all expanded
 
 ### Requirement: Filtering the Resource panel
 
