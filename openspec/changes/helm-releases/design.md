@@ -72,7 +72,7 @@ gzip magic number, otherwise read the bytes as JSON. Decompression stops at
 `HELM_RELEASE_MAX_DECODED_BYTES` (`consts.rs`, 32 MiB), refusing anything larger as unreadable, so a
 hostile Secret can't exhaust memory.
 
-Deserialize into a trimmed `HelmRelease`: name, namespace, version, `info` (status, first and last
+Helm 4 writes the same record with extra fields (such as `apply_method`); unknown fields are ignored, so both versions' records decode. Deserialize into a trimmed `HelmRelease`: name, namespace, version, `info` (status, first and last
 deployed, description, notes) and chart metadata (name, version, appVersion). `config` (user values)
 and `manifest` are kept as `SecretValue`. The chart's templates, files and default values are
 skipped, never held. Add `flate2` as a direct dependency, pinned to the version already in the lock
@@ -147,7 +147,7 @@ release's history for every other Helm user of that cluster. Linking Helm's Go c
 toolchain and FFI. Driving the CLI keeps the semantics exact, at the cost of requiring `helm`.
 
 **Finding helm**: a `helm` path in Settings if set, otherwise `helm` on the login shell's PATH (the
-command tunnels' resolution). The binary is accepted when `helm version --short` reports `v3.`. The
+command tunnels' resolution). The binary is accepted when `helm version --short` reports `v3.` or `v4.`; both read and write the same `helm.sh/release.v1` storage and take the same rollback and uninstall arguments. The
 result is cached per app run and refreshed when Settings change; the actions' availability reads the
 cache, never runs a process on a render path.
 

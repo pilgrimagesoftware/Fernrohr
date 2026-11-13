@@ -2,14 +2,14 @@
 
 ## Purpose
 
-Show a cluster's Helm v3 releases, read from Helm's own storage in the cluster, as a live list and a
+Show a cluster's Helm v3/v4 releases, read from Helm's own storage in the cluster, as a live list and a
 per-release detail view of its status, history, values, manifest, notes and created resources.
 
 ## ADDED Requirements
 
 ### Requirement: Releases are read from Helm's Secret storage
 
-The application SHALL discover a context's Helm releases from the Secrets Helm v3 stores them in by
+The application SHALL discover a context's Helm releases from the Secrets Helm v3 and v4 store them in by
 default: type `helm.sh/release.v1`, labelled `owner=helm`, one Secret per revision. It SHALL decode a
 revision's payload (gzip-compressed JSON, base64-encoded inside the Secret's data) without running
 `helm`. A Secret that claims to be a release but can't be decoded SHALL NOT stop other releases from
