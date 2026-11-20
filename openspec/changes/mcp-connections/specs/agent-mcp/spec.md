@@ -46,8 +46,12 @@ Each MCP client SHALL have one session with Fernrohr for as long as its server p
 - **THEN** the response is an error saying to restart the MCP client, and nothing is read, asked or connected
 
 #### Scenario: Ended session
-- **WHEN** a request names a session that has ended
-- **THEN** the response is the same restart error, and nothing is read, asked or connected
+- **WHEN** a request names a session that has ended, because Fernrohr restarted or stopped serving MCP
+- **THEN** Fernrohr refuses it and nothing is read, asked or connected; the MCP server process opens a new session and retries once, and the new session holds nothing, so a connect needs fresh approval and a read of a context only the old session held reports it not open
+
+#### Scenario: Reopening fails
+- **WHEN** the MCP server process can't open a new session after its old one ended
+- **THEN** the response is the restart error, and nothing is read, asked or connected
 
 ### Requirement: Session identifiers are secret
 A session identifier SHALL be 128 bits from the operating system's random source, SHALL never be logged, shown in the UI, or returned to an MCP client in tool results, and SHALL never be reused.

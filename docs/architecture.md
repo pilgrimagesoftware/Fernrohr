@@ -34,7 +34,7 @@ first-class target rather than a follow-up (see `bootstrap-fernrohr`'s task 9.1)
   namespace + filter + sort + selection`)`.
 - **Connection holders**: a `ClusterSession` lives while anything holds it: a window that uses the
   context, or an agent's MCP session (`Holder::Window` | `Holder::Agent`). When an MCP session ends,
-  its holds linger, unclaimable, for a short grace period, then are released. An agent is an in-app
+  its holds become `Holder::Lingering`: unclaimable, for a short grace period, then are released. An agent is an in-app
   `AgentId`, never its secret MCP session id. See the App's ADR-0003 and the `mcp-connections`
   change.
 - **Multi-cluster side-by-side panels** in one dock is an explicit differentiator vs. Lens.

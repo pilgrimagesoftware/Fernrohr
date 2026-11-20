@@ -155,8 +155,12 @@ how the design meets it.
 2. **Grace delays, never resumes.** A closed session's holds become `Holder::Lingering`, which no
    session can claim; they only keep the connection warm until released (decision 3). A restarted
    client is a new session and sees the approval dialog again.
-3. **No fallback session.** Requests without a live session id are rejected with a "restart your
-   MCP client" error before any tool runs (decision 3, Compatibility).
+3. **No fallback session.** Requests without a live session id are rejected before any tool runs
+   (decision 3, Compatibility). When the app restarts, the adapter opens a **new** session and
+   retries once (the user's decision on review of App#434): the new session is a fresh agent that
+   holds nothing, so connecting needs approval again and reads of contexts only the old session held
+   report not open. The "restart your MCP client" error remains for a protocol mismatch (an older
+   adapter) and for a reopen that fails.
 4. **Session ids are capabilities.** 128 bits from `getrandom` (already the MCP token's source),
    compared in constant time, never logged, shown, or returned in tool results, never reused, and
    only valid while their session socket is open. The session socket itself authenticates with

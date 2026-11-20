@@ -28,7 +28,7 @@ context: |
       ResourceView: kind + namespace + filter + sort + selection).
     - Connection holders: a ClusterSession lives while a window or an agent's MCP
       session holds it (Holder::Window | Holder::Agent). An ended MCP session's holds
-      linger, unclaimable, for a grace period, then go. Agents are in-app AgentIds,
+      become Holder::Lingering: unclaimable, for a grace period, then go. Agents are in-app AgentIds,
       never the secret session id (App ADR-0003, mcp-connections).
     - Multi-cluster side-by-side panels in one dock is an explicit differentiator vs Lens.
     - Keyboard-first via GPUI's actions!/KeyBinding/KeyContext. Central command

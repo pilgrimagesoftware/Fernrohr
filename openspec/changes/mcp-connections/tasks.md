@@ -10,7 +10,7 @@
 ## 2. MCP sessions
 
 - [ ] 2.1 Extend the adapter/app protocol: bump the version, add `OpenSession{client_name}` answered with a session id, and a session id on each request. Verify with protocol round-trip tests, and that a request with no, unknown or ended session id is rejected with the "restart your MCP client" error before any tool runs (agent-mcp "Older adapter", "Ended session").
-- [ ] 2.2 Have the adapter open the session socket on `initialize` (client name from `clientInfo`) and keep it for its lifetime. Verify with an adapter test that tool calls carry the session id and that the socket stays open between calls.
+- [ ] 2.2 Have the adapter open the session socket on its first request (client name from `initialize`'s `clientInfo`) and keep it for its lifetime. Verify with an adapter test that tool calls carry the session id and that the socket stays open between calls.
 - [ ] 2.3 In the app, track live sessions; on a session socket closing, turn its holds into `Holder::Lingering` and release them after the grace period (`consts.rs`). Verify with tests: the connection stays open during the grace period, no session can claim a lingering hold, a restarted client is asked for approval again, and the hold is released after the period (agent-mcp "Client exits", "Client restarts within the grace period").
 - [ ] 2.4 Generate session ids as 128 bits from `getrandom`, compare them in constant time, and keep them out of logs, UI and tool results. Verify with a test that captures debug logs over a session's life and finds no id (agent-mcp "Identifier stays out of logs"), and one that an ended id is never accepted again.
 - [ ] 2.5 Stopping MCP (setting or `StopWithLastWindow`) ends every session. Verify with a test that stopping releases agent holds (agent-mcp "Stop serving with the last window").
@@ -21,6 +21,7 @@
 - [ ] 3.2 Make read tools session-aware: answer only for contexts a user window or the requesting session holds, else report not connected. Verify with tests for agent-mcp "Another agent's connection" and "Window-held context".
 - [ ] 3.3 Keep client names display-only: store the self-reported name per session and label it as self-reported wherever shown. Verify with a test that two sessions reporting the same name get separate holds and separate approval.
 - [ ] 3.4 Update `docs/site/latest/reference/mcp-tools.md` (`connect_context`) and `agents.md` ("Connect" and "Approve actions and connections"), covering per-agent approval, the restart error and the self-reported names, with placeholder context names. Verify the docs build and link checks pass.
+- [ ] 3.5 Make `open_panel` on a context only the calling session holds add it to the frontmost window, or open a window on it, which then holds it too (design decision 4). Verify with a test that the panel opens and both the window and the agent are listed as holders.
 
 ## 4. Connections window
 
