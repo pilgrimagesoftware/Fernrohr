@@ -90,9 +90,12 @@ Alternatives:
   about to use.
 - *Release only by the user.* Rejected: a crashed agent would hold a cluster open until noticed.
 
-**Compatibility**: the protocol version goes up. A request with no session id (an older adapter),
-or with an unknown or ended one, is rejected with an error telling the user to restart their MCP
-client. Adapter and app ship in one binary, so this only happens across a running upgrade.
+**Compatibility**: the protocol version goes up. A request with no session id, or with an unknown
+or ended one, is refused before any tool runs. When its session has ended (the app restarted or
+stopped serving MCP), the adapter opens a new session once and retries; the new session holds
+nothing (Security 3). The "restart your MCP client" error is for an older adapter, which speaks
+another protocol version, and for a reopen that fails. Adapter and app ship in one binary, so an
+older adapter only meets a newer app across a running upgrade.
 
 ### 4. `connect_context` connects for the session and shows the Connections window
 
