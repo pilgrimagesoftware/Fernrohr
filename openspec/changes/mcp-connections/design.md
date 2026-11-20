@@ -90,9 +90,12 @@ Alternatives:
   about to use.
 - *Release only by the user.* Rejected: a crashed agent would hold a cluster open until noticed.
 
-**Compatibility**: the protocol version goes up. A request with no session id (an older adapter),
-or with an unknown or ended one, is rejected with an error telling the user to restart their MCP
-client. Adapter and app ship in one binary, so this only happens across a running upgrade.
+**Compatibility**: the protocol version goes up. A request with no session id, or with an unknown
+or ended one, is refused before any tool runs. When its session has ended (the app restarted or
+stopped serving MCP), the adapter opens a new session once and retries; the new session holds
+nothing (Security 3). The "restart your MCP client" error is for an older adapter, which speaks
+another protocol version, and for a reopen that fails. Adapter and app ship in one binary, so an
+older adapter only meets a newer app across a running upgrade.
 
 ### 4. `connect_context` connects for the session and shows the Connections window
 
@@ -107,7 +110,7 @@ The decision follows from the context's current holders:
 
 No window is touched for an agent-only connection. The Connections window opens or comes forward
 with that row selected: that is the "UI tools bring the app to the front" focus for this tool.
-`open_panel` on a context the session holds opens a window, which then holds it as well.
+`open_panel` on a context only the session holds would put it in a window, and a window's hold lets every agent use it without approval (Security 1). So the user is asked first, through the same gate and in the recoverable tier, with the consequence in the question ("Show `<context>` in a window? Other agents can then use it."). If allowed, the context joins the frontmost window, or a window opens on it, and both the window and the agent hold it; if denied or timed out, nothing changes and the tool reports it. A context a user window already holds needs no question (the user's decision on review of App#435).
 
 ### 5. Last window and quiet mode
 
@@ -155,8 +158,12 @@ how the design meets it.
 2. **Grace delays, never resumes.** A closed session's holds become `Holder::Lingering`, which no
    session can claim; they only keep the connection warm until released (decision 3). A restarted
    client is a new session and sees the approval dialog again.
-3. **No fallback session.** Requests without a live session id are rejected with a "restart your
-   MCP client" error before any tool runs (decision 3, Compatibility).
+3. **No fallback session.** Requests without a live session id are rejected before any tool runs
+   (decision 3, Compatibility). When the app restarts, the adapter opens a **new** session and
+   retries once (the user's decision on review of App#434): the new session is a fresh agent that
+   holds nothing, so connecting needs approval again and reads of contexts only the old session held
+   report not open. The "restart your MCP client" error remains for a protocol mismatch (an older
+   adapter) and for a reopen that fails.
 4. **Session ids are capabilities.** 128 bits from `getrandom` (already the MCP token's source),
    compared in constant time, never logged, shown, or returned in tool results, never reused, and
    only valid while their session socket is open. The session socket itself authenticates with
