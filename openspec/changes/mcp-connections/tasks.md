@@ -4,7 +4,8 @@
 
 - [ ] 1.1 Replace `ClusterSession.holders: HashSet<WindowId>` with a set of `Holder::{Window, Agent}` and record the creating holder; move every existing caller to `Holder::Window`. Verify the existing hold tests (`closing_a_window_releases_only_its_own_hold` and the `holds.rs` tests) pass unchanged.
 - [ ] 1.2 Add `release_agent(session)` and a read of a context's holders. Verify with unit tests: a window and an agent sharing a context, the window closing leaves it connected, the agent releasing last drops the session (cluster-connection "Window closes while an agent holds the context", "Agent's session ends last").
-- [ ] 1.3 Write the App ADR recording that connections are held by windows and agent sessions (design decision 2) in the App's `docs/adr/`, and update `docs/architecture.md`'s session description. Verify the ADR index lists it.
+- [ ] 1.3 Route `ClusterRegistry::retry_with` through `ClusterConnection::redial` (App#431) instead of replacing a session no window holds, and store `context_name` on `ClusterConnection` so `redial` reads its own. Verify with a test that retrying a Failed context held only by an agent reconnects the same entity and the agent's hold sees `Connected` (cluster-connection "Retry keeps an agent's hold").
+- [ ] 1.4 Write the App ADR recording that connections are held by windows and agent sessions (design decision 2) in the App's `docs/adr/`, and update `docs/architecture.md`'s session description. Verify the ADR index lists it.
 
 ## 2. MCP sessions
 

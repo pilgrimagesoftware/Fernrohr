@@ -29,6 +29,11 @@ disconnects the context, closes, or ends.
 - **WHEN** the only window using `cluster-a` closes while an MCP session also holds `cluster-a`
 - **THEN** `cluster-a` stays connected, and the agent's next read of it succeeds without reconnecting
 
+#### Scenario: Retry keeps an agent's hold
+
+- **WHEN** `cluster-a` failed to connect while only an agent holds it, and the user retries it
+- **THEN** the same connection reconnects, the agent's hold is kept, and the agent's next read of `cluster-a` succeeds
+
 #### Scenario: Agent's session ends last
 
 - **WHEN** an MCP session that is the last holder of `cluster-a` ends

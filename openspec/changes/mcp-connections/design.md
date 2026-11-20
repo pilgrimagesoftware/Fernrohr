@@ -106,7 +106,26 @@ every session socket, which ends their holds through decision 3. On Linux and Wi
 as before. The Connections window counts as an open window, like the Tunnel Manager, so quiet mode
 starts only once it closes too.
 
-### 6. Status bar
+### 6. Retrying a failed connection keeps every holder
+
+Built on App#431's `ClusterConnection::redial`, which reconnects the same connection entity in
+place, so every holder (windows and agent sessions) sees the retry without re-subscribing. Two
+changes keep that true once agents hold connections (from the #431 review):
+
+- **The picker's retry goes through `redial` too.** `ClusterRegistry::retry_with` currently removes
+  a session no window holds and builds a new entity. With agent holders, "no window holds it" no
+  longer means "nobody observes it", and the swap would leave an agent on the orphaned, Failed
+  entity. The swap goes; retry always redials in place.
+- **`ClusterConnection` stores its own `context_name`**, and `redial` reads it rather than taking
+  it from the caller, so a connection more owners can reach can't be redialled at another context.
+
+Ownership stays on `ClusterSession` (decision 2 only widens its holder set), so the session's
+`_health` task, which drives pause and resume from the tunnel, keeps serving agent-only holders
+with no change.
+
+This change is based on `develop` after App#431 merges.
+
+### 7. Status bar
 
 A capsule whose context any agent holds shows an agent icon from the app's existing icon set, with
 a tooltip naming the agents. The capsule's Disconnect confirmation counts agents alongside other
