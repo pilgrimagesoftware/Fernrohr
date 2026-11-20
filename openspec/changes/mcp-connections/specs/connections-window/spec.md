@@ -27,16 +27,16 @@ its holders. The list SHALL update live as connections open, change state, or cl
 
 ### Requirement: Holders identify who uses a connection
 Each row SHALL name every holder: each window by its title, and each MCP session by the name its
-client reported, or "Unknown agent" when it reported none. A connection an agent started SHALL say
-so even after a window also takes it.
+client reported, labelled as self-reported ("reports itself as …"), or as an unnamed agent when it
+reported none. A connection an agent started SHALL say so even after a window also takes it.
 
 #### Scenario: Window and agent share a connection
 - **WHEN** a window and an agent both hold `cluster-a`, and the agent started it
-- **THEN** the row lists the window's title and the agent's name, and marks the agent as the one that connected it
+- **THEN** the row lists the window's title and the agent as "reports itself as" its name, and marks the agent as the one that connected it
 
 #### Scenario: Client without a name
 - **WHEN** an MCP client that reported no name holds `cluster-c`
-- **THEN** the row lists it as "Unknown agent"
+- **THEN** the row lists it as an unnamed agent
 
 ### Requirement: Open a connection in a window
 The Connections window SHALL offer, for the selected row, an action that adds the context to the
@@ -69,6 +69,10 @@ close. The agent's later requests for that context SHALL behave as if it had nev
 #### Scenario: Release an agent that's done
 - **WHEN** the user ends the agent's hold on `cluster-a`, which no window holds
 - **THEN** `cluster-a` disconnects and the agent's next read of it reports it isn't connected
+
+#### Scenario: Re-connecting after release needs approval
+- **WHEN** the user has ended an agent's hold on `cluster-a` and that agent asks to connect `cluster-a` again
+- **THEN** the user is asked to approve, as for a new connection
 
 ### Requirement: Opening the Connections window
 The Connections window SHALL be opened or brought forward by a registered command, offered in the

@@ -60,7 +60,8 @@ and the status menu.
 
 ### 2. Holder model: windows and agent sessions
 
-`holders` becomes a set of `Holder::{Window(WindowId), Agent(AgentSessionId)}`, with
+`holders` becomes a set of `Holder::{Window(WindowId), Agent(AgentSessionId), Lingering(id)}`
+(the last for an ended session's holds, decision 3), with
 `hold`/`release` taking a `Holder` and `release_agent(session)` mirroring `release_window`. The
 session records the holder that created it, so the Connections window can say who connected it.
 Every existing caller passes `Holder::Window`, so window behaviour is unchanged.
@@ -77,26 +78,36 @@ an `ADR-*` in the App's `docs/adr/` should record it at implementation time.
 The adapter opens a **session socket** when it receives `initialize` and keeps it for its whole
 life: `Hello{protocol, token}` then `OpenSession{client_name}`, answered with a session id. Each
 per-call request carries that id. The app treats the session socket closing (client exit, adapter
-crash, MCP stopped) as the session ending and releases its holds after a short grace period
-(a `consts.rs` decision, 30 s), so a client that restarts and reconnects within it finds the
-context still connected and needs no fresh approval.
+crash, MCP stopped) as the session ending. Each of its holds becomes **ownerless**: a
+`Holder::Lingering` that keeps the connection open for a grace period (a `consts.rs` decision,
+30 s) and is then released. The grace period only delays the disconnect, so a client that
+restarts quickly reuses the still-open connection rather than redialling; it never restores the
+old session's access. No session can claim a lingering hold, and the restarted client's new
+session asks for approval again (see Security).
 
 Alternatives:
 - *Idle timeout on agent holds.* Rejected: arbitrary, and drops a connection an agent is still
   about to use.
 - *Release only by the user.* Rejected: a crashed agent would hold a cluster open until noticed.
 
-**Compatibility**: the protocol version goes up. A request with no session id (an older adapter)
-is attributed to one shared "Unknown agent" session that lives until MCP stops or the user ends it
-in the Connections window.
+**Compatibility**: the protocol version goes up. A request with no session id (an older adapter),
+or with an unknown or ended one, is rejected with an error telling the user to restart their MCP
+client. Adapter and app ship in one binary, so this only happens across a running upgrade.
 
 ### 4. `connect_context` connects for the session and shows the Connections window
 
-After approval (unchanged), the context is held by `Holder::Agent(session)` and no window is
-touched. The Connections window opens or comes forward, selecting that row: that is the "UI tools
-bring the app to the front" focus for this tool. A context that's already connected takes the
-agent hold without approval; if the frontmost window holds it, that window is focused as today.
-`open_panel` on an agent-only context still opens a window, which then holds it as well.
+The decision follows from the context's current holders:
+
+| Holders now | Approval | Result |
+|---|---|---|
+| this session already | no | report its state |
+| a user window (any) | no | add `Holder::Agent(session)`; focus the window if it's frontmost |
+| only other sessions, or lingering | **yes** (same dialog) | add the hold, reusing the connection |
+| nobody | **yes** (same dialog) | connect, held by `Holder::Agent(session)` |
+
+No window is touched for an agent-only connection. The Connections window opens or comes forward
+with that row selected: that is the "UI tools bring the app to the front" focus for this tool.
+`open_panel` on a context the session holds opens a window, which then holds it as well.
 
 ### 5. Last window and quiet mode
 
@@ -130,7 +141,32 @@ This change is based on `develop` after App#431 merges.
 A capsule whose context any agent holds shows an agent icon from the app's existing icon set, with
 a tooltip naming the agents. The capsule's Disconnect confirmation counts agents alongside other
 windows ("stays connected for assistant"). Agent-only contexts have no capsule anywhere; the
-Connections window is where they're seen.
+Connections window is where they're seen. Names are shown as self-reported.
+
+## Security
+
+The user approved this change with six amendments. Each is a requirement in the specs; here is
+how the design meets it.
+
+1. **Approval is bound to the session.** A session may hold a context only if a user window
+   already holds it or that session's own approval request was granted (decision 4's table).
+   Another session's hold, and a lingering hold, never stand in for approval. The approval result
+   is recorded against the session id inside the app; nothing an MCP client sends can assert it.
+2. **Grace delays, never resumes.** A closed session's holds become `Holder::Lingering`, which no
+   session can claim; they only keep the connection warm until released (decision 3). A restarted
+   client is a new session and sees the approval dialog again.
+3. **No fallback session.** Requests without a live session id are rejected with a "restart your
+   MCP client" error before any tool runs (decision 3, Compatibility).
+4. **Session ids are capabilities.** 128 bits from `getrandom` (already the MCP token's source),
+   compared in constant time, never logged, shown, or returned in tool results, never reused, and
+   only valid while their session socket is open. The session socket itself authenticates with
+   the existing token first.
+5. **Client names are labels, not identities.** The name from `initialize` is stored only for
+   display, always rendered as self-reported ("reports itself as …"), and no code path branches on
+   it. Two clients reporting the same name are still two sessions.
+6. **Reads follow access.** `existing_connection` gains a session-aware check: read tools answer
+   for a context held by a user window or by the requesting session, and report anything else as
+   not connected. Reads of window-held contexts are unchanged.
 
 ## Risks / Trade-offs
 
@@ -138,8 +174,13 @@ Connections window is where they're seen.
   OS reports it; the user can always end a hold by hand in the Connections window.
 - [Agents keeping clusters connected the user forgot about] → the Connections window opens on every
   new agent connection, and the capsule's agent icon shows shared ones.
-- [Protocol change between adapter and app] → version bump with the "Unknown agent" fallback;
-  adapter and app ship in one binary, so mismatches only arise across a running upgrade.
+- [Protocol change between adapter and app] → version bump; an older adapter gets a clear
+  "restart your MCP client" error. Adapter and app ship in one binary, so this only arises across a
+  running upgrade.
+- [A client restarting often re-prompts the user] → intended (Security 2); the grace period at
+  least avoids redialling the cluster when the user approves again.
+- [Agents sharing a cluster each need approval] → intended (Security 1); a user window holding the
+  context still lets any agent use it without a prompt, as today.
 - [Holder-less sessions created lazily by `ClusterRegistry::connection`] → the Connections window
   lists only contexts with at least one holder, so those transient sessions don't appear.
 

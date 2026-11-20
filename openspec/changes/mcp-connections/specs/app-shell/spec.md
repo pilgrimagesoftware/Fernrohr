@@ -39,11 +39,12 @@ context remains, the window SHALL return to the cluster picker.
 
 ### Requirement: Status bar capsule marks agent-held contexts
 A status bar capsule SHALL show an agent icon when an MCP session also holds its context, with a
-tooltip naming each such agent. The icon SHALL not replace or recolor the capsule's state icon.
+tooltip naming each such agent by its self-reported name, labelled as such. The icon SHALL not
+replace or recolor the capsule's state icon.
 
 #### Scenario: Agent shares a window's context
 - **WHEN** a window uses `cluster-a` and an agent named `assistant` also holds it
-- **THEN** the window's `cluster-a` capsule shows the agent icon, and its tooltip names `assistant`
+- **THEN** the window's `cluster-a` capsule shows the agent icon, and its tooltip says an agent reporting itself as `assistant` also uses it
 
 #### Scenario: Agent lets go
 - **WHEN** that agent's session ends
