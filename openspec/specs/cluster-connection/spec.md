@@ -108,9 +108,10 @@ re-authentication succeeds.
 
 ### Requirement: Connections shared across windows
 
-The application SHALL keep at most one connection per context, shared by every window that uses
-that context. A connection, and any tunnel it holds, SHALL stay open while at least one window uses
-the context, and SHALL be shut down when the last such window disconnects the context or closes.
+The application SHALL keep at most one connection per context, shared by every window and every
+MCP session that uses that context. A connection, and any tunnel it holds, SHALL stay open while at
+least one window or MCP session holds the context, and SHALL be shut down when the last holder
+disconnects the context, closes, or ends.
 
 #### Scenario: Shared by two windows
 
@@ -124,7 +125,22 @@ the context, and SHALL be shut down when the last such window disconnects the co
 
 #### Scenario: Last window lets go
 
-- **WHEN** the last window using `cluster-a` disconnects it or closes
+- **WHEN** the last window using `cluster-a` disconnects it or closes, and no MCP session holds it
+- **THEN** `cluster-a`'s connection and watches stop, and its tunnel forward is released
+
+#### Scenario: Window closes while an agent holds the context
+
+- **WHEN** the only window using `cluster-a` closes while an MCP session also holds `cluster-a`
+- **THEN** `cluster-a` stays connected, and the agent's next read of it succeeds without reconnecting
+
+#### Scenario: Retry keeps an agent's hold
+
+- **WHEN** `cluster-a` failed to connect while only an agent holds it, and the user retries it
+- **THEN** the same connection reconnects, the agent's hold is kept, and the agent's next read of `cluster-a` succeeds
+
+#### Scenario: Agent's session ends last
+
+- **WHEN** an MCP session that is the last holder of `cluster-a` ends
 - **THEN** `cluster-a`'s connection and watches stop, and its tunnel forward is released
 
 ### Requirement: Connecting through a bound tunnel
