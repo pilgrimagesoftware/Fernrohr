@@ -21,7 +21,7 @@
 - [ ] 3.2 Make read tools session-aware: answer only for contexts a user window or the requesting session holds, else report not connected. Verify with tests for agent-mcp "Another agent's connection" and "Window-held context".
 - [ ] 3.3 Keep client names display-only: store the self-reported name per session and label it as self-reported wherever shown. Verify with a test that two sessions reporting the same name get separate holds and separate approval.
 - [ ] 3.4 Update `docs/site/latest/reference/mcp-tools.md` (`connect_context`) and `agents.md` ("Connect" and "Approve actions and connections"), covering per-agent approval, the restart error and the self-reported names, with placeholder context names. Verify the docs build and link checks pass.
-- [ ] 3.5 Make `open_panel` on a context only the calling session holds add it to the frontmost window, or open a window on it, which then holds it too (design decision 4). Verify with a test that the panel opens and both the window and the agent are listed as holders.
+- [ ] 3.5 Make `open_panel` on a context only the calling session holds ask the user first ("Show `<context>` in a window? Other agents can then use it.", recoverable tier); allowed, add it to the frontmost window or open one, so the window and the agent both hold it; denied or timed out, change nothing and return the error. Verify with tests for allowed, denied, timed out, a window-held context (no question), and another agent then connecting without a question.
 
 ## 4. Connections window
 

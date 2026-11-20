@@ -86,6 +86,25 @@ Read tools SHALL answer for a context only when a user window holds it or the re
 - **WHEN** an agent lists resources in a context a user window holds, without having connected it
 - **THEN** the result lists the resources as before
 
+### Requirement: Showing an agent-only context in a window requires approval
+Before `open_panel` puts a context that only the asking MCP session holds into a window, Fernrohr SHALL ask the user, saying that other agents can then use it. Allowed, the context SHALL join the frontmost window, or a window SHALL open on it, held by both the window and the session. Denied, timed out, or abandoned, nothing SHALL change. A context a user window already holds SHALL be shown without asking.
+
+#### Scenario: Allowed
+- **WHEN** an agent opens a panel on `staging`, which only its session holds, and the user allows it
+- **THEN** a window shows `staging`, and both the window and the agent hold it
+
+#### Scenario: Denied or timed out
+- **WHEN** the user denies the question, or doesn't answer it in time
+- **THEN** no window gains `staging`, and the result is denied or timed out
+
+#### Scenario: Already in a window
+- **WHEN** an agent opens a panel on a context a user window already holds
+- **THEN** no question is asked and the panel opens
+
+#### Scenario: Other agents can then use it
+- **WHEN** a window shows `staging` after one agent's allowed request, and another agent asks to connect `staging`
+- **THEN** that agent holds it without a question, because a user window holds it
+
 ### Requirement: Agent connections survive the last window closing
 When the last window closes and Fernrohr keeps running with the MCP server serving, connections held by MCP sessions SHALL stay open, and read tools SHALL keep answering for them.
 

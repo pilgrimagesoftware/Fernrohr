@@ -110,7 +110,7 @@ The decision follows from the context's current holders:
 
 No window is touched for an agent-only connection. The Connections window opens or comes forward
 with that row selected: that is the "UI tools bring the app to the front" focus for this tool.
-`open_panel` on a context the session holds opens a window, which then holds it as well.
+`open_panel` on a context only the session holds would put it in a window, and a window's hold lets every agent use it without approval (Security 1). So the user is asked first, through the same gate and in the recoverable tier, with the consequence in the question ("Show `<context>` in a window? Other agents can then use it."). If allowed, the context joins the frontmost window, or a window opens on it, and both the window and the agent hold it; if denied or timed out, nothing changes and the tool reports it. A context a user window already holds needs no question (the user's decision on review of App#435).
 
 ### 5. Last window and quiet mode
 
